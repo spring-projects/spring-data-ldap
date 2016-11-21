@@ -1,0 +1,10 @@
+Spring Data LDAP Changelog
+=============================
+
+Changes in version 1.0.0.M1 LDAP (2016-11-11)
+------------------------------------------------
+
+Repository
+* Introducing generic repository implementation for LDAP
+* Automatic implementation of interface query method names on repositories.
+
