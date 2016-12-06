@@ -6,7 +6,7 @@
 
 	<groupId>org.springframework.data</groupId>
 	<artifactId>spring-data-ldap</artifactId>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
+	<version>2.0.0.BUILD-SNAPSHOT</version>
 
 	<name>Spring Data LDAP</name>
 	<description>Spring Data integration for LDAP</description>
@@ -15,14 +15,12 @@
 	<parent>
 		<groupId>org.springframework.data.build</groupId>
 		<artifactId>spring-data-parent</artifactId>
-		<version>1.9.0.BUILD-SNAPSHOT</version>
+		<version>2.0.0.BUILD-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<spring-ldap>2.2.0.BUILD-SNAPSHOT</spring-ldap>
-		<springdata.commons>1.13.0.BUILD-SNAPSHOT</springdata.commons>
-		<assertj>3.5.2</assertj>
-		<bundlor.enabled>false</bundlor.enabled>
+		<springdata.commons>2.0.0.BUILD-SNAPSHOT</springdata.commons>
 	</properties>
 
 	<developers>
@@ -86,20 +84,6 @@
 			<artifactId>querydsl-apt</artifactId>
 			<version>${querydsl}</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>${assertj}</version>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
