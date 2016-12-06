@@ -20,6 +20,9 @@ import static org.springframework.data.querydsl.QueryDslUtils.*;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import org.springframework.data.ldap.repository.query.AnnotatedLdapRepositoryQuery;
+import org.springframework.data.ldap.repository.query.LdapQueryMethod;
+import org.springframework.data.ldap.repository.query.PartTreeLdapRepositoryQuery;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.core.EntityInformation;
@@ -32,17 +35,13 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.ldap.core.LdapOperations;
-import org.springframework.data.ldap.repository.query.AnnotatedLdapRepositoryQuery;
-import org.springframework.data.ldap.repository.query.LdapQueryMethod;
-import org.springframework.data.ldap.repository.query.PartTreeLdapRepositoryQuery;
-import org.springframework.data.ldap.repository.support.SimpleLdapRepository;
 
 /**
  * Factory to create {@link org.springframework.data.ldap.repository.LdapRepository} instances.
  * 
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
- * @since 2.0
+ * @author Mark Paluch
  */
 public class LdapRepositoryFactory extends RepositoryFactorySupport {
 
@@ -57,33 +56,28 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		return null;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected Object getTargetRepository(RepositoryMetadata metadata) {
-
-		if (!isQueryDslRepository(metadata.getRepositoryInterface())) {
-			return new org.springframework.data.ldap.repository.support.SimpleLdapRepository(ldapOperations,
-					ldapOperations.getObjectDirectoryMapper(), metadata.getDomainType());
-		}
-
-		return new QueryDslLdapRepository(ldapOperations, ldapOperations.getObjectDirectoryMapper(),
-				metadata.getDomainType());
-	}
-
-	protected Object getTargetRepository(RepositoryInformation metadata) {
-		return getTargetRepository((RepositoryMetadata) metadata);
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getRepositoryBaseClass(org.springframework.data.repository.core.RepositoryMetadata)
+	 */
+	@Override
+	protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
+		return isQueryDslRepository(metadata.getRepositoryInterface()) ? QueryDslLdapRepository.class
+				: SimpleLdapRepository.class;
 	}
 
 	private static boolean isQueryDslRepository(Class<?> repositoryInterface) {
 		return QUERY_DSL_PRESENT && QueryDslPredicateExecutor.class.isAssignableFrom(repositoryInterface);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getTargetRepository(org.springframework.data.repository.core.RepositoryInformation)
+	 */
 	@Override
-	protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-		if (!isQueryDslRepository(metadata.getRepositoryInterface())) {
-			return SimpleLdapRepository.class;
-		} else {
-			return QueryDslLdapRepository.class;
-		}
+	protected Object getTargetRepository(RepositoryInformation information) {
+		return getTargetRepositoryViaReflection(information, ldapOperations, ldapOperations.getObjectDirectoryMapper(),
+				information.getDomainType());
 	}
 
 	@Override
@@ -101,6 +95,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		@Override
 		public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory,
 				NamedQueries namedQueries) {
+
 			LdapQueryMethod queryMethod = new LdapQueryMethod(method, metadata, factory);
 			Class<?> domainType = metadata.getDomainType();
 

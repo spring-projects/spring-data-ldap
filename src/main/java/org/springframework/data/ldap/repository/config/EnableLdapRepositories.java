@@ -24,15 +24,16 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.ldap.repository.support.LdapRepositoryFactoryBean;
+import org.springframework.data.repository.config.DefaultRepositoryBaseClass;
+import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 
 /**
  * Annotation to activate Ldap repositories. If no base package is configured through either {@link #value()},
  * {@link #basePackages()} or {@link #basePackageClasses()} it will trigger scanning of the package of annotated class.
  * 
  * @author Mattias Hellborg Arthursson
- * @since 2.0
+ * @author Mark Paluch
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -43,7 +44,8 @@ public @interface EnableLdapRepositories {
 
 	/**
 	 * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation declarations e.g.:
-	 * {@code @EnableLdapRepositories("org.my.pkg")} instead of {@code @EnableLdapRepositories(basePackages="org.my.pkg")}.
+	 * {@code @EnableLdapRepositories("org.my.pkg")} instead of
+	 * {@code @EnableLdapRepositories(basePackages="org.my.pkg")}.
 	 */
 	String[] value() default {};
 
@@ -78,7 +80,7 @@ public @interface EnableLdapRepositories {
 	 *
 	 * @return
 	 */
-	String repositoryImplementationPostfix() default "";
+	String repositoryImplementationPostfix() default "Impl";
 
 	/**
 	 * Configures the location of where to find the Spring Data named queries properties file. Will default to
@@ -89,7 +91,8 @@ public @interface EnableLdapRepositories {
 	String namedQueriesLocation() default "";
 
 	/**
-	 * Returns the key of the {@link org.springframework.data.repository.query.QueryLookupStrategy} to be used for lookup queries for query methods. Defaults to
+	 * Returns the key of the {@link org.springframework.data.repository.query.QueryLookupStrategy} to be used for lookup
+	 * queries for query methods. Defaults to
 	 * {@link org.springframework.data.repository.query.QueryLookupStrategy.Key#CREATE_IF_NOT_FOUND}.
 	 *
 	 * @return
@@ -97,17 +100,31 @@ public @interface EnableLdapRepositories {
 	Key queryLookupStrategy() default Key.CREATE_IF_NOT_FOUND;
 
 	/**
-	 * Returns the {@link org.springframework.beans.factory.FactoryBean} class to be used for each repository instance. Defaults to
-	 * {@link org.springframework.data.ldap.repository.support.LdapRepositoryFactoryBean}.
+	 * Returns the {@link org.springframework.beans.factory.FactoryBean} class to be used for each repository instance.
+	 * Defaults to {@link org.springframework.data.ldap.repository.support.LdapRepositoryFactoryBean}.
 	 * 
 	 * @return
 	 */
 	Class<?> repositoryFactoryBeanClass() default LdapRepositoryFactoryBean.class;
 
 	/**
-	 * Configures the name of the {@link org.springframework.ldap.core.LdapTemplate} bean to be used with the repositories detected.
+	 * Configure the repository base class to be used to create repository proxies for this particular configuration.
+	 *
+	 * @return
+	 */
+	Class<?> repositoryBaseClass() default DefaultRepositoryBaseClass.class;
+
+	/**
+	 * Configures the name of the {@link org.springframework.ldap.core.LdapTemplate} bean to be used with the repositories
+	 * detected.
 	 * 
 	 * @return
 	 */
 	String ldapTemplateRef() default "ldapTemplate";
+
+	/**
+	 * Configures whether nested repository-interfaces (e.g. defined as inner classes) should be discovered by the
+	 * repositories infrastructure.
+	 */
+	boolean considerNestedRepositories() default false;
 }
