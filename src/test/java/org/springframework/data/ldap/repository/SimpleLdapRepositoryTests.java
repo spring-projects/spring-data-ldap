@@ -42,7 +42,7 @@ import org.springframework.ldap.support.LdapUtils;
 /**
  * @author Mattias Hellborg Arthursson
  */
-public class SimpleLdapRepositoryTest {
+public class SimpleLdapRepositoryTests {
 
     private LdapOperations ldapOperationsMock;
     private ObjectDirectoryMapper odmMock;

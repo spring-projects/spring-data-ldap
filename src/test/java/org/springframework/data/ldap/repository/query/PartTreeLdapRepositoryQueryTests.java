@@ -36,8 +36,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
  */
-@ContextConfiguration("classpath:/query-test.xml")
-public class PartTreeLdapRepositoryQueryTest extends AbstractJUnit4SpringContextTests {
+@ContextConfiguration
+public class PartTreeLdapRepositoryQueryTests extends AbstractJUnit4SpringContextTests {
 
 	@Autowired private LdapTemplate ldapTemplate;
 	private Class<?> targetClass;

@@ -46,7 +46,7 @@ public class AnnotationConfigTests {
 	}
 
 	@Configuration
-	@ImportResource("classpath:/ldap-annotation-config.xml")
+	@ImportResource("classpath:/infrastructure.xml")
 	@EnableLdapRepositories(basePackageClasses = DummyLdapRepository.class)
 	static class Config {}
 }
