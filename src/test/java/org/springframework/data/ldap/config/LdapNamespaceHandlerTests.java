@@ -15,9 +15,7 @@
  */
 package org.springframework.data.ldap.config;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +37,6 @@ public class LdapNamespaceHandlerTests {
 
 	@Test // DATALDAP-1
 	public void shouldCreateRepository() {
-		assertThat(context.getBean(DummyLdapRepository.class), is(notNullValue()));
+		assertThat(context.getBean(DummyLdapRepository.class)).isNotNull();
 	}
 }
