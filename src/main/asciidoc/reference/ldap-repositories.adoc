@@ -4,9 +4,9 @@
 [[ldap.repo-intro]]
 == Introduction
 
-This chapter will point out the specialties for repository support for MongoDB. This builds on the core repository support explained in <<repositories>>. So make sure you've got a sound understanding of the basic concepts explained there.
+This chapter will point out the specialties for repository support for LDAP. This builds on the core repository support explained in <<repositories>>. So make sure you've got a sound understanding of the basic concepts explained there.
 
-*  Spring LDAP repositories can be enabled using an `<ldap:repositories>` tag in your XML configuration or using an `@EnableLdapRepositories` annotation on a configuration class.
+*  Spring LDAP repositories can be enabled using an `<data-ldap:repositories>` tag in your XML configuration or using an `@EnableLdapRepositories` annotation on a configuration class.
 *  To include support for `LdapQuery` parameters in automatically generated repositories, have your interface extend `LdapRepository` rather than `CrudRepository`.
 *  All Spring LDAP repositories must work with entities annotated with the ODM annotations, as described in http://docs.spring.io/spring-ldap/docs/{springLdapVersion}.RELEASE/reference/#odm[Object-Directory Mapping].
 *  Since all ODM managed classes must have a Distinguished Name as ID, all Spring LDAP repositories must have the ID type parameter set to `javax.naming.Name`.
@@ -67,6 +67,37 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
 Right now this interface simply serves typing purposes but we will add additional methods to it later. In your Spring configuration simply add
 
+.General LDAP repository Spring configuration
+====
+[source,xml]
+----
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:ldap="http://www.springframework.org/schema/ldap"
+  xmlns:data-ldap="http://www.springframework.org/schema/data/ldap"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/ldap
+    http://www.springframework.org/schema/ldap/spring-ldap.xsd
+    http://www.springframework.org/schema/data/ldap
+    http://www.springframework.org/schema/data/ldap/spring-ldap.xsd">
+
+  <ldap:context-source url="ldap://127.0.0.1:389"
+                     username="cn=Admin"
+                     password="secret" />
+
+  <ldap:ldap-template />
+
+  <data-ldap:repositories base-package="com.acme.*.repositories" />
+
+</beans>
+----
+====
+
+This namespace element will cause the base packages to be scanned for interfaces extending `LdapRepository` and create Spring beans for each of them found. By default the repositories will get a `LdapTemplate` Spring bean wired that is called `ldapTemplate`, so you only need to configure `ldap-template-ref` explicitly if you deviate from this convention.
+
+If you'd rather like to go with JavaConfig use the `@EnableLdapRepositories` annotation. The annotation carries the very same attributes like the namespace element. If no base package is configured the infrastructure will scan the package of the annotated configuration class.
 
 .JavaConfig for repositories
 ====
@@ -120,7 +151,7 @@ The sample creates an application context with Spring's unit test support which 
 [[ldap.repositories.queries]]
 == Query methods
 
-Most of the data access operations you usually trigger on a repository result a query being executed against the MongoDB databases. Defining such a query is just a matter of declaring a method on the repository interface
+Most of the data access operations you usually trigger on a repository result a query being executed against the LDAP directory. Defining such a query is just a matter of declaring a method on the repository interface
 
 .PersonRepository with query methods
 ====
@@ -134,7 +165,7 @@ public interface PersonRepository extends PagingAndSortingRepository<Person, Str
 }
 ----
 <1> The method shows a query for all people with the given lastname. The query will be derived parsing the method name for constraints which can be concatenated with `And` and `Or`. Thus the method name will result in a query expression of `(&(objectclass=person)(lastname=lastname))`.
-<1> The method shows a query for all people with the given lastname and firstname. The query will be derived parsing the method name.Thus the method name will result in a query expression of `(&(objectclass=person)(lastname=lastname)(firstname=firstname))`.
+<2> The method shows a query for all people with the given lastname and firstname. The query will be derived parsing the method name.Thus the method name will result in a query expression of `(&(objectclass=person)(lastname=lastname)(firstname=firstname))`.
 ====
 
 [cols="1,2,3", options="header"]
