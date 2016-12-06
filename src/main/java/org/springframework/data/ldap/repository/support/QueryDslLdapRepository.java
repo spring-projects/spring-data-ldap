@@ -23,8 +23,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
-import org.springframework.data.ldap.repository.support.QueryDslLdapQuery;
-import org.springframework.data.ldap.repository.support.SimpleLdapRepository;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -34,50 +32,80 @@ import com.querydsl.core.types.Predicate;
  *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
- * @since 2.0
  */
 public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implements QueryDslPredicateExecutor<T> {
 
-	public QueryDslLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> clazz) {
-		super(ldapOperations, odm, clazz);
+	/**
+	 * Creates a new {@link QueryDslLdapRepository}.
+	 *
+	 * @param ldapOperations must not be {@literal null}.
+	 * @param odm must not be {@literal null}.
+	 * @param entityType must not be {@literal null}.
+	 */
+	public QueryDslLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> entityType) {
+		super(ldapOperations, odm, entityType);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findOne(com.querydsl.core.types.Predicate)
+	 */
 	@Override
 	public T findOne(Predicate predicate) {
 		return queryFor(predicate).uniqueResult();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate)
+	 */
 	@Override
 	public List<T> findAll(Predicate predicate) {
 		return queryFor(predicate).list();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#count(com.querydsl.core.types.Predicate)
+	 */
 	@Override
 	public long count(Predicate predicate) {
 		return findAll(predicate).size();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#exists(com.querydsl.core.types.Predicate)
+	 */
 	public boolean exists(Predicate predicate) {
 		return count(predicate) > 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate, org.springframework.data.domain.Sort)
+	 */
 	public Iterable<T> findAll(Predicate predicate, Sort sort) {
 		throw new UnsupportedOperationException();
 	}
 
 	private QueryDslLdapQuery<T> queryFor(Predicate predicate) {
-		return new QueryDslLdapQuery<T>(getLdapOperations(), getClazz()).where(predicate);
+		return new QueryDslLdapQuery<T>(getLdapOperations(), getEntityType()).where(predicate);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.OrderSpecifier[])
+	 */
 	public Iterable<T> findAll(OrderSpecifier<?>... orders) {
 		throw new UnsupportedOperationException();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate, com.querydsl.core.types.OrderSpecifier[])
+	 */
 	@Override
 	public Iterable<T> findAll(Predicate predicate, OrderSpecifier<?>... orders) {
 		throw new UnsupportedOperationException();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate, org.springframework.data.domain.Pageable)
+	 */
 	@Override
 	public Page<T> findAll(Predicate predicate, Pageable pageable) {
 		throw new UnsupportedOperationException();

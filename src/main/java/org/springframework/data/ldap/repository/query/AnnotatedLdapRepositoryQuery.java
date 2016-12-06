@@ -17,16 +17,15 @@ package org.springframework.data.ldap.repository.query;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
+import org.springframework.data.ldap.repository.Query;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
-import org.springframework.data.ldap.repository.Query;
 import org.springframework.util.Assert;
 
 /**
  * Handles queries for repository methods annotated with {@link org.springframework.data.ldap.repository.Query}.
  *
  * @author Mattias Hellborg Arthursson
- * @since 2.0
  */
 public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
@@ -36,19 +35,22 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	 * Construct a new instance.
 	 * 
 	 * @param queryMethod the QueryMethod.
-	 * @param clazz the managed class.
+	 * @param entityType the managed class.
 	 * @param ldapOperations the LdapOperations instance to use.
 	 */
-	public AnnotatedLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> clazz, LdapOperations ldapOperations) {
+	public AnnotatedLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations) {
 
-		super(queryMethod, clazz, ldapOperations);
+		super(queryMethod, entityType, ldapOperations);
+
+		Assert.notNull(queryMethod.getQueryAnnotation(), "Annotation must be present");
+		Assert.hasLength(queryMethod.getQueryAnnotation().value(), "Query filter must be specified");
 
 		queryAnnotation = queryMethod.getQueryAnnotation();
-
-		Assert.notNull(queryMethod, "Annotation must be present");
-		Assert.hasLength(queryAnnotation.value(), "Query filter must be specified");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.ldap.repository.query.AbstractLdapRepositoryQuery#createQuery(java.lang.Object[])
+	 */
 	@Override
 	protected LdapQuery createQuery(Object[] parameters) {
 

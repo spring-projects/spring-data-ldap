@@ -35,6 +35,7 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.ldap.core.LdapOperations;
+import org.springframework.util.Assert;
 
 /**
  * Factory to create {@link org.springframework.data.ldap.repository.LdapRepository} instances.
@@ -45,12 +46,25 @@ import org.springframework.ldap.core.LdapOperations;
  */
 public class LdapRepositoryFactory extends RepositoryFactorySupport {
 
+	private final LdapQueryLookupStrategy queryLookupStrategy;
 	private final LdapOperations ldapOperations;
 
+	/**
+	 * Creates a new {@link LdapRepositoryFactory}.
+	 *
+	 * @param ldapOperations must not be {@literal null}.
+	 */
 	public LdapRepositoryFactory(LdapOperations ldapOperations) {
+
+		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+
+		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations);
 		this.ldapOperations = ldapOperations;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getEntityInformation(java.lang.Class)
+	 */
 	@Override
 	public <T, ID extends Serializable> EntityInformation<T, ID> getEntityInformation(Class<T> domainClass) {
 		return null;
@@ -80,17 +94,32 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 				information.getDomainType());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getQueryLookupStrategy(org.springframework.data.repository.query.QueryLookupStrategy.Key)
+	 */
 	@Override
 	protected QueryLookupStrategy getQueryLookupStrategy(QueryLookupStrategy.Key key) {
-		return new LdapQueryLookupStrategy();
+		return queryLookupStrategy;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getQueryLookupStrategy(org.springframework.data.repository.query.QueryLookupStrategy.Key, org.springframework.data.repository.query.EvaluationContextProvider)
+	 */
 	@Override
 	protected QueryLookupStrategy getQueryLookupStrategy(Key key, EvaluationContextProvider evaluationContextProvider) {
-		return new LdapQueryLookupStrategy();
+		return queryLookupStrategy;
 	}
 
-	private final class LdapQueryLookupStrategy implements QueryLookupStrategy {
+	private static final class LdapQueryLookupStrategy implements QueryLookupStrategy {
+
+		private LdapOperations ldapOperations;
+
+		/**
+		 * @param ldapOperations
+		 */
+		public LdapQueryLookupStrategy(LdapOperations ldapOperations) {
+			this.ldapOperations = ldapOperations;
+		}
 
 		@Override
 		public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory,

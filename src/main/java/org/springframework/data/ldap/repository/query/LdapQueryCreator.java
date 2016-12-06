@@ -31,34 +31,47 @@ import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.ConditionCriteria;
 import org.springframework.ldap.query.ContainerCriteria;
 import org.springframework.ldap.query.LdapQuery;
+import org.springframework.util.Assert;
 
 /**
  * Creator of dynamic queries based on method names.
- * 
+ *
  * @author Mattias Hellborg Arthursson
- * @since 2.0
+ * @author Mark Paluch
  */
-public class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria> {
+class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria> {
 
-	private final Class<?> clazz;
+	private final Class<?> entityType;
 	private final ObjectDirectoryMapper mapper;
 
 	/**
-	 * Construct a new instance.
+	 * Constructs a new {@link LdapQueryCreator}.
+	 *
+	 * @param tree must not be {@literal null}.
+	 * @param parameters must not be {@literal null}.
+	 * @param entityType must not be {@literal null}.
+	 * @param mapper must not be {@literal null}.
+	 * @param values must not be {@literal null}.
 	 */
-	public LdapQueryCreator(PartTree tree, Parameters<?, ?> parameters, Class<?> clazz, ObjectDirectoryMapper mapper,
+	LdapQueryCreator(PartTree tree, Parameters<?, ?> parameters, Class<?> entityType, ObjectDirectoryMapper mapper,
 			Object[] values) {
 
 		super(tree, new ParametersParameterAccessor(parameters, values));
 
-		this.clazz = clazz;
+		Assert.notNull(entityType, "Entity type must not be null!");
+		Assert.notNull(mapper, "ObjectDirectoryMapper must not be null!");
+
+		this.entityType = entityType;
 		this.mapper = mapper;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.query.parser.AbstractQueryCreator#create(org.springframework.data.repository.query.parser.Part, java.util.Iterator)
+	 */
 	@Override
 	protected ContainerCriteria create(Part part, Iterator<Object> iterator) {
 
-		String base = clazz.getAnnotation(Entry.class).base();
+		String base = entityType.getAnnotation(Entry.class).base();
 		ConditionCriteria criteria = query().base(base).where(getAttribute(part));
 
 		return appendCondition(part, iterator, criteria);
@@ -95,9 +108,10 @@ public class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerC
 				return criteria.isPresent();
 			case IS_NULL:
 				return criteria.not().isPresent();
+			default:
+				throw new IllegalArgumentException(String.format("%s queries are not supported for LDAP repositories", type));
 		}
 
-		throw new IllegalArgumentException(String.format("%s queries are not supported for LDAP repositories", type));
 	}
 
 	private String getAttribute(Part part) {
@@ -106,9 +120,12 @@ public class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerC
 			throw new IllegalArgumentException("Nested properties are not supported");
 		}
 
-		return mapper.attributeFor(clazz, path.getSegment());
+		return mapper.attributeFor(entityType, path.getSegment());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.query.parser.AbstractQueryCreator#and(org.springframework.data.repository.query.parser.Part, java.lang.Object, java.util.Iterator)
+	 */
 	@Override
 	protected ContainerCriteria and(Part part, ContainerCriteria base, Iterator<Object> iterator) {
 		ConditionCriteria criteria = base.and(getAttribute(part));
@@ -116,11 +133,17 @@ public class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerC
 		return appendCondition(part, iterator, criteria);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.query.parser.AbstractQueryCreator#or(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	protected ContainerCriteria or(ContainerCriteria base, ContainerCriteria criteria) {
 		return base.or(criteria);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.query.parser.AbstractQueryCreator#complete(java.lang.Object, org.springframework.data.domain.Sort)
+	 */
 	@Override
 	protected LdapQuery complete(ContainerCriteria criteria, Sort sort) {
 		return criteria;

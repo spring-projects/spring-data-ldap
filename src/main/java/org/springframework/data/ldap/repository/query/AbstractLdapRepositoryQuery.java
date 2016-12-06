@@ -16,49 +16,81 @@
 package org.springframework.data.ldap.repository.query;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
+import org.springframework.util.Assert;
 
 /**
+ * Base class for {@link RepositoryQuery} implementations for LDAP.
+ *
  * @author Mattias Hellborg Arthursson
- * @since 2.0
+ * @author Mark Paluch
  */
-abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
+public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 
 	private final LdapQueryMethod queryMethod;
-	private final Class<?> clazz;
+	private final Class<?> entityType;
 	private final LdapOperations ldapOperations;
 
-	public AbstractLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> clazz, LdapOperations ldapOperations) {
+	/**
+	 * Creates a new {@link AbstractLdapRepositoryQuery} instance given {@link LdapQuery}, {@link Class} and
+	 * {@link LdapOperations}.
+	 * 
+	 * @param queryMethod must not be {@literal null}.
+	 * @param entityType must not be {@literal null}.
+	 * @param ldapOperations must not be {@literal null}.
+	 */
+	public AbstractLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations) {
+
+		Assert.notNull(queryMethod, "MongoQueryMethod must not be null!");
+		Assert.notNull(entityType, "Entity type must not be null!");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+
 		this.queryMethod = queryMethod;
-		this.clazz = clazz;
+		this.entityType = entityType;
 		this.ldapOperations = ldapOperations;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.query.RepositoryQuery#execute(java.lang.Object[])
+	 */
 	@Override
 	public final Object execute(Object[] parameters) {
 
 		LdapQuery query = createQuery(parameters);
 
 		if (queryMethod.isCollectionQuery()) {
-			return ldapOperations.find(query, clazz);
+			return ldapOperations.find(query, entityType);
 		} else {
 			try {
-				return ldapOperations.findOne(query, clazz);
+				return ldapOperations.findOne(query, entityType);
 			} catch (EmptyResultDataAccessException e) {
 				return null;
 			}
 		}
 	}
 
+	/**
+	 * Creates a {@link Query} instance using the given {@literal parameters}.
+	 * 
+	 * @param parameters must not be {@literal null}.
+	 * @return
+	 */
 	protected abstract LdapQuery createQuery(Object[] parameters);
 
-	Class<?> getClazz() {
-		return clazz;
+	/**
+	 * @return
+	 */
+	protected Class<?> getEntityClass() {
+		return entityType;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.query.RepositoryQuery#getQueryMethod()
+	 */
 	@Override
 	public final QueryMethod getQueryMethod() {
 		return queryMethod;

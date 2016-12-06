@@ -25,47 +25,62 @@ import javax.naming.Name;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.ldap.repository.LdapRepository;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.support.CountNameClassPairCallbackHandler;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.LdapQuery;
-import org.springframework.data.ldap.repository.LdapRepository;
 import org.springframework.util.Assert;
 
 /**
  * Base repository implementation for LDAP.
  *
  * @author Mattias Hellborg Arthursson
- * @since 2.0
+ * @author Mark Paluch
  */
 public class SimpleLdapRepository<T> implements LdapRepository<T> {
 
 	private static final String OBJECTCLASS_ATTRIBUTE = "objectclass";
+
 	private final LdapOperations ldapOperations;
 	private final ObjectDirectoryMapper odm;
-	private final Class<T> clazz;
+	private final Class<T> entityType;
 
-	public SimpleLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> clazz) {
+	/**
+	 * Creates a new {@link SimpleLdapRepository}.
+	 *
+	 * @param ldapOperations must not be {@literal null}.
+	 * @param odm must not be {@literal null}.
+	 * @param entityType must not be {@literal null}.
+	 */
+	public SimpleLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> entityType) {
+
+		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+		Assert.notNull(odm, "ObjectDirectoryMapper must not be null!");
+		Assert.notNull(entityType, "Entity type must not be null!");
 
 		this.ldapOperations = ldapOperations;
 		this.odm = odm;
-		this.clazz = clazz;
+		this.entityType = entityType;
 	}
 
 	protected LdapOperations getLdapOperations() {
 		return ldapOperations;
 	}
 
-	protected Class<T> getClazz() {
-		return clazz;
+	protected Class<T> getEntityType() {
+		return entityType;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#count()
+	 */
 	@Override
 	public long count() {
 
-		Filter filter = odm.filterFor(clazz, null);
+		Filter filter = odm.filterFor(entityType, null);
 		CountNameClassPairCallbackHandler callback = new CountNameClassPairCallbackHandler();
 		LdapQuery query = query().attributes(OBJECTCLASS_ATTRIBUTE).filter(filter);
 		ldapOperations.search(query, callback);
@@ -83,6 +98,9 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#save(java.lang.Object)
+	 */
 	@Override
 	public <S extends T> S save(S entity) {
 
@@ -99,6 +117,9 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		return entity;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#save(java.lang.Iterable)
+	 */
 	@Override
 	public <S extends T> Iterable<S> save(Iterable<S> entities) {
 
@@ -110,34 +131,49 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#findOne(java.io.Serializable)
+	 */
 	@Override
 	public T findOne(Name name) {
 
 		Assert.notNull(name, "Id must not be null");
+
 		try {
-			return ldapOperations.findByDn(name, clazz);
+			return ldapOperations.findByDn(name, entityType);
 		} catch (NameNotFoundException e) {
 			return null;
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.ldap.repository.LdapRepository#findAll(org.springframework.ldap.query.LdapQuery)
+	 */
 	@Override
 	public List<T> findAll(LdapQuery ldapQuery) {
 
 		Assert.notNull(ldapQuery, "LdapQuery must not be null");
-		return ldapOperations.find(ldapQuery, clazz);
+		return ldapOperations.find(ldapQuery, entityType);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.ldap.repository.LdapRepository#findOne(org.springframework.ldap.query.LdapQuery)
+	 */
 	@Override
 	public T findOne(LdapQuery ldapQuery) {
+
 		Assert.notNull(ldapQuery, "LdapQuery must not be null");
+
 		try {
-			return ldapOperations.findOne(ldapQuery, clazz);
+			return ldapOperations.findOne(ldapQuery, entityType);
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#exists(java.io.Serializable)
+	 */
 	@Override
 	public boolean exists(Name name) {
 
@@ -146,11 +182,17 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		return findOne(name) != null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#findAll()
+	 */
 	@Override
 	public List<T> findAll() {
-		return ldapOperations.findAll(clazz);
+		return ldapOperations.findAll(entityType);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#findAll(java.lang.Iterable)
+	 */
 	@Override
 	public List<T> findAll(final Iterable<Name> names) {
 
@@ -171,6 +213,9 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		return list;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#delete(java.io.Serializable)
+	 */
 	@Override
 	public void delete(Name name) {
 
@@ -179,6 +224,9 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		ldapOperations.unbind(name);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Object)
+	 */
 	@Override
 	public void delete(T entity) {
 
@@ -187,6 +235,9 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		ldapOperations.delete(entity);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Iterable)
+	 */
 	@Override
 	public void delete(Iterable<? extends T> entities) {
 
@@ -195,6 +246,9 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#deleteAll()
+	 */
 	@Override
 	public void deleteAll() {
 		delete(findAll());
@@ -235,8 +289,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	}
 
 	private interface Function<F, T> {
-
 		T transform(F entry);
-
 	}
 }

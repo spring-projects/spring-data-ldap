@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
+import org.springframework.util.Assert;
 
 import com.querydsl.core.DefaultQueryMetadata;
 import com.querydsl.core.FilteredClause;
@@ -33,30 +34,45 @@ import com.querydsl.core.types.Predicate;
  *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
- * @since 2.0
  */
 public class QueryDslLdapQuery<K> implements FilteredClause<QueryDslLdapQuery<K>> {
 
 	private final LdapOperations ldapOperations;
-	private final Class<? extends K> clazz;
+	private final Class<? extends K> entityType;
+	private final LdapSerializer filterGenerator;
 
 	private QueryMixin<QueryDslLdapQuery<K>> queryMixin = new QueryMixin<QueryDslLdapQuery<K>>(this,
 			new DefaultQueryMetadata().noValidate());
 
-	private final LdapSerializer filterGenerator;
-
-	@SuppressWarnings("unchecked")
+	/**
+	 * Creates a new {@link QueryDslLdapQuery}.
+	 *
+	 * @param ldapOperations must not be {@literal null}.
+	 * @param entityPath must not be {@literal null}.
+	 */
 	public QueryDslLdapQuery(LdapOperations ldapOperations, EntityPath<K> entityPath) {
-		this(ldapOperations, (Class<K>) entityPath.getType());
+		this(ldapOperations, entityPath.getType());
 	}
 
-	public QueryDslLdapQuery(LdapOperations ldapOperations, Class<K> clazz) {
+	/**
+	 * Creates a new {@link QueryDslLdapQuery}.
+	 *
+	 * @param ldapOperations must not be {@literal null}.
+	 * @param entityType must not be {@literal null}.
+	 */
+	public QueryDslLdapQuery(LdapOperations ldapOperations, Class<? extends K> entityType) {
+
+		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+		Assert.notNull(entityType, "Type must not be null!");
 
 		this.ldapOperations = ldapOperations;
-		this.clazz = clazz;
-		this.filterGenerator = new LdapSerializer(ldapOperations.getObjectDirectoryMapper(), clazz);
+		this.entityType = entityType;
+		this.filterGenerator = new LdapSerializer(ldapOperations.getObjectDirectoryMapper(), this.entityType);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.querydsl.core.FilteredClause#where(com.querydsl.core.types.Predicate[])
+	 */
 	@Override
 	public QueryDslLdapQuery<K> where(Predicate... o) {
 		return queryMixin.where(o);
@@ -64,11 +80,11 @@ public class QueryDslLdapQuery<K> implements FilteredClause<QueryDslLdapQuery<K>
 
 	@SuppressWarnings("unchecked")
 	public List<K> list() {
-		return (List<K>) ldapOperations.find(buildQuery(), clazz);
+		return (List<K>) ldapOperations.find(buildQuery(), entityType);
 	}
 
 	public K uniqueResult() {
-		return ldapOperations.findOne(buildQuery(), clazz);
+		return ldapOperations.findOne(buildQuery(), entityType);
 	}
 
 	LdapQuery buildQuery() {

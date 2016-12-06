@@ -21,7 +21,6 @@ import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.ldap.core.LdapOperations;
-import org.springframework.data.ldap.repository.support.LdapRepositoryFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -29,7 +28,6 @@ import org.springframework.util.Assert;
  * {@link org.springframework.data.ldap.repository.LdapRepository} instances.
  *
  * @author Mattias Hellborg Arthursson
- * @since 2.0
  */
 public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		extends RepositoryFactoryBeanSupport<T, S, Name> {
@@ -40,14 +38,23 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		this.ldapOperations = ldapOperations;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport#createRepositoryFactory()
+	 */
 	@Override
 	protected RepositoryFactorySupport createRepositoryFactory() {
 		return new LdapRepositoryFactory(ldapOperations);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport#afterPropertiesSet()
+	 */
 	@Override
 	public void afterPropertiesSet() {
-		super.afterPropertiesSet();
+
 		Assert.notNull(ldapOperations, "LdapOperations must be set");
+
+		super.afterPropertiesSet();
+
 	}
 }

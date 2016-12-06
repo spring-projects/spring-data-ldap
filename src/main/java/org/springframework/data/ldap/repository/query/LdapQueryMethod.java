@@ -18,17 +18,16 @@ package org.springframework.data.ldap.repository.query;
 import java.lang.reflect.Method;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryMethod;
-import org.springframework.data.ldap.repository.Query;
 
 /**
  * QueryMethod for Ldap Queries.
  *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
- * @since 2.0
  */
 public class LdapQueryMethod extends QueryMethod {
 
@@ -50,8 +49,8 @@ public class LdapQueryMethod extends QueryMethod {
 	/**
 	 * Check whether the target method is annotated with {@link org.springframework.data.ldap.repository.Query}.
 	 * 
-	 * @return <code>true</code> if the target method is annotated with {@link org.springframework.data.ldap.repository.Query},
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the target method is annotated with
+	 *         {@link org.springframework.data.ldap.repository.Query}, <code>false</code> otherwise.
 	 */
 	public boolean hasQueryAnnotation() {
 		return getQueryAnnotation() != null;

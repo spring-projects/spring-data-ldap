@@ -24,7 +24,6 @@ import org.springframework.ldap.query.LdapQuery;
  * Ldap specific extensions to CrudRepository.
  *
  * @author Mattias Hellborg Arthursson
- * @since 2.0
  */
 public interface LdapRepository<T> extends CrudRepository<T, Name> {
 

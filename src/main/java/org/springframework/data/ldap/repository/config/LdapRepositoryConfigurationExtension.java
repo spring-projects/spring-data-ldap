@@ -22,12 +22,12 @@ import java.util.Collections;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.data.ldap.repository.LdapRepository;
+import org.springframework.data.ldap.repository.support.LdapRepositoryFactoryBean;
 import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 import org.springframework.data.repository.config.XmlRepositoryConfigurationSource;
 import org.springframework.ldap.odm.annotations.Entry;
-import org.springframework.data.ldap.repository.support.LdapRepositoryFactoryBean;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
@@ -36,7 +36,6 @@ import org.w3c.dom.Element;
  *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
- * @since 2.0
  */
 public class LdapRepositoryConfigurationExtension extends RepositoryConfigurationExtensionSupport {
 
@@ -86,11 +85,15 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 		return Collections.<Class<?>> singleton(LdapRepository.class);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#postProcess(org.springframework.beans.factory.support.BeanDefinitionBuilder, org.springframework.data.repository.config.XmlRepositoryConfigurationSource)
+	 */
 	@Override
 	public void postProcess(BeanDefinitionBuilder builder, XmlRepositoryConfigurationSource config) {
 
 		Element element = config.getElement();
 		String ldapTemplateRef = element.getAttribute(ATT_LDAP_TEMPLATE_REF);
+
 		if (!StringUtils.hasText(ldapTemplateRef)) {
 			ldapTemplateRef = "ldapTemplate";
 		}
@@ -98,6 +101,9 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 		builder.addPropertyReference("ldapOperations", ldapTemplateRef);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#postProcess(org.springframework.beans.factory.support.BeanDefinitionBuilder, org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource)
+	 */
 	@Override
 	public void postProcess(BeanDefinitionBuilder builder, AnnotationRepositoryConfigurationSource config) {
 

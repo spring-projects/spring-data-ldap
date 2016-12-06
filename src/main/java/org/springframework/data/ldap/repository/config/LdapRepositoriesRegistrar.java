@@ -24,15 +24,20 @@ import org.springframework.data.repository.config.RepositoryConfigurationExtensi
  * LDAP-specific {@link org.springframework.context.annotation.ImportBeanDefinitionRegistrar}.
  *
  * @author Mattias Hellborg Arthursson
- * @since 2.0
  */
 class LdapRepositoriesRegistrar extends RepositoryBeanDefinitionRegistrarSupport {
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport#getAnnotation()
+	 */
 	@Override
 	protected Class<? extends Annotation> getAnnotation() {
 		return EnableLdapRepositories.class;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport#getExtension()
+	 */
 	@Override
 	protected RepositoryConfigurationExtension getExtension() {
 		return new LdapRepositoryConfigurationExtension();

@@ -28,7 +28,6 @@ import org.springframework.ldap.query.SearchScope;
  * automatic query methods based on statically defined queries.
  *
  * @author Mattias Hellborg Arthursson
- * @since 2.0
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,8 +35,8 @@ import org.springframework.ldap.query.SearchScope;
 public @interface Query {
 
 	/**
-	 * Search base, to be used as input to
-	 * {@link org.springframework.ldap.query.LdapQueryBuilder#base(javax.naming.Name)}.
+	 * Search base, to be used as input to {@link org.springframework.ldap.query.LdapQueryBuilder#base(javax.naming.Name)}
+	 * .
 	 *
 	 * @return the search base, default is {@link org.springframework.ldap.support.LdapUtils#emptyLdapName()}
 	 */

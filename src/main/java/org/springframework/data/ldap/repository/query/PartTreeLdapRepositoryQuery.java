@@ -16,13 +16,17 @@
 package org.springframework.data.ldap.repository.query;
 
 import org.springframework.data.repository.query.Parameters;
+import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.LdapQuery;
 
 /**
+ * {@link RepositoryQuery} implementation for LDAP.
+ * 
  * @author Mattias Hellborg Arthursson
+ * @author Mark Paluch
  */
 public class PartTreeLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
@@ -30,20 +34,30 @@ public class PartTreeLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	private final Parameters<?, ?> parameters;
 	private final ObjectDirectoryMapper objectDirectoryMapper;
 
-	public PartTreeLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> clazz, LdapOperations ldapOperations) {
+	/**
+	 * Creates a new {@link PartTreeLdapRepositoryQuery}.
+	 *
+	 * @param queryMethod must not be {@literal null}.
+	 * @param entityType must not be {@literal null}.
+	 * @param ldapOperations must not be {@literal null}.
+	 */
+	public PartTreeLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations) {
 
-		super(queryMethod, clazz, ldapOperations);
+		super(queryMethod, entityType, ldapOperations);
 
-		partTree = new PartTree(queryMethod.getName(), clazz);
+		partTree = new PartTree(queryMethod.getName(), entityType);
 		parameters = queryMethod.getParameters();
 		objectDirectoryMapper = ldapOperations.getObjectDirectoryMapper();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.ldap.repository.query.AbstractLdapRepositoryQuery#createQuery(java.lang.Object[])
+	 */
 	@Override
 	protected LdapQuery createQuery(Object[] actualParameters) {
 
 		org.springframework.data.ldap.repository.query.LdapQueryCreator queryCreator = new LdapQueryCreator(partTree,
-				this.parameters, getClazz(), objectDirectoryMapper, actualParameters);
+				this.parameters, getEntityClass(), objectDirectoryMapper, actualParameters);
 		return queryCreator.createQuery();
 	}
 }
