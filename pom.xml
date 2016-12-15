@@ -23,6 +23,7 @@
 		<springdata.commons>1.13.0.BUILD-SNAPSHOT</springdata.commons>
 		<assertj>3.5.2</assertj>
 		<bundlor.enabled>false</bundlor.enabled>
+		<manifest.file></manifest.file>
 	</properties>
 
 	<developers>
