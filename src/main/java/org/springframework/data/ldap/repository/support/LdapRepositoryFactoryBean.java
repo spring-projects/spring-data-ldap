@@ -28,17 +28,28 @@ import org.springframework.util.Assert;
  * {@link org.springframework.data.ldap.repository.LdapRepository} instances.
  *
  * @author Mattias Hellborg Arthursson
+ * @author Oliver Gierke
  */
 public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		extends RepositoryFactoryBeanSupport<T, S, Name> {
 
 	private LdapOperations ldapOperations;
 
+	/**
+	 * Creates a new {@link LdapRepositoryFactoryBean} for the given repository interface.
+	 * 
+	 * @param repositoryInterface must not be {@literal null}.
+	 */
+	public LdapRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
+		super(repositoryInterface);
+	}
+
 	public void setLdapOperations(LdapOperations ldapOperations) {
 		this.ldapOperations = ldapOperations;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport#createRepositoryFactory()
 	 */
 	@Override
@@ -46,7 +57,8 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		return new LdapRepositoryFactory(ldapOperations);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport#afterPropertiesSet()
 	 */
 	@Override
@@ -55,6 +67,5 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		Assert.notNull(ldapOperations, "LdapOperations must be set");
 
 		super.afterPropertiesSet();
-
 	}
 }
