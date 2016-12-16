@@ -7,6 +7,11 @@ env:
   matrix:
     - PROFILE=ci
 
+addons:
+  apt:
+    packages:
+    - oracle-java8-installer
+
 sudo: false
 
 cache:
