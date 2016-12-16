@@ -19,7 +19,7 @@
 	</parent>
 
 	<properties>
-		<spring-ldap>2.2.0.BUILD-SNAPSHOT</spring-ldap>
+		<spring-ldap>2.2.0.RELEASE</spring-ldap>
 		<springdata.commons>1.13.0.BUILD-SNAPSHOT</springdata.commons>
 		<assertj>3.5.2</assertj>
 		<bundlor.enabled>false</bundlor.enabled>
