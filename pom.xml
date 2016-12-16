@@ -19,7 +19,7 @@
 	</parent>
 
 	<properties>
-		<spring-ldap>2.2.0.BUILD-SNAPSHOT</spring-ldap>
+		<spring-ldap>2.2.0.RELEASE</spring-ldap>
 		<springdata.commons>2.0.0.BUILD-SNAPSHOT</springdata.commons>
 	</properties>
 
