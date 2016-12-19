@@ -136,6 +136,12 @@
 
 	<profiles>
 		<profile>
+			<id>springldap-next</id>
+			<properties>
+				<spring-ldap>2.3.0.BUILD-SNAPSHOT</spring-ldap>
+			</properties>
+		</profile>
+		<profile>
 			<id>release</id>
 			<build>
 				<plugins>
