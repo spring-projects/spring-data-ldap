@@ -1,10 +1,22 @@
 Spring Data LDAP Changelog
-=============================
+==========================
 
-Changes in version 1.0.0.M1 LDAP (2016-11-11)
-------------------------------------------------
+Changes in version 1.0.0.RC1 (2016-12-21)
+------------------------------------------
+* DATALDAP-1 - Create namespace handler and XML schema.
+* DATALDAP-2 - Support repositoryBaseClass and considerNestedRepositories in @EnableLdapRepositories annotation.
+* DATALDAP-3 - Setup TravisCI build.
+* DATALDAP-6 - Register repository factory in spring.factories for multi-store support.
+* DATALDAP-7 - Migrate tests to AssertJ.
+* DATALDAP-9 - Adapt API in RepositoryFactoryBeanSupport implementation.
+* DATALDAP-10 - Disable inclusion of manifest file in build.
+* DATALDAP-11 - Upgrade to Spring LDAP 2.2.0 GA.
+* DATALDAP-12 - Upgrade to a newer JDK version on TravisCI.
+* DATALDAP-14 - Add build profile for next Spring LDAP version.
+* DATALDAP-15 - Upgrade to Spring LDAP 2.3 RC1.
+* DATALDAP-16 - Release 1.0 RC1.
 
-Repository
+Changes in version 1.0.0.M1 (2016-11-11)
+----------------------------------------
 * Introducing generic repository implementation for LDAP
 * Automatic implementation of interface query method names on repositories.
-
