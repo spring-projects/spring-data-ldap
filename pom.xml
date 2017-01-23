@@ -19,7 +19,7 @@
 	</parent>
 
 	<properties>
-		<spring-ldap>2.3.0.RC1</spring-ldap>
+		<spring-ldap>2.3.1.RELEASE</spring-ldap>
 		<springdata.commons>2.0.0.BUILD-SNAPSHOT</springdata.commons>
 	</properties>
 
@@ -138,7 +138,7 @@
 		<profile>
 			<id>springldap-next</id>
 			<properties>
-				<spring-ldap>2.3.0.BUILD-SNAPSHOT</spring-ldap>
+				<spring-ldap>2.4.0.BUILD-SNAPSHOT</spring-ldap>
 			</properties>
 		</profile>
 		<profile>
