@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -15,15 +14,15 @@
 	<parent>
 		<groupId>org.springframework.data.build</groupId>
 		<artifactId>spring-data-parent</artifactId>
-		<version>1.9.0.BUILD-SNAPSHOT</version>
+		<version>1.9.0.RELEASE</version>
 	</parent>
 
 	<properties>
 		<spring-ldap>2.3.1.RELEASE</spring-ldap>
-		<springdata.commons>1.13.0.BUILD-SNAPSHOT</springdata.commons>
+		<springdata.commons>1.13.0.RELEASE</springdata.commons>
 		<assertj>3.5.2</assertj>
 		<bundlor.enabled>false</bundlor.enabled>
-		<manifest.file></manifest.file>
+		<manifest.file/>
 	</properties>
 
 	<developers>
@@ -107,8 +106,8 @@
 
 	<repositories>
 		<repository>
-			<id>spring-libs-snapshot</id>
-			<url>https://repo.spring.io/libs-snapshot</url>
+			<id>spring-libs-release</id>
+			<url>https://repo.spring.io/libs-release</url>
 		</repository>
 	</repositories>
 
