@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import com.querydsl.core.annotations.QueryEntities;
  *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
+ * @author Mark Paluch
  */
 @SupportedAnnotationTypes("org.springframework.ldap.odm.annotations.*")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
@@ -49,7 +50,7 @@ public class LdapAnnotationProcessor extends AbstractQuerydslProcessor {
 		processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Running " + getClass().getSimpleName());
 
 		DefaultConfiguration configuration = new DefaultLdapAnnotationProcessorConfiguration(roundEnv,
-				processingEnv.getOptions(), Collections.<String> emptySet(), QueryEntities.class, Entry.class, null, null, null,
+				processingEnv.getOptions(), Collections.emptySet(), QueryEntities.class, Entry.class, null, null, null,
 				Transient.class);
 		configuration.setUseFields(true);
 		configuration.setUseGetters(false);

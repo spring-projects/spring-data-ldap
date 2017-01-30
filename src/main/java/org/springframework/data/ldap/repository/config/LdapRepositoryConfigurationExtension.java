@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 	 */
 	@Override
 	protected Collection<Class<? extends Annotation>> getIdentifyingAnnotations() {
-		return Collections.<Class<? extends Annotation>> singleton(Entry.class);
+		return Collections.singleton(Entry.class);
 	}
 
 	/*
@@ -82,7 +82,7 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 	 */
 	@Override
 	protected Collection<Class<?>> getIdentifyingTypes() {
-		return Collections.<Class<?>> singleton(LdapRepository.class);
+		return Collections.singleton(LdapRepository.class);
 	}
 
 	/* (non-Javadoc)

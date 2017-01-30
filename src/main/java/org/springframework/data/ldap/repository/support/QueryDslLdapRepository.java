@@ -92,7 +92,7 @@ public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implement
 	}
 
 	private QueryDslLdapQuery<T> queryFor(Predicate predicate) {
-		return new QueryDslLdapQuery<T>(ldapOperations, entityType).where(predicate);
+		return new QueryDslLdapQuery<>(ldapOperations, entityType).where(predicate);
 	}
 
 	/* (non-Javadoc)

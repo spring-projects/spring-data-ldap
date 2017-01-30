@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import com.querydsl.core.types.Predicate;
  *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
+ * @author Mark Paluch
  */
 public class QueryDslLdapQuery<K> implements FilteredClause<QueryDslLdapQuery<K>> {
 
@@ -41,7 +42,7 @@ public class QueryDslLdapQuery<K> implements FilteredClause<QueryDslLdapQuery<K>
 	private final Class<? extends K> entityType;
 	private final LdapSerializer filterGenerator;
 
-	private QueryMixin<QueryDslLdapQuery<K>> queryMixin = new QueryMixin<QueryDslLdapQuery<K>>(this,
+	private QueryMixin<QueryDslLdapQuery<K>> queryMixin = new QueryMixin<>(this,
 			new DefaultQueryMetadata().noValidate());
 
 	/**
