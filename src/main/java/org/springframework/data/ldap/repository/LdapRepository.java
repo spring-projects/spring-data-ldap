@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.springframework.data.ldap.repository;
 
+import java.util.Optional;
+
 import javax.naming.Name;
 
 import org.springframework.data.repository.CrudRepository;
@@ -24,6 +26,7 @@ import org.springframework.ldap.query.LdapQuery;
  * Ldap specific extensions to CrudRepository.
  *
  * @author Mattias Hellborg Arthursson
+ * @author Mark Paluch
  */
 public interface LdapRepository<T> extends CrudRepository<T, Name> {
 
@@ -34,7 +37,7 @@ public interface LdapRepository<T> extends CrudRepository<T, Name> {
 	 * @return the found entry or <code>null</code> if no matching entry was found.
 	 * @throws org.springframework.dao.IncorrectResultSizeDataAccessException if more than one entry matches the query.
 	 */
-	T findOne(LdapQuery ldapQuery);
+	Optional<T> findOne(LdapQuery ldapQuery);
 
 	/**
 	 * Find all entries matching the specified query.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,17 @@ package org.springframework.data.ldap.repository.support;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.naming.Name;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.ldap.repository.LdapRepository;
+import org.springframework.data.util.Optionals;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.support.CountNameClassPairCallbackHandler;
@@ -64,14 +66,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		this.ldapOperations = ldapOperations;
 		this.odm = odm;
 		this.entityType = entityType;
-	}
-
-	protected LdapOperations getLdapOperations() {
-		return ldapOperations;
-	}
-
-	protected Class<T> getEntityType() {
-		return entityType;
 	}
 
 	/* (non-Javadoc)
@@ -123,26 +117,23 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	@Override
 	public <S extends T> Iterable<S> save(Iterable<S> entities) {
 
-		return new TransformingIterable<S, S>(entities, new Function<S, S>() {
-			@Override
-			public S transform(S entry) {
-				return save(entry);
-			}
-		});
+		return StreamSupport.stream(entities.spliterator(), false) //
+				.map(this::save) //
+				.collect(Collectors.toList());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.data.repository.CrudRepository#findOne(java.io.Serializable)
 	 */
 	@Override
-	public T findOne(Name name) {
+	public Optional<T> findOne(Name name) {
 
 		Assert.notNull(name, "Id must not be null");
 
 		try {
-			return ldapOperations.findByDn(name, entityType);
+			return Optional.ofNullable(ldapOperations.findByDn(name, entityType));
 		} catch (NameNotFoundException e) {
-			return null;
+			return Optional.empty();
 		}
 	}
 
@@ -160,14 +151,14 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	 * @see org.springframework.data.ldap.repository.LdapRepository#findOne(org.springframework.ldap.query.LdapQuery)
 	 */
 	@Override
-	public T findOne(LdapQuery ldapQuery) {
+	public Optional<T> findOne(LdapQuery ldapQuery) {
 
 		Assert.notNull(ldapQuery, "LdapQuery must not be null");
 
 		try {
-			return ldapOperations.findOne(ldapQuery, entityType);
+			return Optional.ofNullable(ldapOperations.findOne(ldapQuery, entityType));
 		} catch (EmptyResultDataAccessException e) {
-			return null;
+			return Optional.empty();
 		}
 	}
 
@@ -196,21 +187,10 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	@Override
 	public List<T> findAll(final Iterable<Name> names) {
 
-		Iterable<T> found = new TransformingIterable<Name, T>(names, new Function<Name, T>() {
-			@Override
-			public T transform(Name name) {
-				return findOne(name);
-			}
-		});
-
-		LinkedList<T> list = new LinkedList<T>();
-		for (T entry : found) {
-			if (entry != null) {
-				list.add(entry);
-			}
-		}
-
-		return list;
+		return StreamSupport.stream(names.spliterator(), false) //
+				.map(this::findOne) //
+				.flatMap(Optionals::toStream) //
+				.collect(Collectors.toList());
 	}
 
 	/* (non-Javadoc)
@@ -240,10 +220,7 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	 */
 	@Override
 	public void delete(Iterable<? extends T> entities) {
-
-		for (T entity : entities) {
-			delete(entity);
-		}
+		entities.forEach(this::delete);
 	}
 
 	/* (non-Javadoc)
@@ -252,43 +229,5 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	@Override
 	public void deleteAll() {
 		delete(findAll());
-	}
-
-	private static final class TransformingIterable<F, T> implements Iterable<T> {
-
-		private final Iterable<F> target;
-		private final Function<F, T> function;
-
-		private TransformingIterable(Iterable<F> target, Function<F, T> function) {
-			this.target = target;
-			this.function = function;
-		}
-
-		@Override
-		public Iterator<T> iterator() {
-
-			final Iterator<F> targetIterator = target.iterator();
-			return new Iterator<T>() {
-
-				@Override
-				public boolean hasNext() {
-					return targetIterator.hasNext();
-				}
-
-				@Override
-				public T next() {
-					return function.transform(targetIterator.next());
-				}
-
-				@Override
-				public void remove() {
-					throw new UnsupportedOperationException("Remove is not supported for this iterator");
-				}
-			};
-		}
-	}
-
-	private interface Function<F, T> {
-		T transform(F entry);
 	}
 }

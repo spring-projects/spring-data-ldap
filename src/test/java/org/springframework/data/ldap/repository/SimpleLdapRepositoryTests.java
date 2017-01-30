@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.data.ldap.repository;
 
 import static org.assertj.core.api.Assertions.*;
@@ -22,191 +21,221 @@ import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Optional;
 
 import javax.naming.Name;
 import javax.naming.ldap.LdapName;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.ldap.repository.support.SimpleLdapRepository;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.support.CountNameClassPairCallbackHandler;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.LdapQuery;
-import org.springframework.data.ldap.repository.support.SimpleLdapRepository;
 import org.springframework.ldap.support.LdapUtils;
 
 /**
+ * Unit tests for {@link SimpleLdapRepository}.
+ *
  * @author Mattias Hellborg Arthursson
+ * @author Mark Paluch
  */
+@RunWith(MockitoJUnitRunner.class)
 public class SimpleLdapRepositoryTests {
 
-    private LdapOperations ldapOperationsMock;
-    private ObjectDirectoryMapper odmMock;
-    private SimpleLdapRepository<Object> tested;
+	@Mock LdapOperations ldapOperationsMock;
+	@Mock ObjectDirectoryMapper odmMock;
 
-    @Before
-    public void prepareTestedInstance() {
-        ldapOperationsMock = mock(LdapOperations.class);
-        odmMock = mock(ObjectDirectoryMapper.class);
-        tested = new SimpleLdapRepository<Object>(ldapOperationsMock, odmMock, Object.class);
-    }
+	SimpleLdapRepository<Object> tested;
 
-    @Test
-    public void testCount() {
-        Filter filterMock = mock(Filter.class);
-        when(odmMock.filterFor(Object.class, null)).thenReturn(filterMock);
-        ArgumentCaptor<LdapQuery> ldapQuery = ArgumentCaptor.forClass(LdapQuery.class);
-        doNothing().when(ldapOperationsMock).search(ldapQuery.capture(), any(CountNameClassPairCallbackHandler.class));
+	@Before
+	public void prepareTestedInstance() {
+		tested = new SimpleLdapRepository<>(ldapOperationsMock, odmMock, Object.class);
+	}
 
-        long count = tested.count();
+	@Test
+	public void testCount() {
 
-        assertThat(count).isEqualTo(0);
-        LdapQuery query = ldapQuery.getValue();
-        assertThat(query.filter()).isEqualTo(filterMock);
-        assertThat(query.attributes()).isEqualTo(new String[]{"objectclass"});
-    }
+		Filter filterMock = mock(Filter.class);
+		when(odmMock.filterFor(Object.class, null)).thenReturn(filterMock);
+		ArgumentCaptor<LdapQuery> ldapQuery = ArgumentCaptor.forClass(LdapQuery.class);
+		doNothing().when(ldapOperationsMock).search(ldapQuery.capture(), any(CountNameClassPairCallbackHandler.class));
 
-    @Test
-    public void testSaveNonPersistableWithIdSet() {
-        Object expectedEntity = new Object();
+		long count = tested.count();
 
-        when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
-        when(odmMock.getCalculatedId(expectedEntity)).thenReturn(null);
+		assertThat(count).isEqualTo(0);
+		LdapQuery query = ldapQuery.getValue();
+		assertThat(query.filter()).isEqualTo(filterMock);
+		assertThat(query.attributes()).isEqualTo(new String[] { "objectclass" });
+	}
 
-        tested.save(expectedEntity);
+	@Test
+	public void testSaveNonPersistableWithIdSet() {
 
-        verify(ldapOperationsMock).update(expectedEntity);
-    }
+		Object expectedEntity = new Object();
 
-    @Test
-    public void testSaveNonPersistableWithIdChanged() {
-        Object expectedEntity = new Object();
-        LdapName expectedName = LdapUtils.newLdapName("ou=newlocation");
+		when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
+		when(odmMock.getCalculatedId(expectedEntity)).thenReturn(null);
 
-        when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
-        when(odmMock.getCalculatedId(expectedEntity)).thenReturn(expectedName);
+		tested.save(expectedEntity);
 
-        tested.save(expectedEntity);
+		verify(ldapOperationsMock).update(expectedEntity);
+	}
 
-        verify(ldapOperationsMock).update(expectedEntity);
-    }
+	@Test
+	public void testSaveNonPersistableWithIdChanged() {
 
-    @Test
-    public void testSaveNonPersistableWithNoIdCalculatedId() {
-        Object expectedEntity = new Object();
-        LdapName expectedName = LdapUtils.emptyLdapName();
+		Object expectedEntity = new Object();
+		LdapName expectedName = LdapUtils.newLdapName("ou=newlocation");
 
-        when(odmMock.getId(expectedEntity)).thenReturn(null);
-        when(odmMock.getCalculatedId(expectedEntity)).thenReturn(expectedName);
+		when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
+		when(odmMock.getCalculatedId(expectedEntity)).thenReturn(expectedName);
 
-        tested.save(expectedEntity);
+		tested.save(expectedEntity);
 
-        verify(ldapOperationsMock).create(expectedEntity);
-    }
+		verify(ldapOperationsMock).update(expectedEntity);
+	}
 
-    @Test
-    public void testSavePersistableNewWithDeclaredId() {
-        Persistable expectedEntity = mock(Persistable.class);
+	@Test
+	public void testSaveNonPersistableWithNoIdCalculatedId() {
 
-        when(expectedEntity.isNew()).thenReturn(true);
-        when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
-        when(odmMock.getCalculatedId(expectedEntity)).thenReturn(null);
+		Object expectedEntity = new Object();
+		LdapName expectedName = LdapUtils.emptyLdapName();
 
-        tested.save(expectedEntity);
+		when(odmMock.getId(expectedEntity)).thenReturn(null);
+		when(odmMock.getCalculatedId(expectedEntity)).thenReturn(expectedName);
 
-        verify(ldapOperationsMock).create(expectedEntity);
-    }
+		tested.save(expectedEntity);
 
-    @Test
-    public void testSavePersistableNewWithCalculatedId() {
-        Persistable expectedEntity = mock(Persistable.class);
-        LdapName expectedName = LdapUtils.emptyLdapName();
+		verify(ldapOperationsMock).create(expectedEntity);
+	}
 
-        when(expectedEntity.isNew()).thenReturn(true);
-        when(odmMock.getId(expectedEntity)).thenReturn(null);
-        when(odmMock.getCalculatedId(expectedEntity)).thenReturn(expectedName);
+	@Test
+	public void testSavePersistableNewWithDeclaredId() {
 
-        tested.save(expectedEntity);
+		Persistable expectedEntity = mock(Persistable.class);
 
-        verify(ldapOperationsMock).create(expectedEntity);
-    }
+		when(expectedEntity.isNew()).thenReturn(true);
+		when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
+		when(odmMock.getCalculatedId(expectedEntity)).thenReturn(null);
 
-    @Test
-    public void testSavePersistableNotNew() {
-        Persistable expectedEntity = mock(Persistable.class);
+		tested.save(expectedEntity);
 
-        when(expectedEntity.isNew()).thenReturn(false);
-        when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
-        when(odmMock.getCalculatedId(expectedEntity)).thenReturn(null);
+		verify(ldapOperationsMock).create(expectedEntity);
+	}
 
-        tested.save(expectedEntity);
+	@Test
+	public void testSavePersistableNewWithCalculatedId() {
 
-        verify(ldapOperationsMock).update(expectedEntity);
-    }
+		Persistable expectedEntity = mock(Persistable.class);
+		LdapName expectedName = LdapUtils.emptyLdapName();
 
-    @Test
-    public void testFindOneWithName() {
-        LdapName expectedName = LdapUtils.emptyLdapName();
-        Object expectedResult = new Object();
+		when(expectedEntity.isNew()).thenReturn(true);
+		when(odmMock.getId(expectedEntity)).thenReturn(null);
+		when(odmMock.getCalculatedId(expectedEntity)).thenReturn(expectedName);
 
-        when(ldapOperationsMock.findByDn(expectedName, Object.class)).thenReturn(expectedResult);
+		tested.save(expectedEntity);
 
-        Object actualResult = tested.findOne(expectedName);
+		verify(ldapOperationsMock).create(expectedEntity);
+	}
 
-        assertThat(actualResult).isSameAs(expectedResult);
-    }
+	@Test
+	public void testSavePersistableNotNew() {
 
-    @Test
-    public void verifyThatNameNotFoundInFindOneWithNameReturnsNull() {
-        LdapName expectedName = LdapUtils.emptyLdapName();
+		Persistable expectedEntity = mock(Persistable.class);
 
-        when(ldapOperationsMock.findByDn(expectedName, Object.class)).thenThrow(new NameNotFoundException(""));
+		when(expectedEntity.isNew()).thenReturn(false);
+		when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
+		when(odmMock.getCalculatedId(expectedEntity)).thenReturn(null);
 
-        Object actualResult = tested.findOne(expectedName);
+		tested.save(expectedEntity);
 
-        assertThat(actualResult).isNull();
-    }
+		verify(ldapOperationsMock).update(expectedEntity);
+	}
 
-    @Test
-    public void testFindAll() {
-        Name expectedName1 = LdapUtils.newLdapName("ou=aa");
-        Name expectedName2 = LdapUtils.newLdapName("ou=bb");
+	@Test
+	public void testFindOneWithName() {
 
-        Object expectedResult1 = new Object();
-        Object expectedResult2 = new Object();
+		LdapName expectedName = LdapUtils.emptyLdapName();
+		Object expectedResult = new Object();
 
-        when(ldapOperationsMock.findByDn(expectedName1, Object.class)).thenReturn(expectedResult1);
-        when(ldapOperationsMock.findByDn(expectedName2, Object.class)).thenReturn(expectedResult2);
+		when(ldapOperationsMock.findByDn(expectedName, Object.class)).thenReturn(expectedResult);
 
-        Iterable<Object> actualResult = tested.findAll(Arrays.asList(expectedName1, expectedName2));
+		Optional<Object> actualResult = tested.findOne(expectedName);
 
-        Iterator<Object> iterator = actualResult.iterator();
-        assertThat(iterator.next()).isSameAs(expectedResult1);
-        assertThat(iterator.next()).isSameAs(expectedResult2);
+		assertThat(actualResult).contains(expectedResult);
+	}
 
-        assertThat(iterator.hasNext()).isFalse();
-    }
+	@Test // DATALDAP-21
+	public void verifyThatNameNotFoundInFindOneWithNameReturnsEmptyOptional() {
 
-    @Test
-    public void testFindAllWhereOneEntryIsNotFound() {
-        Name expectedName1 = LdapUtils.newLdapName("ou=aa");
-        Name expectedName2 = LdapUtils.newLdapName("ou=bb");
+		LdapName expectedName = LdapUtils.emptyLdapName();
 
-        Object expectedResult2 = new Object();
+		when(ldapOperationsMock.findByDn(expectedName, Object.class)).thenThrow(new NameNotFoundException(""));
 
-        when(ldapOperationsMock.findByDn(expectedName1, Object.class)).thenReturn(null);
-        when(ldapOperationsMock.findByDn(expectedName2, Object.class)).thenReturn(expectedResult2);
+		Optional<Object> actualResult = tested.findOne(expectedName);
 
-        Iterable<Object> actualResult = tested.findAll(Arrays.asList(expectedName1, expectedName2));
+		assertThat(actualResult).isNotPresent();
+	}
 
-        Iterator<Object> iterator = actualResult.iterator();
-        assertThat(iterator.next()).isSameAs(expectedResult2);
+	@Test // DATALDAP-21
+	public void verifyThatNoResultFoundInFindOneWithNameReturnsEmptyOptional() {
 
-        assertThat(iterator.hasNext()).isFalse();
-    }
+		LdapName expectedName = LdapUtils.emptyLdapName();
+
+		when(ldapOperationsMock.findByDn(expectedName, Object.class)).thenReturn(null);
+
+		Optional<Object> actualResult = tested.findOne(expectedName);
+
+		assertThat(actualResult).isNotPresent();
+	}
+
+	@Test
+	public void testFindAll() {
+
+		Name expectedName1 = LdapUtils.newLdapName("ou=aa");
+		Name expectedName2 = LdapUtils.newLdapName("ou=bb");
+
+		Object expectedResult1 = new Object();
+		Object expectedResult2 = new Object();
+
+		when(ldapOperationsMock.findByDn(expectedName1, Object.class)).thenReturn(expectedResult1);
+		when(ldapOperationsMock.findByDn(expectedName2, Object.class)).thenReturn(expectedResult2);
+
+		Iterable<Object> actualResult = tested.findAll(Arrays.asList(expectedName1, expectedName2));
+
+		Iterator<Object> iterator = actualResult.iterator();
+		assertThat(iterator.next()).isSameAs(expectedResult1);
+		assertThat(iterator.next()).isSameAs(expectedResult2);
+
+		assertThat(iterator.hasNext()).isFalse();
+	}
+
+	@Test
+	public void testFindAllWhereOneEntryIsNotFound() {
+
+		Name expectedName1 = LdapUtils.newLdapName("ou=aa");
+		Name expectedName2 = LdapUtils.newLdapName("ou=bb");
+
+		Object expectedResult2 = new Object();
+
+		when(ldapOperationsMock.findByDn(expectedName1, Object.class)).thenReturn(null);
+		when(ldapOperationsMock.findByDn(expectedName2, Object.class)).thenReturn(expectedResult2);
+
+		Iterable<Object> actualResult = tested.findAll(Arrays.asList(expectedName1, expectedName2));
+
+		Iterator<Object> iterator = actualResult.iterator();
+		assertThat(iterator.next()).isSameAs(expectedResult2);
+
+		assertThat(iterator.hasNext()).isFalse();
+	}
 
 }

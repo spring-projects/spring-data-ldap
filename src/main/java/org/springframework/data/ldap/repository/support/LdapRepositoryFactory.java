@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,17 @@
  */
 package org.springframework.data.ldap.repository.support;
 
-import static org.springframework.data.querydsl.QueryDslUtils.*;
+import static org.springframework.data.querydsl.QuerydslUtils.*;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 import org.springframework.data.ldap.repository.query.AnnotatedLdapRepositoryQuery;
 import org.springframework.data.ldap.repository.query.LdapQueryMethod;
 import org.springframework.data.ldap.repository.query.PartTreeLdapRepositoryQuery;
 import org.springframework.data.projection.ProjectionFactory;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryInformation;
@@ -39,7 +40,7 @@ import org.springframework.util.Assert;
 
 /**
  * Factory to create {@link org.springframework.data.ldap.repository.LdapRepository} instances.
- * 
+ *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
  * @author Mark Paluch
@@ -76,12 +77,11 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 */
 	@Override
 	protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-		return isQueryDslRepository(metadata.getRepositoryInterface()) ? QueryDslLdapRepository.class
-				: SimpleLdapRepository.class;
-	}
 
-	private static boolean isQueryDslRepository(Class<?> repositoryInterface) {
-		return QUERY_DSL_PRESENT && QueryDslPredicateExecutor.class.isAssignableFrom(repositoryInterface);
+		boolean isQueryDslRepository = QUERY_DSL_PRESENT
+				&& QuerydslPredicateExecutor.class.isAssignableFrom(metadata.getRepositoryInterface());
+
+		return isQueryDslRepository ? QueryDslLdapRepository.class : SimpleLdapRepository.class;
 	}
 
 	/*
@@ -95,19 +95,12 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getQueryLookupStrategy(org.springframework.data.repository.query.QueryLookupStrategy.Key)
-	 */
-	@Override
-	protected QueryLookupStrategy getQueryLookupStrategy(QueryLookupStrategy.Key key) {
-		return queryLookupStrategy;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getQueryLookupStrategy(org.springframework.data.repository.query.QueryLookupStrategy.Key, org.springframework.data.repository.query.EvaluationContextProvider)
 	 */
 	@Override
-	protected QueryLookupStrategy getQueryLookupStrategy(Key key, EvaluationContextProvider evaluationContextProvider) {
-		return queryLookupStrategy;
+	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(Key key,
+			EvaluationContextProvider evaluationContextProvider) {
+		return Optional.of(queryLookupStrategy);
 	}
 
 	private static final class LdapQueryLookupStrategy implements QueryLookupStrategy {

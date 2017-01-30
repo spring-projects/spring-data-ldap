@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 
@@ -32,8 +32,12 @@ import com.querydsl.core.types.Predicate;
  *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
+ * @author Mark Paluch
  */
-public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implements QueryDslPredicateExecutor<T> {
+public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implements QuerydslPredicateExecutor<T> {
+
+	private final LdapOperations ldapOperations;
+	private final Class<T> entityType;
 
 	/**
 	 * Creates a new {@link QueryDslLdapRepository}.
@@ -44,6 +48,9 @@ public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implement
 	 */
 	public QueryDslLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> entityType) {
 		super(ldapOperations, odm, entityType);
+
+		this.ldapOperations = ldapOperations;
+		this.entityType = entityType;
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +92,7 @@ public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implement
 	}
 
 	private QueryDslLdapQuery<T> queryFor(Predicate predicate) {
-		return new QueryDslLdapQuery<T>(getLdapOperations(), getEntityType()).where(predicate);
+		return new QueryDslLdapQuery<T>(ldapOperations, entityType).where(predicate);
 	}
 
 	/* (non-Javadoc)
