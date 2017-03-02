@@ -14,12 +14,12 @@
 	<parent>
 		<groupId>org.springframework.data.build</groupId>
 		<artifactId>spring-data-parent</artifactId>
-		<version>1.9.1.RELEASE</version>
+		<version>1.9.2.BUILD-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<spring-ldap>2.3.1.RELEASE</spring-ldap>
-		<springdata.commons>1.13.1.RELEASE</springdata.commons>
+		<springdata.commons>1.13.2.BUILD-SNAPSHOT</springdata.commons>
 		<assertj>3.5.2</assertj>
 		<bundlor.enabled>false</bundlor.enabled>
 		<manifest.file/>
@@ -106,8 +106,8 @@
 
 	<repositories>
 		<repository>
-			<id>spring-libs-release</id>
-			<url>https://repo.spring.io/libs-release</url>
+			<id>spring-libs-snapshot</id>
+			<url>https://repo.spring.io/libs-snapshot</url>
 		</repository>
 	</repositories>
 
