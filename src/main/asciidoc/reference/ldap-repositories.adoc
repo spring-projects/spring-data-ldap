@@ -8,7 +8,7 @@ This chapter will point out the specialties for repository support for LDAP. Thi
 
 *  Spring LDAP repositories can be enabled using an `<data-ldap:repositories>` tag in your XML configuration or using an `@EnableLdapRepositories` annotation on a configuration class.
 *  To include support for `LdapQuery` parameters in automatically generated repositories, have your interface extend `LdapRepository` rather than `CrudRepository`.
-*  All Spring LDAP repositories must work with entities annotated with the ODM annotations, as described in http://docs.spring.io/spring-ldap/docs/{springLdapVersion}.RELEASE/reference/#odm[Object-Directory Mapping].
+*  All Spring LDAP repositories must work with entities annotated with the ODM annotations, as described in http://docs.spring.io/spring-ldap/docs/{springLdapVersion}/reference/#odm[Object-Directory Mapping].
 *  Since all ODM managed classes must have a Distinguished Name as ID, all Spring LDAP repositories must have the ID type parameter set to `javax.naming.Name`.
    Indeed, the built-in `LdapRepository` only takes one type parameter; the managed entity class, defaulting ID to `javax.naming.Name`.
 *  Due to specifics of the LDAP protocol, paging and sorting is not supported for Spring LDAP repositories.
@@ -225,7 +225,7 @@ public interface PersonRepository extends PagingAndSortingRepository<Person, Str
 === QueryDSL support
 Basic QueryDSL support is included in Spring LDAP. This support includes the following:
 
-*  An Annotation Processor, `LdapAnnotationProcessor`, for generating QueryDSL classes based on Spring LDAP ODM annotations. See http://docs.spring.io/spring-ldap/docs/{springLdapVersion}.RELEASE/reference/#odm[Object-Directory Mapping] for more information on the ODM annotations.
+*  An Annotation Processor, `LdapAnnotationProcessor`, for generating QueryDSL classes based on Spring LDAP ODM annotations. See http://docs.spring.io/spring-ldap/docs/{springLdapVersion}/reference/#odm[Object-Directory Mapping] for more information on the ODM annotations.
 *  A Query implementation, `QueryDslLdapQuery`, for building and executing QueryDSL queries in code.
 *  Spring Data repository support for QueryDSL predicates. `QueryDslPredicateExecutor` includes a number of additional methods with appropriate parameters; extend this interface along with `LdapRepository` to include this support in your repository.
 
