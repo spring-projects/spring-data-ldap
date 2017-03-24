@@ -63,7 +63,7 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 	 * (non-Javadoc)
 	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtension#getRepositoryFactoryClassName()
 	 */
-	public String getRepositoryFactoryClassName() {
+	public String getRepositoryFactoryBeanClassName() {
 		return LdapRepositoryFactoryBean.class.getName();
 	}
 
