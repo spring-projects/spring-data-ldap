@@ -19,27 +19,39 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import javax.naming.Name;
+import javax.naming.directory.SearchControls;
+import javax.naming.ldap.Control;
+import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.LdapName;
+import javax.naming.ldap.PagedResultsResponseControl;
 
+import com.sun.jndi.ldap.BerEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.ldap.repository.support.SimpleLdapRepository;
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DirContextProcessor;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.support.CountNameClassPairCallbackHandler;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.LdapQuery;
+import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.ldap.support.LdapUtils;
 
 /**
@@ -53,6 +65,7 @@ public class SimpleLdapRepositoryTests {
 
 	@Mock LdapOperations ldapOperationsMock;
 	@Mock ObjectDirectoryMapper odmMock;
+	@Mock LdapContext contextMock;
 
 	SimpleLdapRepository<Object> tested;
 
@@ -232,4 +245,101 @@ public class SimpleLdapRepositoryTests {
 		assertThat(iterator.hasNext()).isFalse();
 	}
 
+	@Test
+	public void testFindAllWithOnePage() {
+
+		String cookieForLastPage = "";
+		Object expectedResult1 = new Object();
+		Object expectedResult2 = new Object();
+
+		setupMocksForLdapPagedSearchResult(Arrays.asList(expectedResult1, expectedResult2), cookieForLastPage);
+
+		Page<Object> pagedResult = tested.findAll(PageRequest.of(0, 2));
+
+		assertThat(pagedResult).containsExactly(expectedResult1, expectedResult2);
+		assertThat(pagedResult.getSize()).isEqualTo(2);
+		assertThat(pagedResult.hasNext()).isFalse();
+	}
+
+
+	@Test
+	public void testFindAllByLdapQueryWithOnePage() {
+
+		String cookieForLastPage = "";
+		Object expectedResult1 = new Object();
+		Object expectedResult2 = new Object();
+
+		setupMocksForLdapPagedSearchResult(Arrays.asList(expectedResult1, expectedResult2), cookieForLastPage);
+		LdapQuery query = LdapQueryBuilder.query().base("").filter("");
+
+		Page<Object> pagedResult = tested.findAll(query, PageRequest.of(0, 2));
+
+		assertThat(pagedResult).containsExactly(expectedResult1, expectedResult2);
+		assertThat(pagedResult.getSize()).isEqualTo(2);
+		assertThat(pagedResult.hasNext()).isFalse();
+	}
+
+
+	@Test
+	public void testFindAllWithTwoPages() {
+
+		String cookieForLastPage = "";
+		String cookieForMorePages = "more-pages-remaining";
+		Object expectedResult1 = new Object();
+		Object expectedResult2 = new Object();
+		Object expectedResult3 = new Object();
+
+		setupMocksForLdapPagedSearchResult(Arrays.asList(expectedResult1, expectedResult2), cookieForMorePages);
+
+		Page<Object> pagedResult = tested.findAll(PageRequest.of(0, 2));
+
+		assertThat(pagedResult).containsExactly(expectedResult1, expectedResult2);
+		assertThat(pagedResult.getNumber()).isEqualTo(0);
+		assertThat(pagedResult.getNumberOfElements()).isEqualTo(2);
+		assertThat(pagedResult.hasNext()).isTrue();
+		assertThat(pagedResult.nextPageable()).isNotNull();
+
+		setupMocksForLdapPagedSearchResult(Arrays.asList(expectedResult3), cookieForLastPage);
+
+		pagedResult = tested.findAll(pagedResult.nextPageable());
+		assertThat(pagedResult).containsExactly(expectedResult3);
+		assertThat(pagedResult.getNumber()).isEqualTo(1);
+		assertThat(pagedResult.getNumberOfElements()).isEqualTo(1);
+		assertThat(pagedResult.hasNext()).isFalse();
+	}
+
+	private void setupMocksForLdapPagedSearchResult(List<Object> resultList, String cookie) {
+
+		Filter filterMock = mock(Filter.class);
+		when(odmMock.filterFor(Object.class, null)).thenReturn(filterMock);
+
+		when(ldapOperationsMock.search(any(Name.class), any(), any(SearchControls.class),
+				any(ContextMapper.class), any(DirContextProcessor.class))).thenAnswer(invocation -> {
+
+			DirContextProcessor contextProcessor = (DirContextProcessor) invocation.getArguments()[4];
+			if(contextProcessor == null) {
+				return null;
+			}
+
+			Control[] pagedResponseControls = createPagedResponseControls(resultList.size(), cookie);
+			when(contextMock.getResponseControls()).thenReturn(pagedResponseControls);
+			contextProcessor.postProcess(contextMock);
+			return resultList;
+		});
+	}
+
+	private Control[] createPagedResponseControls(int size, String cookie) throws IOException {
+
+		String ldapOidString = "1.2.840.113556.1.4.319";
+
+		BerEncoder cookieBerCode = new BerEncoder();
+		cookieBerCode.beginSeq(2);
+		cookieBerCode.encodeInt(size);
+		cookieBerCode.encodeOctetString(cookie.getBytes(), 4);
+		cookieBerCode.endSeq();
+
+		Control[] controls = new Control[1];
+		controls[0] = new PagedResultsResponseControl(ldapOidString, false, cookieBerCode.getBuf());
+		return controls;
+	}
 }

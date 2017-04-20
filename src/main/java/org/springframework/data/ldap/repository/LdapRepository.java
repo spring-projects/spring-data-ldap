@@ -19,6 +19,8 @@ import java.util.Optional;
 
 import javax.naming.Name;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.ldap.query.LdapQuery;
 
@@ -27,6 +29,7 @@ import org.springframework.ldap.query.LdapQuery;
  *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
+ * @author Houcheng Lin
  */
 public interface LdapRepository<T> extends CrudRepository<T, Name> {
 
@@ -46,4 +49,21 @@ public interface LdapRepository<T> extends CrudRepository<T, Name> {
 	 * @return the entries matching the query.
 	 */
 	Iterable<T> findAll(LdapQuery ldapQuery);
+
+	/**
+	 * Find all entries in the page.
+	 *
+	 * @param pageable the page specification.
+	 * @return the entries matching the query.
+	 */
+	Page<T> findAll(Pageable pageable);
+
+	/**
+	 * Find all entries matching the specified query in the page.
+	 *
+	 * @param ldapQuery the query specification.
+	 * @param pageable the page specification.
+	 * @return the entries matching the query.
+	 */
+	Page<T> findAll(LdapQuery ldapQuery, Pageable pageable);
 }
