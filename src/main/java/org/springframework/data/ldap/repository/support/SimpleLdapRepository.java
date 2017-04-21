@@ -23,20 +23,15 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.naming.Name;
-import javax.naming.NamingException;
 import javax.naming.directory.SearchControls;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.AbstractPageRequest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Persistable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.ldap.repository.LdapRepository;
 import org.springframework.data.util.Optionals;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.control.PagedResultsCookie;
 import org.springframework.ldap.control.PagedResultsDirContextProcessor;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
@@ -60,11 +55,12 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 
 	private static final String OBJECTCLASS_ATTRIBUTE = "objectclass";
 	private static final String[] ALL_ATTRIBUTES = null;
-	private static final int DEFAULT_PAGE_SIZE = 25;
+	private static final SearchControls searchControls = createSearchControls();
 
 	private final LdapOperations ldapOperations;
 	private final ObjectDirectoryMapper odm;
 	private final Class<T> entityType;
+	private final ContextMapper<T> contextMapper;
 
 	/**
 	 * Creates a new {@link SimpleLdapRepository}.
@@ -82,6 +78,18 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		this.ldapOperations = ldapOperations;
 		this.odm = odm;
 		this.entityType = entityType;
+		this.contextMapper = ctx -> odm.mapFromLdapDataEntry((DirContextOperations) ctx, entityType);
+	}
+
+	private static SearchControls createSearchControls() {
+
+		SearchControls searchControls = new SearchControls();
+
+		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+		searchControls.setReturningObjFlag(true);
+		searchControls.setReturningAttributes(ALL_ATTRIBUTES);
+
+		return searchControls;
 	}
 
 	/* (non-Javadoc)
@@ -164,36 +172,37 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	}
 
 	/* (non-Javadoc)
-     * @see org.springframework.data.ldap.repository.LdapRepository#findAll(org.springframework.data.domain.Pageable)
-     */
+	 * @see org.springframework.data.ldap.repository.LdapRepository#findAll(org.springframework.data.domain.Pageable)
+	 */
 	@Override
-	public Page<T> findAll(Pageable pageable) {
+	public Slice<T> findAll(Pageable pageable) {
 
-		PagedResultsDirContextProcessor pagedContextProcessor = createPagedContext(pageable);
-		ContextMapper<T> mapper = createContextMapper();
-		SearchControls searchControls = createSearchControls();
+		Assert.notNull(pageable, "Pageable must not be null!");
+
+		PagedResultsDirContextProcessor pagedContextProcessor = LdapPaging.createPagedContext(pageable);
 		Filter filter = odm.filterFor(entityType, null);
 
-		List<T> content = ldapOperations.search(getBaseAnnotationFromEntityType(), filter.encode(),
-				searchControls, mapper, pagedContextProcessor);
+		List<T> content = ldapOperations.search(getBaseAnnotationFromEntityType(), filter.encode(), searchControls,
+				contextMapper, pagedContextProcessor);
 
-		return createLdapPage(pageable, pagedContextProcessor, content);
+		return LdapPaging.createSlice(content, pageable, pagedContextProcessor);
 	}
 
 	/* (non-Javadoc)
-     * @see org.springframework.data.ldap.repository.LdapRepository#findAll(org.springframework.ldap.query.LdapQuery, org.springframework.data.domain.Pageable)
-     */
+	 * @see org.springframework.data.ldap.repository.LdapRepository#findAll(org.springframework.ldap.query.LdapQuery, org.springframework.data.domain.Pageable)
+	 */
 	@Override
-	public Page<T> findAll(LdapQuery ldapQuery, Pageable pageable) {
+	public Slice<T> findAll(LdapQuery ldapQuery, Pageable pageable) {
 
-		PagedResultsDirContextProcessor pagedContextProcessor = createPagedContext(pageable);
-		ContextMapper<T> mapper = createContextMapper();
-		SearchControls searchControls = createSearchControls();
+		Assert.notNull(ldapQuery, "LdapQuery must not be null");
+		Assert.notNull(pageable, "Pageable must not be null!");
 
-		List<T> content =  ldapOperations.search(ldapQuery.base(), ldapQuery.filter().encode(), searchControls,
-				mapper, pagedContextProcessor);
+		PagedResultsDirContextProcessor pagedContextProcessor = LdapPaging.createPagedContext(pageable);
 
-		return createLdapPage(pageable, pagedContextProcessor, content);
+		List<T> content = ldapOperations.search(ldapQuery.base(), ldapQuery.filter().encode(), searchControls,
+				contextMapper, pagedContextProcessor);
+
+		return LdapPaging.createSlice(content, pageable, pagedContextProcessor);
 	}
 
 	/* (non-Javadoc)
@@ -280,124 +289,9 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		delete(findAll());
 	}
 
-
-	private PagedResultsDirContextProcessor createPagedContext(Pageable pageable) {
-
-		PagedResultsCookie pagedResultCookie = null;
-		if(pageable instanceof SimpleLdapRepository.LdapPageRequest) {
-			pagedResultCookie = ((LdapPageRequest) pageable).getCookie();
-		}
-
-		int pageSize = (pageable == null) ? DEFAULT_PAGE_SIZE : pageable.getPageSize();
-
-		return new PagedResultsDirContextProcessor(pageSize,
-				pagedResultCookie);
-	}
-
-	private Page<T> createLdapPage(Pageable pageable, PagedResultsDirContextProcessor pagedContextProcessor, List<T> content) {
-
-		LdapPageImpl ldapPageImpl =  new LdapPageImpl(content, pageable, content.size());
-		ldapPageImpl.setContextProcessorForNextPageable(pagedContextProcessor);
-		return ldapPageImpl;
-	}
-
 	private Name getBaseAnnotationFromEntityType() {
 
 		Entry entryAnnotation = entityType.getAnnotation(Entry.class);
 		return (entryAnnotation == null) ? LdapUtils.emptyLdapName() : LdapUtils.newLdapName(entryAnnotation.base());
-	}
-
-	private ContextMapper<T> createContextMapper() {
-
-		return new ContextMapper<T> () {
-			public T mapFromContext(Object ctx) throws NamingException {
-				return odm.mapFromLdapDataEntry((DirContextOperations)ctx, entityType);
-			}
-		};
-	}
-
-	private SearchControls createSearchControls() {
-
-		SearchControls searchControls = new SearchControls();
-		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-		searchControls.setReturningObjFlag(true);
-		searchControls.setReturningAttributes(ALL_ATTRIBUTES);
-		return searchControls;
-	}
-
-	static class LdapPageImpl<T> extends PageImpl<T> {
-
-		private final Pageable pageable;
-		private PagedResultsCookie cookieForNextPageable;
-		private boolean hasMore;
-
-		LdapPageImpl(List<T> content, Pageable pageable, int total) {
-
-			super(content, pageable, total);
-			this.pageable = pageable;
-		}
-
-		void setContextProcessorForNextPageable(PagedResultsDirContextProcessor contextProcessor) {
-
-			this.cookieForNextPageable = contextProcessor.getCookie();
-			this.hasMore = contextProcessor.hasMore();
-		}
-
-		@Override
-		public Pageable nextPageable() {
-
-			if (hasMore) {
-				LdapPageRequest nextPageable = LdapPageRequest.newInstance(pageable.getPageNumber() + 1, pageable.getPageSize());
-				nextPageable.setCookie(cookieForNextPageable);
-				return nextPageable;
-			}
-
-			return null;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return hasMore;
-		}
-	}
-
-	static class LdapPageRequest extends AbstractPageRequest {
-		private PagedResultsCookie cookie;
-
-		private LdapPageRequest(int page, int size){
-			super(page, size);
-		}
-
-		static LdapPageRequest newInstance(int page, int size) {
-			return new LdapPageRequest(page, size);
-		}
-
-		void setCookie(PagedResultsCookie cookie) {
-			this.cookie = cookie;
-		}
-
-		PagedResultsCookie getCookie() {
-			return cookie;
-		}
-
-		@Override
-		public Sort getSort() {
-			return Sort.unsorted();
-		}
-
-		@Override
-		public Pageable next() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public Pageable previous() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public Pageable first() {
-			throw new UnsupportedOperationException();
-		}
 	}
 }

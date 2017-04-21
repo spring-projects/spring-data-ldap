@@ -19,8 +19,8 @@ import java.util.Optional;
 
 import javax.naming.Name;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.ldap.query.LdapQuery;
 
@@ -45,7 +45,7 @@ public interface LdapRepository<T> extends CrudRepository<T, Name> {
 	/**
 	 * Find all entries matching the specified query.
 	 *
-	 * @param ldapQuery the query specification.
+	 * @param ldapQuery the query specification, must not be {@literal null}.
 	 * @return the entries matching the query.
 	 */
 	Iterable<T> findAll(LdapQuery ldapQuery);
@@ -53,17 +53,21 @@ public interface LdapRepository<T> extends CrudRepository<T, Name> {
 	/**
 	 * Find all entries in the page.
 	 *
-	 * @param pageable the page specification.
+	 * @param pageable the page specification, must not be {@literal null}. Page number must be either zero or must be
+	 *          obtained from {@link Slice#nextPageable()}.
 	 * @return the entries matching the query.
+	 * @since 2.0
 	 */
-	Page<T> findAll(Pageable pageable);
+	Slice<T> findAll(Pageable pageable);
 
 	/**
 	 * Find all entries matching the specified query in the page.
 	 *
-	 * @param ldapQuery the query specification.
-	 * @param pageable the page specification.
+	 * @param ldapQuery the query specification, must not be {@literal null}.
+	 * @param pageable the page specification, must not be {@literal null}. Page number must be either zero or must be
+	 *          obtained from {@link Slice#nextPageable()}.
 	 * @return the entries matching the query.
+	 * @since 2.0
 	 */
-	Page<T> findAll(LdapQuery ldapQuery, Pageable pageable);
+	Slice<T> findAll(LdapQuery ldapQuery, Pageable pageable);
 }

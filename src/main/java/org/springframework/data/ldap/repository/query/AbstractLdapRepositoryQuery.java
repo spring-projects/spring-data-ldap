@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,17 @@
  */
 package org.springframework.data.ldap.repository.query;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.ldap.repository.Query;
+import org.springframework.data.ldap.repository.query.LdapQueryExecution.CollectionExecution;
+import org.springframework.data.ldap.repository.query.LdapQueryExecution.SingleEntityExecution;
+import org.springframework.data.ldap.repository.query.LdapQueryExecution.SlicedExecution;
+import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapOperations;
+import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.util.Assert;
 
@@ -32,13 +38,15 @@ import org.springframework.util.Assert;
 public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 
 	private final LdapQueryMethod queryMethod;
+	private final ObjectDirectoryMapper odm;
 	private final Class<?> entityType;
 	private final LdapOperations ldapOperations;
+	private final ContextMapper<?> contextMapper;
 
 	/**
 	 * Creates a new {@link AbstractLdapRepositoryQuery} instance given {@link LdapQuery}, {@link Class} and
 	 * {@link LdapOperations}.
-	 * 
+	 *
 	 * @param queryMethod must not be {@literal null}.
 	 * @param entityType must not be {@literal null}.
 	 * @param ldapOperations must not be {@literal null}.
@@ -52,6 +60,8 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 		this.queryMethod = queryMethod;
 		this.entityType = entityType;
 		this.ldapOperations = ldapOperations;
+		this.odm = ldapOperations.getObjectDirectoryMapper();
+		this.contextMapper = ctx -> odm.mapFromLdapDataEntry((DirContextOperations) ctx, entityType);
 	}
 
 	/* (non-Javadoc)
@@ -60,22 +70,28 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 	@Override
 	public final Object execute(Object[] parameters) {
 
+		ParametersParameterAccessor accessor = new ParametersParameterAccessor(queryMethod.getParameters(), parameters);
 		LdapQuery query = createQuery(parameters);
 
-		if (queryMethod.isCollectionQuery()) {
-			return ldapOperations.find(query, entityType);
+		LdapQueryExecution queryExecution = getExecutionToWrap(accessor);
+
+		return queryExecution.execute(query, entityType);
+	}
+
+	private LdapQueryExecution getExecutionToWrap(ParametersParameterAccessor accessor) {
+
+		if (queryMethod.isSliceQuery()) {
+			return new SlicedExecution(ldapOperations, accessor.getPageable(), contextMapper);
+		} else if (queryMethod.isCollectionQuery()) {
+			return new CollectionExecution(ldapOperations);
 		} else {
-			try {
-				return ldapOperations.findOne(query, entityType);
-			} catch (EmptyResultDataAccessException e) {
-				return null;
-			}
+			return new SingleEntityExecution(ldapOperations);
 		}
 	}
 
 	/**
 	 * Creates a {@link Query} instance using the given {@literal parameters}.
-	 * 
+	 *
 	 * @param parameters must not be {@literal null}.
 	 * @return
 	 */

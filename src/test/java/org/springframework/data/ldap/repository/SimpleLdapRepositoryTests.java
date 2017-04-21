@@ -32,16 +32,15 @@ import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.PagedResultsResponseControl;
 
-import com.sun.jndi.ldap.BerEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.ldap.repository.support.SimpleLdapRepository;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
@@ -54,11 +53,14 @@ import org.springframework.ldap.query.LdapQuery;
 import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.ldap.support.LdapUtils;
 
+import com.sun.jndi.ldap.BerEncoder;
+
 /**
  * Unit tests for {@link SimpleLdapRepository}.
  *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
+ * @author Houcheng Lin
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SimpleLdapRepositoryTests {
@@ -106,7 +108,6 @@ public class SimpleLdapRepositoryTests {
 	public void testSaveNonPersistableWithIdChanged() {
 
 		Object expectedEntity = new Object();
-		LdapName expectedName = LdapUtils.newLdapName("ou=newlocation");
 
 		when(odmMock.getId(expectedEntity)).thenReturn(LdapUtils.emptyLdapName());
 
@@ -119,7 +120,6 @@ public class SimpleLdapRepositoryTests {
 	public void testSaveNonPersistableWithNoIdCalculatedId() {
 
 		Object expectedEntity = new Object();
-		LdapName expectedName = LdapUtils.emptyLdapName();
 
 		when(odmMock.getId(expectedEntity)).thenReturn(null);
 
@@ -145,7 +145,6 @@ public class SimpleLdapRepositoryTests {
 	public void testSavePersistableNewWithCalculatedId() {
 
 		Persistable expectedEntity = mock(Persistable.class);
-		LdapName expectedName = LdapUtils.emptyLdapName();
 
 		when(expectedEntity.isNew()).thenReturn(true);
 		when(odmMock.getId(expectedEntity)).thenReturn(null);
@@ -245,7 +244,7 @@ public class SimpleLdapRepositoryTests {
 		assertThat(iterator.hasNext()).isFalse();
 	}
 
-	@Test
+	@Test // DATALDAP-30
 	public void testFindAllWithOnePage() {
 
 		String cookieForLastPage = "";
@@ -254,15 +253,14 @@ public class SimpleLdapRepositoryTests {
 
 		setupMocksForLdapPagedSearchResult(Arrays.asList(expectedResult1, expectedResult2), cookieForLastPage);
 
-		Page<Object> pagedResult = tested.findAll(PageRequest.of(0, 2));
+		Slice<Object> pagedResult = tested.findAll(PageRequest.of(0, 2));
 
 		assertThat(pagedResult).containsExactly(expectedResult1, expectedResult2);
 		assertThat(pagedResult.getSize()).isEqualTo(2);
 		assertThat(pagedResult.hasNext()).isFalse();
 	}
 
-
-	@Test
+	@Test // DATALDAP-30
 	public void testFindAllByLdapQueryWithOnePage() {
 
 		String cookieForLastPage = "";
@@ -272,15 +270,14 @@ public class SimpleLdapRepositoryTests {
 		setupMocksForLdapPagedSearchResult(Arrays.asList(expectedResult1, expectedResult2), cookieForLastPage);
 		LdapQuery query = LdapQueryBuilder.query().base("").filter("");
 
-		Page<Object> pagedResult = tested.findAll(query, PageRequest.of(0, 2));
+		Slice<Object> pagedResult = tested.findAll(query, PageRequest.of(0, 2));
 
 		assertThat(pagedResult).containsExactly(expectedResult1, expectedResult2);
 		assertThat(pagedResult.getSize()).isEqualTo(2);
 		assertThat(pagedResult.hasNext()).isFalse();
 	}
 
-
-	@Test
+	@Test // DATALDAP-30
 	public void testFindAllWithTwoPages() {
 
 		String cookieForLastPage = "";
@@ -291,7 +288,7 @@ public class SimpleLdapRepositoryTests {
 
 		setupMocksForLdapPagedSearchResult(Arrays.asList(expectedResult1, expectedResult2), cookieForMorePages);
 
-		Page<Object> pagedResult = tested.findAll(PageRequest.of(0, 2));
+		Slice<Object> pagedResult = tested.findAll(PageRequest.of(0, 2));
 
 		assertThat(pagedResult).containsExactly(expectedResult1, expectedResult2);
 		assertThat(pagedResult.getNumber()).isEqualTo(0);
@@ -313,19 +310,19 @@ public class SimpleLdapRepositoryTests {
 		Filter filterMock = mock(Filter.class);
 		when(odmMock.filterFor(Object.class, null)).thenReturn(filterMock);
 
-		when(ldapOperationsMock.search(any(Name.class), any(), any(SearchControls.class),
-				any(ContextMapper.class), any(DirContextProcessor.class))).thenAnswer(invocation -> {
+		when(ldapOperationsMock.search(any(Name.class), any(), any(SearchControls.class), any(ContextMapper.class),
+				any(DirContextProcessor.class))).thenAnswer(invocation -> {
 
-			DirContextProcessor contextProcessor = (DirContextProcessor) invocation.getArguments()[4];
-			if(contextProcessor == null) {
-				return null;
-			}
+					DirContextProcessor contextProcessor = (DirContextProcessor) invocation.getArguments()[4];
+					if (contextProcessor == null) {
+						return null;
+					}
 
-			Control[] pagedResponseControls = createPagedResponseControls(resultList.size(), cookie);
-			when(contextMock.getResponseControls()).thenReturn(pagedResponseControls);
-			contextProcessor.postProcess(contextMock);
-			return resultList;
-		});
+					Control[] pagedResponseControls = createPagedResponseControls(resultList.size(), cookie);
+					when(contextMock.getResponseControls()).thenReturn(pagedResponseControls);
+					contextProcessor.postProcess(contextMock);
+					return resultList;
+				});
 	}
 
 	private Control[] createPagedResponseControls(int size, String cookie) throws IOException {
