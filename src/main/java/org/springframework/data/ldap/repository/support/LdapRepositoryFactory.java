@@ -44,6 +44,7 @@ import org.springframework.util.Assert;
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
  * @author Mark Paluch
+ * @author Jens Schauder
  */
 public class LdapRepositoryFactory extends RepositoryFactorySupport {
 
@@ -67,7 +68,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getEntityInformation(java.lang.Class)
 	 */
 	@Override
-	public <T, ID extends Serializable> EntityInformation<T, ID> getEntityInformation(Class<T> domainClass) {
+	public <T, ID> EntityInformation<T, ID> getEntityInformation(Class<T> domainClass) {
 		return null;
 	}
 

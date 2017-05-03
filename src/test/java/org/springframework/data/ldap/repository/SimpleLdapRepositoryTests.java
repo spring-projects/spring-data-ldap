@@ -47,6 +47,7 @@ import org.springframework.ldap.support.LdapUtils;
  *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
+ * @author Jens Schauder
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SimpleLdapRepositoryTests {
@@ -163,7 +164,7 @@ public class SimpleLdapRepositoryTests {
 
 		when(ldapOperationsMock.findByDn(expectedName, Object.class)).thenReturn(expectedResult);
 
-		Optional<Object> actualResult = tested.findOne(expectedName);
+		Optional<Object> actualResult = tested.findById(expectedName);
 
 		assertThat(actualResult).contains(expectedResult);
 	}
@@ -175,7 +176,7 @@ public class SimpleLdapRepositoryTests {
 
 		when(ldapOperationsMock.findByDn(expectedName, Object.class)).thenThrow(new NameNotFoundException(""));
 
-		Optional<Object> actualResult = tested.findOne(expectedName);
+		Optional<Object> actualResult = tested.findById(expectedName);
 
 		assertThat(actualResult).isNotPresent();
 	}
@@ -187,7 +188,7 @@ public class SimpleLdapRepositoryTests {
 
 		when(ldapOperationsMock.findByDn(expectedName, Object.class)).thenReturn(null);
 
-		Optional<Object> actualResult = tested.findOne(expectedName);
+		Optional<Object> actualResult = tested.findById(expectedName);
 
 		assertThat(actualResult).isNotPresent();
 	}
@@ -204,7 +205,7 @@ public class SimpleLdapRepositoryTests {
 		when(ldapOperationsMock.findByDn(expectedName1, Object.class)).thenReturn(expectedResult1);
 		when(ldapOperationsMock.findByDn(expectedName2, Object.class)).thenReturn(expectedResult2);
 
-		Iterable<Object> actualResult = tested.findAll(Arrays.asList(expectedName1, expectedName2));
+		Iterable<Object> actualResult = tested.findAllById(Arrays.asList(expectedName1, expectedName2));
 
 		Iterator<Object> iterator = actualResult.iterator();
 		assertThat(iterator.next()).isSameAs(expectedResult1);
@@ -224,7 +225,7 @@ public class SimpleLdapRepositoryTests {
 		when(ldapOperationsMock.findByDn(expectedName1, Object.class)).thenReturn(null);
 		when(ldapOperationsMock.findByDn(expectedName2, Object.class)).thenReturn(expectedResult2);
 
-		Iterable<Object> actualResult = tested.findAll(Arrays.asList(expectedName1, expectedName2));
+		Iterable<Object> actualResult = tested.findAllById(Arrays.asList(expectedName1, expectedName2));
 
 		Iterator<Object> iterator = actualResult.iterator();
 		assertThat(iterator.next()).isSameAs(expectedResult2);

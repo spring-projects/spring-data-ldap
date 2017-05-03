@@ -41,6 +41,7 @@ import org.springframework.util.Assert;
  *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
+ * @author Jens Schauder
  */
 public class SimpleLdapRepository<T> implements LdapRepository<T> {
 
@@ -112,10 +113,10 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#save(java.lang.Iterable)
+	 * @see org.springframework.data.repository.CrudRepository#saveAll(java.lang.Iterable)
 	 */
 	@Override
-	public <S extends T> Iterable<S> save(Iterable<S> entities) {
+	public <S extends T> Iterable<S> saveAll(Iterable<S> entities) {
 
 		return StreamSupport.stream(entities.spliterator(), false) //
 				.map(this::save) //
@@ -123,10 +124,10 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#findOne(java.io.Serializable)
+	 * @see org.springframework.data.repository.CrudRepository#findById(java.io.Serializable)
 	 */
 	@Override
-	public Optional<T> findOne(Name name) {
+	public Optional<T> findById(Name name) {
 
 		Assert.notNull(name, "Id must not be null");
 
@@ -163,14 +164,14 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#exists(java.io.Serializable)
+	 * @see org.springframework.data.repository.CrudRepository#existsById(java.io.Serializable)
 	 */
 	@Override
-	public boolean exists(Name name) {
+	public boolean existsById(Name name) {
 
 		Assert.notNull(name, "Id must not be null");
 
-		return findOne(name) != null;
+		return findById(name) != null;
 	}
 
 	/* (non-Javadoc)
@@ -182,22 +183,22 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#findAll(java.lang.Iterable)
+	 * @see org.springframework.data.repository.CrudRepository#findAllById(java.lang.Iterable)
 	 */
 	@Override
-	public List<T> findAll(final Iterable<Name> names) {
+	public List<T> findAllById(final Iterable<Name> names) {
 
 		return StreamSupport.stream(names.spliterator(), false) //
-				.map(this::findOne) //
+				.map(this::findById) //
 				.flatMap(Optionals::toStream) //
 				.collect(Collectors.toList());
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#delete(java.io.Serializable)
+	 * @see org.springframework.data.repository.CrudRepository#deleteById(java.io.Serializable)
 	 */
 	@Override
-	public void delete(Name name) {
+	public void deleteById(Name name) {
 
 		Assert.notNull(name, "Id must not be null");
 
@@ -216,10 +217,10 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Iterable)
+	 * @see org.springframework.data.repository.CrudRepository#deleteAll(java.lang.Iterable)
 	 */
 	@Override
-	public void delete(Iterable<? extends T> entities) {
+	public void deleteAll(Iterable<? extends T> entities) {
 		entities.forEach(this::delete);
 	}
 
@@ -228,6 +229,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	 */
 	@Override
 	public void deleteAll() {
-		delete(findAll());
+		deleteAll(findAll());
 	}
 }
