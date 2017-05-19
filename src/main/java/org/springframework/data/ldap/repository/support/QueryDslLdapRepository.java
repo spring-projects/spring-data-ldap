@@ -16,7 +16,9 @@
 package org.springframework.data.ldap.repository.support;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -53,12 +55,18 @@ public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implement
 		this.entityType = entityType;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findOne(com.querydsl.core.types.Predicate)
 	 */
 	@Override
-	public T findOne(Predicate predicate) {
-		return queryFor(predicate).uniqueResult();
+	public Optional<T> findOne(Predicate predicate) {
+
+		try {
+			return Optional.of(queryFor(predicate).uniqueResult());
+		} catch (EmptyResultDataAccessException o_O) {
+			return Optional.empty();
+		}
 	}
 
 	/* (non-Javadoc)
