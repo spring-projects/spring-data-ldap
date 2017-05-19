@@ -36,19 +36,19 @@ import com.querydsl.core.types.Predicate;
  * @author Eddu Melendez
  * @author Mark Paluch
  */
-public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implements QuerydslPredicateExecutor<T> {
+public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T> implements QuerydslPredicateExecutor<T> {
 
 	private final LdapOperations ldapOperations;
 	private final Class<T> entityType;
 
 	/**
-	 * Creates a new {@link QueryDslLdapRepository}.
+	 * Creates a new {@link QuerydslLdapRepository}.
 	 *
 	 * @param ldapOperations must not be {@literal null}.
 	 * @param odm must not be {@literal null}.
 	 * @param entityType must not be {@literal null}.
 	 */
-	public QueryDslLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> entityType) {
+	public QuerydslLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> entityType) {
 		super(ldapOperations, odm, entityType);
 
 		this.ldapOperations = ldapOperations;
@@ -99,8 +99,8 @@ public class QueryDslLdapRepository<T> extends SimpleLdapRepository<T> implement
 		throw new UnsupportedOperationException();
 	}
 
-	private QueryDslLdapQuery<T> queryFor(Predicate predicate) {
-		return new QueryDslLdapQuery<>(ldapOperations, entityType).where(predicate);
+	private QuerydslLdapQuery<T> queryFor(Predicate predicate) {
+		return new QuerydslLdapQuery<>(ldapOperations, entityType).where(predicate);
 	}
 
 	/* (non-Javadoc)

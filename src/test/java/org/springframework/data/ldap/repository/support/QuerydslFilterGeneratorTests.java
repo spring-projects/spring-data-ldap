@@ -29,7 +29,7 @@ import com.querydsl.core.types.Expression;
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
  */
-public class QueryDslFilterGeneratorTests {
+public class QuerydslFilterGeneratorTests {
 
 	private LdapSerializer tested;
 	private QPerson person;

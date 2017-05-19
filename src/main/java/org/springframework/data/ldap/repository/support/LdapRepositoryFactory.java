@@ -82,7 +82,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		boolean isQueryDslRepository = QUERY_DSL_PRESENT
 				&& QuerydslPredicateExecutor.class.isAssignableFrom(metadata.getRepositoryInterface());
 
-		return isQueryDslRepository ? QueryDslLdapRepository.class : SimpleLdapRepository.class;
+		return isQueryDslRepository ? QuerydslLdapRepository.class : SimpleLdapRepository.class;
 	}
 
 	/*

@@ -36,32 +36,32 @@ import com.querydsl.core.types.Predicate;
  * @author Eddu Melendez
  * @author Mark Paluch
  */
-public class QueryDslLdapQuery<K> implements FilteredClause<QueryDslLdapQuery<K>> {
+public class QuerydslLdapQuery<K> implements FilteredClause<QuerydslLdapQuery<K>> {
 
 	private final LdapOperations ldapOperations;
 	private final Class<? extends K> entityType;
 	private final LdapSerializer filterGenerator;
 
-	private QueryMixin<QueryDslLdapQuery<K>> queryMixin = new QueryMixin<>(this,
+	private QueryMixin<QuerydslLdapQuery<K>> queryMixin = new QueryMixin<>(this,
 			new DefaultQueryMetadata().noValidate());
 
 	/**
-	 * Creates a new {@link QueryDslLdapQuery}.
+	 * Creates a new {@link QuerydslLdapQuery}.
 	 *
 	 * @param ldapOperations must not be {@literal null}.
 	 * @param entityPath must not be {@literal null}.
 	 */
-	public QueryDslLdapQuery(LdapOperations ldapOperations, EntityPath<K> entityPath) {
+	public QuerydslLdapQuery(LdapOperations ldapOperations, EntityPath<K> entityPath) {
 		this(ldapOperations, entityPath.getType());
 	}
 
 	/**
-	 * Creates a new {@link QueryDslLdapQuery}.
+	 * Creates a new {@link QuerydslLdapQuery}.
 	 *
 	 * @param ldapOperations must not be {@literal null}.
 	 * @param entityType must not be {@literal null}.
 	 */
-	public QueryDslLdapQuery(LdapOperations ldapOperations, Class<? extends K> entityType) {
+	public QuerydslLdapQuery(LdapOperations ldapOperations, Class<? extends K> entityType) {
 
 		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
 		Assert.notNull(entityType, "Type must not be null!");
@@ -75,7 +75,7 @@ public class QueryDslLdapQuery<K> implements FilteredClause<QueryDslLdapQuery<K>
 	 * @see com.querydsl.core.FilteredClause#where(com.querydsl.core.types.Predicate[])
 	 */
 	@Override
-	public QueryDslLdapQuery<K> where(Predicate... o) {
+	public QuerydslLdapQuery<K> where(Predicate... o) {
 		return queryMixin.where(o);
 	}
 
