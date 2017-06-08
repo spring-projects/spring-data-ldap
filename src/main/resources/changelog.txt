@@ -1,6 +1,11 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.4.RELEASE (2017-06-08)
+---------------------------------------------
+* DATALDAP-34 - Release 1.0.4 (Ingalls SR4).
+
+
 Changes in version 2.0.0.M3 (2017-05-09)
 ----------------------------------------
 * DATALDAP-35 - Adapt to API changes in repository interfaces.
