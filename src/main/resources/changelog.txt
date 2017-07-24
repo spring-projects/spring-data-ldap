@@ -1,6 +1,11 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.5.RELEASE (2017-07-24)
+---------------------------------------------
+* DATALDAP-39 - Release 1.0.5 (Ingalls SR5).
+
+
 Changes in version 2.0.0.M4 (2017-06-14)
 ----------------------------------------
 * DATALDAP-37 - Adapt to API changes in QuerydslPredicateExecutor.
