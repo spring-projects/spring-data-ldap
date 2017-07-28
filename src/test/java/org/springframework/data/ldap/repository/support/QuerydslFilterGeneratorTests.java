@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.springframework.data.ldap.repository.support;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
@@ -31,92 +30,108 @@ import com.querydsl.core.types.Expression;
  */
 public class QuerydslFilterGeneratorTests {
 
-	private LdapSerializer tested;
-	private QPerson person;
-
-	@Before
-	public void prepareTestedInstance() {
-		ObjectDirectoryMapper odm = new DefaultObjectDirectoryMapper();
-		tested = new LdapSerializer(odm, UnitTestPerson.class);
-		person = QPerson.person;
-	}
+	private ObjectDirectoryMapper odm = new DefaultObjectDirectoryMapper();
+	private LdapSerializer tested = new LdapSerializer(odm, UnitTestPerson.class);
+	private QPerson person = QPerson.person;
 
 	@Test
 	public void testEqualsFilter() {
+
 		Expression<?> expression = person.fullName.eq("John Doe");
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(cn=John Doe)");
 	}
 
 	@Test
 	public void testAndFilter() {
+
 		Expression<?> expression = person.fullName.eq("John Doe").and(person.lastName.eq("Doe"));
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(&(cn=John Doe)(sn=Doe))");
 	}
 
 	@Test
 	public void testOrFilter() {
+
 		Expression<?> expression = person.fullName.eq("John Doe").or(person.lastName.eq("Doe"));
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(|(cn=John Doe)(sn=Doe))");
 	}
 
 	@Test
 	public void testOr() {
+
 		Expression<?> expression = person.fullName.eq("John Doe")
 				.and(person.lastName.eq("Doe").or(person.lastName.eq("Die")));
 
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(&(cn=John Doe)(|(sn=Doe)(sn=Die)))");
 	}
 
 	@Test
 	public void testNot() {
+
 		Expression<?> expression = person.fullName.eq("John Doe").not();
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(!(cn=John Doe))");
 	}
 
 	@Test
 	public void testIsLike() {
+
 		Expression<?> expression = person.fullName.like("kalle*");
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(cn=kalle*)");
 	}
 
 	@Test
 	public void testStartsWith() {
+
 		Expression<?> expression = person.fullName.startsWith("kalle");
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(cn=kalle*)");
 	}
 
 	@Test
 	public void testEndsWith() {
+
 		Expression<?> expression = person.fullName.endsWith("kalle");
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(cn=*kalle)");
 	}
 
 	@Test
 	public void testContains() {
+
 		Expression<?> expression = person.fullName.contains("kalle");
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(cn=*kalle*)");
 	}
 
 	@Test
 	public void testNotNull() {
+
 		Expression<?> expression = person.fullName.isNotNull();
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(cn=*)");
 	}
 
 	@Test
 	public void testNull() {
+
 		Expression<?> expression = person.fullName.isNull();
 		Filter result = tested.handle(expression);
+
 		assertThat(result.toString()).isEqualTo("(!(cn=*))");
 	}
 }

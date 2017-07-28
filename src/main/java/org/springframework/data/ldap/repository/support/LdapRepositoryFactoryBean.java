@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import javax.naming.Name;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
+import org.springframework.lang.Nullable;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.util.Assert;
 
@@ -29,15 +30,16 @@ import org.springframework.util.Assert;
  *
  * @author Mattias Hellborg Arthursson
  * @author Oliver Gierke
+ * @author Mark Paluch
  */
 public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		extends RepositoryFactoryBeanSupport<T, S, Name> {
 
-	private LdapOperations ldapOperations;
+	private @Nullable LdapOperations ldapOperations;
 
 	/**
 	 * Creates a new {@link LdapRepositoryFactoryBean} for the given repository interface.
-	 * 
+	 *
 	 * @param repositoryInterface must not be {@literal null}.
 	 */
 	public LdapRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
@@ -54,6 +56,9 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 	 */
 	@Override
 	protected RepositoryFactorySupport createRepositoryFactory() {
+
+		Assert.state(ldapOperations != null, "LdapOperations must be set");
+
 		return new LdapRepositoryFactory(ldapOperations);
 	}
 

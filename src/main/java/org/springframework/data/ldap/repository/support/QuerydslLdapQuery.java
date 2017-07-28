@@ -42,8 +42,7 @@ public class QuerydslLdapQuery<K> implements FilteredClause<QuerydslLdapQuery<K>
 	private final Class<? extends K> entityType;
 	private final LdapSerializer filterGenerator;
 
-	private QueryMixin<QuerydslLdapQuery<K>> queryMixin = new QueryMixin<>(this,
-			new DefaultQueryMetadata().noValidate());
+	private QueryMixin<QuerydslLdapQuery<K>> queryMixin = new QueryMixin<>(this, new DefaultQueryMetadata().noValidate());
 
 	/**
 	 * Creates a new {@link QuerydslLdapQuery}.
@@ -88,8 +87,13 @@ public class QuerydslLdapQuery<K> implements FilteredClause<QuerydslLdapQuery<K>
 		return ldapOperations.findOne(buildQuery(), entityType);
 	}
 
-	LdapQuery buildQuery() {
-		return query().filter(filterGenerator.handle(queryMixin.getMetadata().getWhere()));
-	}
+	private LdapQuery buildQuery() {
 
+		Predicate where = queryMixin.getMetadata().getWhere();
+		if (where != null) {
+			return query().filter(filterGenerator.handle(where));
+		}
+
+		return query();
+	}
 }

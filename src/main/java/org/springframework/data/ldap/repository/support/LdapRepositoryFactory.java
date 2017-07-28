@@ -17,7 +17,6 @@ package org.springframework.data.ldap.repository.support;
 
 import static org.springframework.data.querydsl.QuerydslUtils.*;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
@@ -35,6 +34,7 @@ import org.springframework.data.repository.query.EvaluationContextProvider;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.lang.Nullable;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.util.Assert;
 
@@ -68,8 +68,9 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getEntityInformation(java.lang.Class)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public <T, ID> EntityInformation<T, ID> getEntityInformation(Class<T> domainClass) {
-		return null;
+		return new LdapEntityInformation(domainClass);
 	}
 
 	/*
@@ -99,7 +100,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getQueryLookupStrategy(org.springframework.data.repository.query.QueryLookupStrategy.Key, org.springframework.data.repository.query.EvaluationContextProvider)
 	 */
 	@Override
-	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(Key key,
+	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable Key key,
 			EvaluationContextProvider evaluationContextProvider) {
 		return Optional.of(queryLookupStrategy);
 	}
@@ -109,9 +110,9 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		private LdapOperations ldapOperations;
 
 		/**
-		 * @param ldapOperations
+		 * @param ldapOperations must not be {@literal null}.
 		 */
-		public LdapQueryLookupStrategy(LdapOperations ldapOperations) {
+		LdapQueryLookupStrategy(LdapOperations ldapOperations) {
 			this.ldapOperations = ldapOperations;
 		}
 

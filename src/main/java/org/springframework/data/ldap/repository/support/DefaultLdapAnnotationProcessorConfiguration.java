@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,22 +22,24 @@ import java.util.Map;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.VariableElement;
 
+import org.springframework.lang.Nullable;
 import org.springframework.ldap.odm.annotations.Id;
 
 import com.querydsl.apt.DefaultConfiguration;
 
 /**
  * Configuration for {@link LdapAnnotationProcessor}.
- * 
+ *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
+ * @author Mark Paluch
  */
 class DefaultLdapAnnotationProcessorConfiguration extends DefaultConfiguration {
 
 	public DefaultLdapAnnotationProcessorConfiguration(RoundEnvironment roundEnv, Map<String, String> options,
 			Collection<String> keywords, Class<? extends Annotation> entitiesAnn, Class<? extends Annotation> entityAnn,
-			Class<? extends Annotation> superTypeAnn, Class<? extends Annotation> embeddableAnn,
-			Class<? extends Annotation> embeddedAnn, Class<? extends Annotation> skipAnn) {
+			@Nullable Class<? extends Annotation> superTypeAnn, @Nullable Class<? extends Annotation> embeddableAnn,
+			@Nullable Class<? extends Annotation> embeddedAnn, Class<? extends Annotation> skipAnn) {
 
 		super(roundEnv, options, keywords, entitiesAnn, entityAnn, superTypeAnn, embeddableAnn, embeddedAnn, skipAnn);
 	}

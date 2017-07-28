@@ -1,6 +1,10 @@
 [[new-features]]
 = New & Noteworthy
 
+[[new-features.2.0]]
+== What's new in Spring Data LDAP 2.0
+* Enhanced tooling support by using Spring Framework's `@NonNullApi` and `@Nullable` annotations.
+
 [[new-features.1.0]]
 == What's new in Spring Data LDAP 1.0
-* Migration of Spring LDAP's repository suport into Spring Data LDAP.
+* Migration of Spring LDAP's repository support into Spring Data LDAP.

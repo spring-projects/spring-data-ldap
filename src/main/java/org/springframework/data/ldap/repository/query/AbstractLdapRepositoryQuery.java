@@ -38,7 +38,7 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 	/**
 	 * Creates a new {@link AbstractLdapRepositoryQuery} instance given {@link LdapQuery}, {@link Class} and
 	 * {@link LdapOperations}.
-	 * 
+	 *
 	 * @param queryMethod must not be {@literal null}.
 	 * @param entityType must not be {@literal null}.
 	 * @param ldapOperations must not be {@literal null}.
@@ -58,6 +58,7 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 	 * @see org.springframework.data.repository.query.RepositoryQuery#execute(java.lang.Object[])
 	 */
 	@Override
+	@SuppressWarnings("ConstantConditions")
 	public final Object execute(Object[] parameters) {
 
 		LdapQuery query = createQuery(parameters);
@@ -75,7 +76,7 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 
 	/**
 	 * Creates a {@link Query} instance using the given {@literal parameters}.
-	 * 
+	 *
 	 * @param parameters must not be {@literal null}.
 	 * @return
 	 */

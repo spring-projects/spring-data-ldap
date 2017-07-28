@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
 import java.util.Iterator;
 
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.PropertyPath;
 import org.springframework.data.repository.query.Parameters;
@@ -31,6 +32,7 @@ import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.ConditionCriteria;
 import org.springframework.ldap.query.ContainerCriteria;
 import org.springframework.ldap.query.LdapQuery;
+import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.util.Assert;
 
 /**
@@ -71,8 +73,15 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 	@Override
 	protected ContainerCriteria create(Part part, Iterator<Object> iterator) {
 
-		String base = entityType.getAnnotation(Entry.class).base();
-		ConditionCriteria criteria = query().base(base).where(getAttribute(part));
+		Entry entry = AnnotatedElementUtils.findMergedAnnotation(entityType, Entry.class);
+
+		LdapQueryBuilder query = query();
+
+		if (entry != null) {
+			query = query.base(entry.base());
+		}
+
+		ConditionCriteria criteria = query.where(getAttribute(part));
 
 		return appendCondition(part, iterator, criteria);
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Method;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.ldap.repository.support.BaseUnitTestPerson;
@@ -35,23 +34,17 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 /**
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
+ * @author Mark Paluch
  */
 @ContextConfiguration
 public class PartTreeLdapRepositoryQueryTests extends AbstractJUnit4SpringContextTests {
 
 	@Autowired private LdapTemplate ldapTemplate;
-	private Class<?> targetClass;
-	private Class<?> entityClass;
-	private DefaultRepositoryMetadata repositoryMetadata;
-	private ProjectionFactory factory;
 
-	@Before
-	public void prepareTest() {
-		entityClass = UnitTestPerson.class;
-		targetClass = UnitTestPersonRepository.class;
-		repositoryMetadata = new DefaultRepositoryMetadata(targetClass);
-		factory = new SpelAwareProxyProjectionFactory();
-	}
+	private Class<?> entityClass = UnitTestPerson.class;
+	private Class<?> targetClass = UnitTestPersonRepository.class;
+	private DefaultRepositoryMetadata repositoryMetadata = new DefaultRepositoryMetadata(targetClass);
+	private ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
 
 	@Test
 	public void testFindByFullName() throws NoSuchMethodException {
@@ -61,9 +54,11 @@ public class PartTreeLdapRepositoryQueryTests extends AbstractJUnit4SpringContex
 	// LDAP-314
 	@Test
 	public void testFindByFullNameWithBase() throws NoSuchMethodException {
+
 		entityClass = BaseUnitTestPerson.class;
 		targetClass = BaseTestPersonRepository.class;
 		repositoryMetadata = new DefaultRepositoryMetadata(targetClass);
+
 		assertFilterAndBaseForMethod(targetClass.getMethod("findByFullName", String.class), "(cn=John Doe)", "ou=someOu",
 				"John Doe");
 	}
@@ -136,6 +131,7 @@ public class PartTreeLdapRepositoryQueryTests extends AbstractJUnit4SpringContex
 
 	private void assertFilterAndBaseForMethod(Method targetMethod, String expectedFilter, String expectedBase,
 			Object... expectedParams) {
+
 		LdapQueryMethod queryMethod = new LdapQueryMethod(targetMethod, repositoryMetadata, factory);
 		PartTreeLdapRepositoryQuery tested = new PartTreeLdapRepositoryQuery(queryMethod, entityClass, ldapTemplate);
 

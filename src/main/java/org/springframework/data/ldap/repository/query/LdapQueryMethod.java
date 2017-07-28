@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,14 @@ import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryMethod;
+import org.springframework.lang.Nullable;
 
 /**
  * QueryMethod for Ldap Queries.
  *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
+ * @author Mark Paluch
  */
 public class LdapQueryMethod extends QueryMethod {
 
@@ -48,7 +50,7 @@ public class LdapQueryMethod extends QueryMethod {
 
 	/**
 	 * Check whether the target method is annotated with {@link org.springframework.data.ldap.repository.Query}.
-	 * 
+	 *
 	 * @return <code>true</code> if the target method is annotated with
 	 *         {@link org.springframework.data.ldap.repository.Query}, <code>false</code> otherwise.
 	 */
@@ -58,11 +60,29 @@ public class LdapQueryMethod extends QueryMethod {
 
 	/**
 	 * Get the {@link org.springframework.data.ldap.repository.Query} annotation of the target method (if any).
-	 * 
+	 *
 	 * @return the {@link org.springframework.data.ldap.repository.Query} annotation of the target method if present, or
 	 *         <code>null</code> otherwise.
 	 */
+	@Nullable
 	Query getQueryAnnotation() {
 		return AnnotationUtils.getAnnotation(method, Query.class);
+	}
+
+	/**
+	 * Get the required {@link org.springframework.data.ldap.repository.Query} annotation of the target method.
+	 *
+	 * @return the {@link org.springframework.data.ldap.repository.Query} annotation of the target method if present, or
+	 *         {@link IllegalStateException} otherwise.
+	 */
+	Query getRequiredQueryAnnotation() {
+
+		Query queryAnnotation = getQueryAnnotation();
+
+		if (queryAnnotation != null) {
+			return queryAnnotation;
+		}
+
+		throw new IllegalStateException("Required @Query annotation is not present!");
 	}
 }
