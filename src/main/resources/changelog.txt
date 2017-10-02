@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.0.0.RELEASE (2017-10-02)
+---------------------------------------------
+* DATALDAP-48 - Add explicit automatic module name for Java 9.
+* DATALDAP-47 - Release 2.0 GA (Kay).
+
+
 Changes in version 2.0.0.RC3 (2017-09-11)
 -----------------------------------------
 * DATALDAP-45 - Introduce nullable annotations.
