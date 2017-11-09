@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 /**
  * Annotation to activate Ldap repositories. If no base package is configured through either {@link #value()},
  * {@link #basePackages()} or {@link #basePackageClasses()} it will trigger scanning of the package of annotated class.
- * 
+ *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
  */
@@ -84,7 +84,7 @@ public @interface EnableLdapRepositories {
 
 	/**
 	 * Configures the location of where to find the Spring Data named queries properties file. Will default to
-	 * {@code META-INFO/mongo-named-queries.properties}.
+	 * {@code META-INFO/ldap-named-queries.properties}.
 	 *
 	 * @return
 	 */
@@ -102,7 +102,7 @@ public @interface EnableLdapRepositories {
 	/**
 	 * Returns the {@link org.springframework.beans.factory.FactoryBean} class to be used for each repository instance.
 	 * Defaults to {@link org.springframework.data.ldap.repository.support.LdapRepositoryFactoryBean}.
-	 * 
+	 *
 	 * @return
 	 */
 	Class<?> repositoryFactoryBeanClass() default LdapRepositoryFactoryBean.class;
@@ -117,7 +117,7 @@ public @interface EnableLdapRepositories {
 	/**
 	 * Configures the name of the {@link org.springframework.ldap.core.LdapTemplate} bean to be used with the repositories
 	 * detected.
-	 * 
+	 *
 	 * @return
 	 */
 	String ldapTemplateRef() default "ldapTemplate";
