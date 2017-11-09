@@ -1,6 +1,10 @@
 [[new-features]]
 = New & Noteworthy
 
+[[new-features.2.1]]
+== What's new in Spring Data LDAP 2.1
+* CDI extension to create LDAP repositories within a CDI container.
+
 [[new-features.2.0]]
 == What's new in Spring Data LDAP 2.0
 * Enhanced tooling support by using Spring Framework's `@NonNullApi` and `@Nullable` annotations.
