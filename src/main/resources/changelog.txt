@@ -1,6 +1,14 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.1.0.M1 (2018-02-06)
+----------------------------------------
+* DATALDAP-56 - Update copyright years to 2018.
+* DATALDAP-51 - Upgrade to Spring Ldap 2.3.2.
+* DATALDAP-50 - Release 2.1 M1 (Lovelace).
+* DATALDAP-5 - Add CDI extension for LDAP repositories.
+
+
 Changes in version 2.0.3.RELEASE (2018-01-24)
 ---------------------------------------------
 * DATALDAP-55 - Release 2.0.3 (Kay SR3).
