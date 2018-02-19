@@ -92,7 +92,8 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 
 		String value = null;
 		if (iterator.hasNext()) {
-			value = iterator.next().toString();
+			Object next = iterator.next();
+			value = next != null ? next.toString() : null;
 		}
 		switch (type) {
 			case NEGATING_SIMPLE_PROPERTY:

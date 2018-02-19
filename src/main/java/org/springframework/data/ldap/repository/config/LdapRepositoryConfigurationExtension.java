@@ -19,14 +19,20 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.data.ldap.core.mapping.LdapMappingContext;
 import org.springframework.data.ldap.repository.LdapRepository;
 import org.springframework.data.ldap.repository.support.LdapRepositoryFactoryBean;
 import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
+import org.springframework.data.repository.config.RepositoryConfigurationSource;
 import org.springframework.data.repository.config.XmlRepositoryConfigurationSource;
+import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
@@ -40,6 +46,7 @@ import org.w3c.dom.Element;
 public class LdapRepositoryConfigurationExtension extends RepositoryConfigurationExtensionSupport {
 
 	private static final String ATT_LDAP_TEMPLATE_REF = "ldap-template-ref";
+	private static final String MAPPING_CONTEXT_BEAN_NAME = "ldapMappingContext";
 
 	/*
 	 * (non-Javadoc)
@@ -99,6 +106,7 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 		}
 
 		builder.addPropertyReference("ldapOperations", ldapTemplateRef);
+		builder.addPropertyReference("mappingContext", MAPPING_CONTEXT_BEAN_NAME);
 	}
 
 	/* (non-Javadoc)
@@ -110,5 +118,28 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 		AnnotationAttributes attributes = config.getAttributes();
 
 		builder.addPropertyReference("ldapOperations", attributes.getString("ldapTemplateRef"));
+		builder.addPropertyReference("mappingContext", MAPPING_CONTEXT_BEAN_NAME);
+	}
+
+	@Override
+	public void registerBeansForRoot(BeanDefinitionRegistry registry, RepositoryConfigurationSource configurationSource) {
+
+		if (!registry.containsBeanDefinition(MAPPING_CONTEXT_BEAN_NAME)) {
+
+			RootBeanDefinition definition = new RootBeanDefinition(LdapMappingContext.class);
+			definition.setRole(AbstractBeanDefinition.ROLE_INFRASTRUCTURE);
+			definition.setSource(configurationSource.getSource());
+
+			registry.registerBeanDefinition(MAPPING_CONTEXT_BEAN_NAME, definition);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#useRepositoryConfiguration(org.springframework.data.repository.core.RepositoryMetadata)
+	 */
+	@Override
+	protected boolean useRepositoryConfiguration(RepositoryMetadata metadata) {
+		return !metadata.isReactiveRepository();
 	}
 }
