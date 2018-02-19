@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.springframework.data.ldap.repository.support;
 
 import javax.naming.Name;
 
+import org.springframework.data.ldap.core.mapping.LdapMappingContext;
+import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
@@ -36,6 +38,7 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		extends RepositoryFactoryBeanSupport<T, S, Name> {
 
 	private @Nullable LdapOperations ldapOperations;
+	private boolean mappingContextConfigured = false;
 
 	/**
 	 * Creates a new {@link LdapRepositoryFactoryBean} for the given repository interface.
@@ -46,8 +49,22 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		super(repositoryInterface);
 	}
 
+	/**
+	 * @param ldapOperations
+	 */
 	public void setLdapOperations(LdapOperations ldapOperations) {
 		this.ldapOperations = ldapOperations;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport#setMappingContext(org.springframework.data.mapping.context.MappingContext)
+	 */
+	@Override
+	public void setMappingContext(MappingContext<?, ?> mappingContext) {
+
+		super.setMappingContext(mappingContext);
+		this.mappingContextConfigured = true;
 	}
 
 	/*
@@ -72,5 +89,9 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		Assert.notNull(ldapOperations, "LdapOperations must be set");
 
 		super.afterPropertiesSet();
+
+		if (!mappingContextConfigured) {
+			setMappingContext(new LdapMappingContext());
+		}
 	}
 }
