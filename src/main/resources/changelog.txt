@@ -1,6 +1,11 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.0.5.RELEASE (2018-02-28)
+---------------------------------------------
+* DATALDAP-61 - Release 2.0.5 (Kay SR5).
+
+
 Changes in version 2.0.4.RELEASE (2018-02-19)
 ---------------------------------------------
 * DATALDAP-60 - Enable Spring Data LDAP for Spring Data REST usage.
