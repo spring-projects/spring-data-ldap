@@ -18,10 +18,7 @@ package org.springframework.data.ldap.repository.cdi;
 /**
  * @author Mark Paluch
  */
-class SampleRepositoryImpl implements SampleRepositoryCustom {
+interface SampleFragment {
 
-	@Override
-	public int returnOne() {
-		return 1;
-	}
+	int returnOne();
 }

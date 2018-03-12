@@ -23,4 +23,4 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * @author Mark Paluch
  */
-public interface SampleRepository extends CrudRepository<DummyEntity, Name>, SampleRepositoryCustom {}
+public interface SampleRepository extends CrudRepository<DummyEntity, Name>, SampleFragment {}

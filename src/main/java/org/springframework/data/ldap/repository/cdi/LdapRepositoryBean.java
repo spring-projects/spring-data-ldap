@@ -63,13 +63,19 @@ public class LdapRepositoryBean<T> extends CdiRepositoryBean<T> {
 	 * @see org.springframework.data.repository.cdi.CdiRepositoryBean#create(javax.enterprise.context.spi.CreationalContext, java.lang.Class)
 	 */
 	@Override
-	protected T create(CreationalContext<T> creationalContext, Class<T> repositoryType,
-			Optional<Object> customImplementation) {
+	protected T create(CreationalContext<T> creationalContext, Class<T> repositoryType) {
 
 		LdapOperations ldapOperations = getDependencyInstance(operations, LdapOperations.class);
-		LdapRepositoryFactory factory = new LdapRepositoryFactory(ldapOperations);
 
-		return customImplementation.map(o -> factory.getRepository(repositoryType, o))
-				.orElseGet(() -> factory.getRepository(repositoryType));
+		return create(() -> new LdapRepositoryFactory(ldapOperations), repositoryType);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.cdi.CdiRepositoryBean#getScope()
+	 */
+	@Override
+	public Class<? extends Annotation> getScope() {
+		return operations.getScope();
 	}
 }
