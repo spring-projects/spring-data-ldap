@@ -20,6 +20,7 @@ import static org.springframework.ldap.query.LdapQueryBuilder.*;
 import java.util.List;
 
 import org.springframework.ldap.core.LdapOperations;
+import org.springframework.ldap.filter.AbsoluteTrueFilter;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.util.Assert;
 
@@ -75,25 +76,32 @@ public class QuerydslLdapQuery<K> implements FilteredClause<QuerydslLdapQuery<K>
 	 */
 	@Override
 	public QuerydslLdapQuery<K> where(Predicate... o) {
+
+		if (o == null) {
+			return this;
+		}
+
 		return queryMixin.where(o);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<K> list() {
-		return (List<K>) ldapOperations.find(buildQuery(), entityType);
+
+		LdapQuery ldapQuery = buildQuery();
+		if (ldapQuery.filter() instanceof AbsoluteTrueFilter) {
+			return (List<K>) ldapOperations.findAll(entityType);
+		}
+
+		return (List<K>) ldapOperations.find(ldapQuery, entityType);
 	}
 
 	public K uniqueResult() {
 		return ldapOperations.findOne(buildQuery(), entityType);
 	}
 
-	private LdapQuery buildQuery() {
+	LdapQuery buildQuery() {
 
 		Predicate where = queryMixin.getMetadata().getWhere();
-		if (where != null) {
-			return query().filter(filterGenerator.handle(where));
-		}
-
-		return query();
+		return where != null ? query().filter(filterGenerator.handle(where)) : query().filter(new AbsoluteTrueFilter());
 	}
 }
