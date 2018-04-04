@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.11.RELEASE (2018-04-04)
+----------------------------------------------
+* DATALDAP-65 - QueryDSL support throw IllegalStateException with a null Predicate.
+* DATALDAP-57 - Release 1.0.11 (Ingalls SR11).
+
+
 Changes in version 2.0.5.RELEASE (2018-02-28)
 ---------------------------------------------
 * DATALDAP-61 - Release 2.0.5 (Kay SR5).
