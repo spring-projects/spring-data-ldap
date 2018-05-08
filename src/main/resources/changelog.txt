@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.12.RELEASE (2018-05-08)
+----------------------------------------------
+* DATALDAP-68 - Spring Data Ldap introduces spring-web as dependency without any reason.
+* DATALDAP-66 - Release 1.0.12 (Ingalls SR12).
+
+
 Changes in version 2.1.0.M2 (2018-04-13)
 ----------------------------------------
 * DATALDAP-68 - Spring Data Ldap introduces spring-web as dependency without any reason.
