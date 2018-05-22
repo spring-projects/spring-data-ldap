@@ -1,24 +1,23 @@
 [[ldap.repositories]]
-= LDAP repositories
+= LDAP Repositories
 
-[[ldap.repo-intro]]
-== Introduction
+This chapter point out the specialties for repository support for LDAP. It builds on the core repository support explained in <<repositories>>. You should have a sound understanding of the basic concepts explained there.
 
-This chapter will point out the specialties for repository support for LDAP. This builds on the core repository support explained in <<repositories>>. So make sure you've got a sound understanding of the basic concepts explained there.
+You should keep in mind the following points as you work with Spring LDAP repositories:
 
-*  Spring LDAP repositories can be enabled using an `<data-ldap:repositories>` tag in your XML configuration or using an `@EnableLdapRepositories` annotation on a configuration class.
+*  Spring LDAP repositories can be enabled by using a `<data-ldap:repositories>` tag in your XML configuration or by using an `@EnableLdapRepositories` annotation on a configuration class.
 *  To include support for `LdapQuery` parameters in automatically generated repositories, have your interface extend `LdapRepository` rather than `CrudRepository`.
 *  All Spring LDAP repositories must work with entities annotated with the ODM annotations, as described in http://docs.spring.io/spring-ldap/docs/{springLdapVersion}/reference/#odm[Object-Directory Mapping].
-*  Since all ODM managed classes must have a Distinguished Name as ID, all Spring LDAP repositories must have the ID type parameter set to `javax.naming.Name`.
-   Indeed, the built-in `LdapRepository` only takes one type parameter; the managed entity class, defaulting ID to `javax.naming.Name`.
-*  Due to specifics of the LDAP protocol, paging and sorting is not supported for Spring LDAP repositories.
+*  Since all ODM managed classes must have a Distinguished Name as the ID, all Spring LDAP repositories must have the ID type parameter set to `javax.naming.Name`.
+   Indeed, the built-in `LdapRepository` only takes one type parameter: the managed entity class, which defaults the ID to `javax.naming.Name`.
+*  Due to specifics of the LDAP protocol, paging and sorting are not supported for Spring LDAP repositories.
 
-NOTE: Make sure to use ODM annotations like `org.springframework.ldap.odm.annotations.Id`. Using Spring Data's annotation does not work as Spring LDAP uses its own mapping layer.
+NOTE: You must use ODM annotations, such as `org.springframework.ldap.odm.annotations.Id`. Using Spring Data's annotation does not work, because Spring LDAP uses its own mapping layer.
 
 [[ldap.repo-usage]]
 == Usage
 
-To access domain entities stored in a LDAP-compliant directory you can leverage our sophisticated repository support that eases implementing those quite significantly. To do so, simply create an interface for your repository:
+To access domain entities stored in a LDAP-compliant directory, you can use our sophisticated repository support that significantly eases implementation. To do so, create an interface for your repository, as the following example shows:
 
 .Sample Person entity
 ====
@@ -37,7 +36,7 @@ public class Person {
    @Attribute(name="firstName")
    private String firstName;
 
-   // No @Attribute annotation means this will be bound to the LDAP attribute
+   // No @Attribute annotation means this is bound to the LDAP attribute
    // with the same value
    private String firstName;
 
@@ -52,9 +51,9 @@ public class Person {
 ----
 ====
 
-We have a quite simple domain object here. Note that it has a property named `dn` of type `Name`.
+We have a simple domain object here. Note that it has a property named `dn` of type `Name`. With that domain object, we can create a repository to persist objects of that type by defining an interface for it, as follows:
 
-.Basic repository interface to persist Person entities
+.Basic repository interface to persist `Person` entities
 ====
 [source]
 ----
@@ -65,7 +64,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 ----
 ====
 
-Right now this interface simply serves typing purposes but we will add additional methods to it later. In your Spring configuration simply add
+Right now, this interface serves only typing purposes, but we can add additional methods to it later. In your Spring configuration, add the following:
 
 .General LDAP repository Spring configuration
 ====
@@ -95,11 +94,11 @@ Right now this interface simply serves typing purposes but we will add additiona
 ----
 ====
 
-This namespace element will cause the base packages to be scanned for interfaces extending `LdapRepository` and create Spring beans for each of them found. By default the repositories will get a `LdapTemplate` Spring bean wired that is called `ldapTemplate`, so you only need to configure `ldap-template-ref` explicitly if you deviate from this convention.
+This namespace element causes the base packages to be scanned for interfaces that extend `LdapRepository` and create Spring beans for each one found. By default the repositories get an autowired `LdapTemplate` Spring bean that is called `ldapTemplate`, so you only need to configure `ldap-template-ref` explicitly if you deviate from this convention.
 
-If you'd rather like to go with JavaConfig use the `@EnableLdapRepositories` annotation. The annotation carries the very same attributes like the namespace element. If no base package is configured the infrastructure will scan the package of the annotated configuration class.
+If you want to go with Java configuration, use the `@EnableLdapRepositories` annotation. The annotation carries the same attributes as the namespace element. If no base package is configured, the infrastructure scans the package of the annotated configuration class. The following example shows how to set up Java configuration:
 
-.JavaConfig for repositories
+.Java configuration for repositories
 ====
 [source,java]
 ----
@@ -124,7 +123,9 @@ class ApplicationConfig {
 ----
 ====
 
-As our domain repository extends `CrudRepository` it provides you with CRUD operations as well as methods for access to the entities. Working with the repository instance is just a matter of dependency injecting it into a client.
+Because our domain repository extends `CrudRepository`, it provides you with CRUD operations as well as methods for access to the entities. Working with the repository instance is a matter of dependency injecting it into a client.
+
+We can add paging access to our repository, as follows:
 
 .Paging access to Person entities
 ====
@@ -146,12 +147,12 @@ public class PersonRepositoryTests {
 ----
 ====
 
-The sample creates an application context with Spring's unit test support which will perform annotation based dependency injection into test cases. Inside the test method we simply use the repository to query the datastore.
+The sample creates an application context with Spring's unit test support, which will perform annotation-based dependency injection into test cases. Inside the test method, we  use the repository to query the datastore.
 
 [[ldap.repositories.queries]]
-== Query methods
+== Query Methods
 
-Most of the data access operations you usually trigger on a repository result a query being executed against the LDAP directory. Defining such a query is just a matter of declaring a method on the repository interface
+Most of the data access operations you usually trigger on a repository result in a query being executed against the LDAP directory. Defining such a query is a matter of declaring a method on the repository interface, as the following example shows:
 
 .PersonRepository with query methods
 ====
@@ -164,9 +165,11 @@ public interface PersonRepository extends PagingAndSortingRepository<Person, Str
     List<Person> findByLastnameFirstname(String lastname, String firstname); <2>
 }
 ----
-<1> The method shows a query for all people with the given lastname. The query will be derived parsing the method name for constraints which can be concatenated with `And` and `Or`. Thus the method name will result in a query expression of `(&(objectclass=person)(lastname=lastname))`.
-<2> The method shows a query for all people with the given lastname and firstname. The query will be derived parsing the method name.Thus the method name will result in a query expression of `(&(objectclass=person)(lastname=lastname)(firstname=firstname))`.
+<1> The method shows a query for all people with the given `lastname`. The query is derived by parsing the method name for constraints that can be concatenated with `And` and `Or`. Thus, the method name results in a query expression of `(&(objectclass=person)(lastname=lastname))`.
+<2> The method shows a query for all people with the given `lastname` and `firstname`. The query is derived by parsing the method name. Thus, the method name results in a query expression of `(&(objectclass=person)(lastname=lastname)(firstname=firstname))`.
 ====
+
+The following table provides samples of the keywords that you can use with query methods:
 
 [cols="1,2,3", options="header"]
 .Supported keywords for query methods
@@ -222,12 +225,12 @@ public interface PersonRepository extends PagingAndSortingRepository<Person, Str
 |===
 
 
-=== QueryDSL support
+=== QueryDSL Support
 Basic QueryDSL support is included in Spring LDAP. This support includes the following:
 
 *  An Annotation Processor, `LdapAnnotationProcessor`, for generating QueryDSL classes based on Spring LDAP ODM annotations. See http://docs.spring.io/spring-ldap/docs/{springLdapVersion}/reference/#odm[Object-Directory Mapping] for more information on the ODM annotations.
 *  A Query implementation, `QueryDslLdapQuery`, for building and executing QueryDSL queries in code.
-*  Spring Data repository support for QueryDSL predicates. `QueryDslPredicateExecutor` includes a number of additional methods with appropriate parameters; extend this interface along with `LdapRepository` to include this support in your repository.
+*  Spring Data repository support for QueryDSL predicates. `QueryDslPredicateExecutor` includes a number of additional methods with appropriate parameters. You can extend this interface (along with `LdapRepository`) to include this support in your repository.
 
 [[ldap.repositories.misc]]
 == Miscellaneous
@@ -235,7 +238,7 @@ Basic QueryDSL support is included in Spring LDAP. This support includes the fol
 [[ldap.repositories.misc.cdi-integration]]
 === CDI Integration
 
-Instances of the repository interfaces are usually created by a container, which Spring is the most natural choice when working with Spring Data. As of version 2.1 Spring Data LDAP ships with a custom CDI extension that allows using the repository abstraction in CDI environments. The extension is part of the JAR so all you need to do to activate it is dropping the Spring Data LDAP JAR into your classpath. You can now set up the infrastructure by implementing a CDI Producer for the `LdapTemplate`:
+Instances of the repository interfaces are usually created by a container, for which Spring is the most natural choice when working with Spring Data. As of version 2.1, Spring Data LDAP includes a custom CDI extension that lets you use the repository abstraction in CDI environments. The extension is part of the JAR. To activate it, drop the Spring Data LDAP JAR into your classpath. You can now set up the infrastructure by implementing a CDI Producer for the `LdapTemplate`, as the following example shows:
 
 [source,java]
 ----
@@ -251,7 +254,7 @@ class LdapTemplateProducer {
 }
 ----
 
-The Spring Data LDAP CDI extension will pick up the `LdapTemplate` available as CDI bean and create a proxy for a Spring Data repository whenever a bean of a repository type is requested by the container. Thus obtaining an instance of a Spring Data repository is a matter of declaring an `@Inject`-ed property:
+The Spring Data LDAP CDI extension picks up the `LdapTemplate` as a CDI bean and creates a proxy for a Spring Data repository whenever a bean of a repository type is requested by the container. Thus, obtaining an instance of a Spring Data repository is a matter of declaring an injected property, as the following example shows:
 
 [source,java]
 ----
