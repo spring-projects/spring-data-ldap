@@ -1,7 +1,7 @@
 [[ldap.repositories]]
 = LDAP Repositories
 
-This chapter point out the specialties for repository support for LDAP. It builds on the core repository support explained in <<repositories>>. You should have a sound understanding of the basic concepts explained there.
+This chapter points out the specialties for repository support for LDAP. It builds on the core repository support explained in <<repositories>>. You should have a sound understanding of the basic concepts explained there.
 
 You should keep in mind the following points as you work with Spring LDAP repositories:
 
