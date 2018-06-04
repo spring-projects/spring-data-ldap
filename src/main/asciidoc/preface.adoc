@@ -9,13 +9,28 @@ This document is the reference guide for Spring Data - Document Support. It expl
 [[get-started:first-steps:spring]]
 == Knowing Spring
 
-Spring Data uses Spring framework's http://docs.spring.io/spring/docs/{springVersion}/spring-framework-reference/core.html[core] functionality, including:
+Spring Data uses the Spring Framework's {spring-framework-docs}core.html[core]
+functionality, including:
 
-* http://docs.spring.io/spring/docs/{springVersion}/spring-framework-reference/core.html#beans[IoC] container
-* http://docs.spring.io/spring/docs/{springVersion}/spring-framework-reference/core.html#core-convert[Type conversion system]
-* http://docs.spring.io/spring/docs/{springVersion}/spring-framework-reference/core.html#expressions[Spring Expression Language (SpEL)]
-* http://docs.spring.io/spring/docs/{springVersion}/spring-framework-reference/integration.html#jmx[JMX integration]
-* http://docs.spring.io/spring/docs/{springVersion}/spring-framework-reference/data-access.html#dao-exceptions[DAO exception hierarchy]
+* {spring-framework-docs}core.html#beans[IoC] container
+* {spring-framework-docs}core.html#validation[validation, type conversion and data binding]
+* {spring-framework-docs}core.html#expressions[expression language]
+* {spring-framework-docs}core.html#aop[AOP]
+* {spring-framework-docs}integration.html#jmx[JMX integration]
+* {spring-framework-docs}data-access.html[DAO support]
+* {spring-framework-docs}data-access.html#dao-exceptions[DAO Exception Hierarchy]
+
+While it is not important to know the Spring APIs, understanding the concepts behind them is important. At a minimum, the idea
+behind IoC should be familiar, no matter what IoC container you choose to use.
+
+The core functionality of the Cassandra support can be used directly, with no need to invoke the IoC services
+of the Spring container. This is much like `JdbcTemplate`, which can be used 'standalone' without any other services
+of the Spring container. To use all the features of Spring Data for Apache Cassandra, such as the repository support,
+you must configure some parts of the library by using Spring.
+
+To learn more about Spring, you can refer to the comprehensive {spring-framework-docs}[documentation]
+that explains the Spring Framework in detail. There are a lot of articles, blog entries, and books on Spring.
+See the Spring Framework http://projects.spring.io/spring-framework/[home page] for more information.
 
 While it is not important to know the Spring APIs, you do need to understand the concepts behind them. At a minimum, the idea behind IoC should be familiar for whatever IoC container you choose to use.
 
@@ -24,7 +39,7 @@ To learn more about Spring, you can refer to the comprehensive documentation tha
 [[requirements]]
 == Requirements
 
-Spring Data LDAP 1.x binaries requires JDK level 6.0 or later, http://spring.io/docs[Spring Framework] {springVersion} or later, and http://projects.spring.io/spring-ldap[Spring LDAP] {springLdapVersion} or later.
+Spring Data LDAP 2.x binaries requires JDK level 8.0 or later, http://spring.io/docs[Spring Framework] {springVersion} or later, and http://projects.spring.io/spring-ldap[Spring LDAP] {springLdapVersion} or later.
 
 [[get-started:help]]
 == Additional Help Resources
@@ -43,3 +58,12 @@ Professional, from-the-source support, with guaranteed response time, is availab
 === Following Development
 
 For information on the Spring Data LDAP source code repository, nightly builds, and snapshot artifacts, see the http://projects.spring.io/spring-data-ldap/[Spring Data LDAP homepage]. You can help make Spring Data best serve the needs of the Spring community by interacting with developers through the community on http://stackoverflow.com/questions/tagged/spring-data[Stackoverflow]. To follow developer activity, look for the mailing list information on the Spring Data LDAP homepage. If you encounter a bug or want to suggest an improvement, please create a ticket on the Spring Data issue https://jira.spring.io/browse/DATALDAP[tracker]. To stay up-to-date with the latest news and announcements in the Spring ecosystem, subscribe to the Spring Community http://spring.io[Portal]. Finally, you can follow the Spring http://spring.io/blog[blog] or the project team on Twitter (http://twitter.com/SpringData[SpringData]).
+
+[[get-started:project-metadata]]
+=== Project Metadata
+
+* Version Control: https://github.com/spring-projects/spring-data-ldap
+* Bugtracker: https://jira.spring.io/browse/DATALDAP
+* Release repository: https://repo.spring.io/libs-release
+* Milestone repository: https://repo.spring.io/libs-milestone
+* Snapshot repository: https://repo.spring.io/libs-snapshot
