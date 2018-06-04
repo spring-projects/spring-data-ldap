@@ -5,8 +5,7 @@ Mattias Hellborg Arthursson; Ulrik Sandberg; Eric Dalquist; Keith Barlow; Rob Wi
 :linkcss:
 :doctype: book
 :docinfo: shared
-:toc:
-:toc-placement!:
+:toc: left
 :toclevels: 4
 :source-highlighter: prettify
 :icons: font
