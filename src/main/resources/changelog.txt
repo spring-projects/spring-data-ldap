@@ -1,6 +1,13 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.1.0.RC1 (2018-07-26)
+-----------------------------------------
+* DATALDAP-76 - Add coverpage for epub documentation output.
+* DATALDAP-75 - Full editing pass on reference documentation.
+* DATALDAP-74 - Release 2.1 RC1 (Lovelace).
+
+
 Changes in version 2.0.8.RELEASE (2018-06-13)
 ---------------------------------------------
 * DATALDAP-76 - Add coverpage for epub documentation output.
