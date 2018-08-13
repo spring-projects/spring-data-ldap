@@ -23,9 +23,9 @@ functionality, including:
 While it is not important to know the Spring APIs, understanding the concepts behind them is important. At a minimum, the idea
 behind IoC should be familiar, no matter what IoC container you choose to use.
 
-The core functionality of the Cassandra support can be used directly, with no need to invoke the IoC services
+The core functionality of the LDAP support can be used directly, with no need to invoke the IoC services
 of the Spring container. This is much like `JdbcTemplate`, which can be used 'standalone' without any other services
-of the Spring container. To use all the features of Spring Data for Apache Cassandra, such as the repository support,
+of the Spring container. To use all the features of Spring Data LDAP, such as the repository support,
 you must configure some parts of the library by using Spring.
 
 To learn more about Spring, you can refer to the comprehensive {spring-framework-docs}[documentation]
