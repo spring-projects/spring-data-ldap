@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.15.RELEASE (2018-09-10)
+----------------------------------------------
+* DATALDAP-82 - Docs talk about Cassandra.
+* DATALDAP-81 - Release 1.0.15 (Ingalls SR15).
+
+
 Changes in version 2.1.0.RC2 (2018-08-20)
 -----------------------------------------
 * DATALDAP-82 - Docs talk about Cassandra.
