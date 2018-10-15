@@ -1,6 +1,11 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.16.RELEASE (2018-10-15)
+----------------------------------------------
+* DATALDAP-84 - Release 1.0.16 (Ingalls SR16).
+
+
 Changes in version 2.0.11.RELEASE (2018-10-15)
 ----------------------------------------------
 * DATALDAP-85 - Release 2.0.11 (Kay SR11).
