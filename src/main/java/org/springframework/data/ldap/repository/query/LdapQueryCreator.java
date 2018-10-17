@@ -78,7 +78,7 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 		LdapQueryBuilder query = query();
 
 		if (entry != null) {
-			query = query.base(entry.base());
+			query.base(entry.base());
 		}
 
 		ConditionCriteria criteria = query.where(getAttribute(part));
