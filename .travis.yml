@@ -3,10 +3,12 @@ language: java
 jdk:
   - oraclejdk8
 
-env:
-  matrix:
-    - PROFILE=ci
-    - PROFILE=springldap-next
+matrix:
+  include:
+  - env: PROFILE=ci
+  - env: PROFILE=springldap-next
+  allow_failures:
+  - env: PROFILE=springldap-next
 
 addons:
   apt:
