@@ -1,6 +1,13 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.17.RELEASE (2018-11-27)
+----------------------------------------------
+* DATALDAP-93 - The Travis build for branch 1.0.x fails.
+* DATALDAP-90 - Simplify TravisCI build definition.
+* DATALDAP-89 - Release 1.0.17 (Ingalls SR17).
+
+
 Changes in version 2.1.2.RELEASE (2018-10-29)
 ---------------------------------------------
 * DATALDAP-90 - Simplify TravisCI build definition.
