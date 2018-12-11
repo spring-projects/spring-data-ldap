@@ -1,6 +1,13 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.2.0.M1 (2018-12-11)
+----------------------------------------
+* DATALDAP-98 - Simplify reference documentation setup.
+* DATALDAP-97 - Release 2.2 M1 (Moore).
+* DATALDAP-90 - Simplify TravisCI build definition.
+
+
 Changes in version 2.1.3.RELEASE (2018-11-27)
 ---------------------------------------------
 * DATALDAP-92 - Release 2.1.3 (Lovelace SR3).
