@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.18.RELEASE (2019-01-10)
+----------------------------------------------
+* DATALDAP-100 - Update copyright years to 2019.
+* DATALDAP-94 - Release 1.0.18 (Ingalls SR18).
+
+
 Changes in version 2.2.0.M1 (2018-12-11)
 ----------------------------------------
 * DATALDAP-98 - Simplify reference documentation setup.
