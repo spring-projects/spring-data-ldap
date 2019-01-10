@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.0.13.RELEASE (2019-01-10)
+----------------------------------------------
+* DATALDAP-100 - Update copyright years to 2019.
+* DATALDAP-95 - Release 2.0.13 (Kay SR13).
+
+
 Changes in version 1.0.18.RELEASE (2019-01-10)
 ----------------------------------------------
 * DATALDAP-100 - Update copyright years to 2019.
