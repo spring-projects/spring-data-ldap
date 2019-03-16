@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -29,7 +29,7 @@
 			<name>Rob Winch</name>
 			<email>rwinch at pivotal.io</email>
 			<organization>Pivotal</organization>
-			<organizationUrl>http://www.pivotal.io</organizationUrl>
+			<organizationUrl>https://www.pivotal.io</organizationUrl>
 			<roles>
 				<role>Project Lead</role>
 			</roles>
@@ -40,7 +40,7 @@
 			<name>Mark Paluch</name>
 			<email>mpaluch at pivotal.io</email>
 			<organization>Pivotal</organization>
-			<organizationUrl>http://www.pivotal.io</organizationUrl>
+			<organizationUrl>https://www.pivotal.io</organizationUrl>
 			<roles>
 				<role>Developer</role>
 			</roles>
