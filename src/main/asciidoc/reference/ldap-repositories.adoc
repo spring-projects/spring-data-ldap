@@ -7,7 +7,7 @@ You should keep in mind the following points as you work with Spring LDAP reposi
 
 *  Spring LDAP repositories can be enabled by using a `<data-ldap:repositories>` tag in your XML configuration or by using an `@EnableLdapRepositories` annotation on a configuration class.
 *  To include support for `LdapQuery` parameters in automatically generated repositories, have your interface extend `LdapRepository` rather than `CrudRepository`.
-*  All Spring LDAP repositories must work with entities annotated with the ODM annotations, as described in http://docs.spring.io/spring-ldap/docs/{springLdapVersion}/reference/#odm[Object-Directory Mapping].
+*  All Spring LDAP repositories must work with entities annotated with the ODM annotations, as described in https://docs.spring.io/spring-ldap/docs/{springLdapVersion}/reference/#odm[Object-Directory Mapping].
 *  Since all ODM managed classes must have a Distinguished Name as the ID, all Spring LDAP repositories must have the ID type parameter set to `javax.naming.Name`.
    Indeed, the built-in `LdapRepository` only takes one type parameter: the managed entity class, which defaults the ID to `javax.naming.Name`.
 *  Due to specifics of the LDAP protocol, paging and sorting are not supported for Spring LDAP repositories.
@@ -76,11 +76,11 @@ Right now, this interface serves only typing purposes, but we can add additional
   xmlns:ldap="http://www.springframework.org/schema/ldap"
   xmlns:data-ldap="http://www.springframework.org/schema/data/ldap"
   xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
+    https://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/ldap
-    http://www.springframework.org/schema/ldap/spring-ldap.xsd
+    https://www.springframework.org/schema/ldap/spring-ldap.xsd
     http://www.springframework.org/schema/data/ldap
-    http://www.springframework.org/schema/data/ldap/spring-ldap.xsd">
+    https://www.springframework.org/schema/data/ldap/spring-ldap.xsd">
 
   <ldap:context-source url="ldap://127.0.0.1:389"
                      username="cn=Admin"
@@ -228,7 +228,7 @@ The following table provides samples of the keywords that you can use with query
 === QueryDSL Support
 Basic QueryDSL support is included in Spring LDAP. This support includes the following:
 
-*  An Annotation Processor, `LdapAnnotationProcessor`, for generating QueryDSL classes based on Spring LDAP ODM annotations. See http://docs.spring.io/spring-ldap/docs/{springLdapVersion}/reference/#odm[Object-Directory Mapping] for more information on the ODM annotations.
+*  An Annotation Processor, `LdapAnnotationProcessor`, for generating QueryDSL classes based on Spring LDAP ODM annotations. See https://docs.spring.io/spring-ldap/docs/{springLdapVersion}/reference/#odm[Object-Directory Mapping] for more information on the ODM annotations.
 *  A Query implementation, `QueryDslLdapQuery`, for building and executing QueryDSL queries in code.
 *  Spring Data repository support for QueryDSL predicates. `QueryDslPredicateExecutor` includes a number of additional methods with appropriate parameters. You can extend this interface (along with `LdapRepository`) to include this support in your repository.
 
