@@ -1,6 +1,11 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 1.0.20.RELEASE (2019-04-01)
+----------------------------------------------
+* DATALDAP-109 - Release 1.0.20 (Ingalls SR20).
+
+
 Changes in version 1.0.19.RELEASE (2019-04-01)
 ----------------------------------------------
 * DATALDAP-102 - Release 1.0.19 (Ingalls SR19).
