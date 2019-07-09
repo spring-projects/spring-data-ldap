@@ -1,28 +1,65 @@
-image:https://spring.io/badges/spring-data-ldap/ga.svg[Spring Data LDAP,link=http://projects.spring.io/spring-data-ldap#quick-start]
-image:https://spring.io/badges/spring-data-ldap/snapshot.svg[Spring Data LDAP,link=http://projects.spring.io/spring-data-ldap#quick-start]
+image:https://spring.io/badges/spring-data-ldap/ga.svg[Spring Data LDAP,link=https://projects.spring.io/spring-data-ldap#quick-start]
+image:https://spring.io/badges/spring-data-ldap/snapshot.svg[Spring Data LDAP,link=https://projects.spring.io/spring-data-ldap#quick-start]
 
-image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2Fmaster&subject=Moore%20(master)[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/]
-image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2F2.1.x&subject=Lovelace%20(2.1.x)[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/]
-image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2F1.0.x&subject=Ingalls%20(1.0.x)[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/]
+= Spring Data LDAP image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2Fmaster&subject=Build[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/] https://gitter.im/spring-projects/spring-data[image:https://badges.gitter.im/spring-projects/spring-data.svg[Gitter]]
 
-= Spring Data LDAP
-
-The primary goal of the http://projects.spring.io/spring-data[Spring Data] project is to make it easier to build Spring-powered applications that use new data access technologies such as non-relational databases, map-reduce frameworks, and cloud based data services.
+The primary goal of the https://projects.spring.io/spring-data[Spring Data] project is to make it easier to build Spring-powered applications that use new data access technologies such as non-relational databases, map-reduce frameworks, and cloud based data services.
 
 The Spring Data LDAP project aims to provide familiar and consistent repository abstractions for https://github.com/spring-projects/spring-ldap[Spring LDAP].
 
-== Getting Help
+== Features
 
-For a comprehensive treatment of all the Spring Data LDAP features, please refer to:
+* Spring configuration support using Java-based `@Configuration` classes or an XML namespace.
+* Annotation based mapping metadata.
+* Automatic implementation of Repository interfaces including support for custom query methods.
+* QueryDSL integration to support type-safe queries.
 
-* the http://docs.spring.io/spring-data/ldap/docs/current/reference/html/[User Guide]
-* the http://docs.spring.io/spring-data/ldap/docs/current/api/[JavaDocs] have extensive comments in them as well.
-* the home page of http://projects.spring.io/spring-data-ldap[Spring Data LDAP] contains links to articles and other resources.
-* for more detailed questions, use http://stackoverflow.com/questions/tagged/spring-data-ldap[Spring Data LDAP on Stackoverflow].
+== Code of Conduct
 
-If you are new to Spring as well as to Spring Data, look for information about http://projects.spring.io/[Spring projects].
+This project is governed by the link:CODE_OF_CONDUCT.adoc[Spring Code of Conduct]. By participating, you are expected to uphold this code of conduct. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
 
-== Quick Start
+== Getting Started
+
+Here is a quick teaser of an application using Spring Data Repositories in Java:
+
+[source,java]
+----
+public interface PersonRepository extends CrudRepository<Person, Long> {
+
+  List<Person> findByLastname(String lastname);
+
+  List<Person> findByFirstnameLike(String firstname);
+}
+
+@Service
+public class MyService {
+
+  private final PersonRepository repository;
+
+  public MyService(PersonRepository repository) {
+    this.repository = repository;
+  }
+
+  public void doWork() {
+
+    repository.deleteAll();
+
+    Person person = new Person();
+    person.setFirstname("Rob");
+    person.setLastname("Winch");
+    repository.save(person);
+
+    List<Person> lastNameResults = repository.findByLastname("Winch");
+    List<Person> firstNameResults = repository.findByFirstnameLike("R*");
+ }
+}
+
+@Configuration
+@EnableLdapRepositories
+class ApplicationConfig {
+
+}
+----
 
 === Maven configuration
 
@@ -50,114 +87,63 @@ If you'd rather like the latest snapshots of the upcoming major version, use our
 <repository>
   <id>spring-libs-snapshot</id>
   <name>Spring Snapshot Repository</name>
-  <url>http://repo.spring.io/libs-snapshot</url>
+  <url>https://repo.spring.io/libs-snapshot</url>
 </repository>
 ----
 
-=== Spring Data repositories
+== Getting Help
 
-To simplify the creation of data repositories Spring Data LDAP provides a generic repository programming model. It will automatically create a repository proxy for you that adds implementations of finder methods you specify on an interface.
+Having trouble with Spring Data? We’d love to help!
 
-For example, given a `Person` class with first and last name properties, a `PersonRepository` interface that can query for `Person` by last name and when the first name matches a like expression is shown below:
+* Check the
+https://docs.spring.io/spring-data/ldap/docs/current/reference/html/[reference documentation], and https://docs.spring.io/spring-data/ldap/docs/current/api/[Javadocs].
+* Learn the Spring basics – Spring Data builds on Spring Framework, check the https://spring.io[spring.io] web-site for a wealth of reference documentation.
+If you are just starting out with Spring, try one of the https://spring.io/guides[guides].
+* If you are upgrading, check out the https://docs.spring.io/spring-data/ldap/docs/current/changelog.txt[changelog] for "`new and noteworthy`" features.
+* Ask a question - we monitor https://stackoverflow.com[stackoverflow.com] for questions tagged with https://stackoverflow.com/tags/spring-data[`spring-data-ldap`].
+You can also chat with the community on https://gitter.im/spring-projects/spring-data[Gitter].
+* Report bugs with Spring Data LDAP at https://jira.spring.io/browse/DATALDAP[jira.spring.io/browse/DATALDAP].
 
-[source,java]
+== Reporting Issues
+
+Spring Data uses JIRA as issue tracking system to record bugs and feature requests. If you want to raise an issue, please follow the recommendations below:
+
+* Before you log a bug, please search the
+https://jira.spring.io/browse/DATALDAP[issue tracker] to see if someone has already reported the problem.
+* If the issue doesn’t already exist, https://jira.spring.io/browse/DATALDAP[create a new issue].
+* Please provide as much information as possible with the issue report, we like to know the version of Spring Data that you are using and JVM version.
+* If you need to paste code, or include a stack trace use JIRA `{code}…{code}` escapes before and after your text.
+* If possible try to create a test-case or project that replicates the issue. Attach a link to your code or a compressed file containing your code.
+
+== Building from Source
+
+You don’t need to build from source to use Spring Data (binaries in https://repo.spring.io[repo.spring.io]), but if you want to try out the latest and greatest, Spring Data can be easily built with the https://github.com/takari/maven-wrapper[maven wrapper].
+You also need JDK 1.8.
+
+[source,bash]
 ----
-public interface PersonRepository extends CrudRepository<Person, Name> {
-
-  List<Person> findByLastname(String lastname);
-
-  List<Person> findByFirstnameLike(String firstname);
-}
-----
-
-The queries issued on execution will be derived from the method name. Extending `CrudRepository` causes CRUD methods being pulled into the interface so that you can easily save and find single entities and collections of them.
-
-You can have Spring automatically create a proxy for the interface by using the following JavaConfig:
-
-[source,java]
-----
-@Configuration
-@EnableLdapRepositories
-class ApplicationConfig {
-
-}
-----
-
-This will find the repository interface and register a proxy object in the container. You can use it as shown below:
-
-[source,java]
-----
-@Service
-public class MyService {
-
-  private final PersonRepository repository;
-
-  @Autowired
-  public MyService(PersonRepository repository) {
-    this.repository = repository;
-  }
-
-  public void doWork() {
-
-     repository.deleteAll();
-
-     Person person = new Person();
-     person.setFirstname("Rob");
-     person.setLastname("Winch");
-     person = repository.save(person);
-
-     List<Person> lastNameResults = repository.findByLastname("Winch");
-     List<Person> firstNameResults = repository.findByFirstnameLike("Ro*");
- }
-}
+ $ ./mvnw clean install
 ----
 
-== Contributing to Spring Data
+If you want to build with the regular `mvn` command, you will need https://maven.apache.org/run-maven/index.html[Maven v3.5.0 or above].
 
-Here are some ways for you to get involved in the community:
+_Also see link:CONTRIBUTING.adoc[CONTRIBUTING.adoc] if you wish to submit pull requests, and in particular please sign the https://cla.pivotal.io/sign/spring[Contributor’s Agreement] before your first change, is trivial._
 
-* Get involved with the Spring community on Stackoverflow and help out on the http://stackoverflow.com/questions/tagged/spring-data-ldap[spring-data-ldap] tag by responding to questions and joining the debate.
-* Create https://jira.spring.io/browse/DATALDAP[JIRA] tickets for bugs and new features and comment and vote on the ones that you are interested in.
-* Github is for social coding: if you want to write code, we encourage contributions through pull requests from http://help.github.com/forking/[forks of this repository]. If you want to contribute code this way, please reference a JIRA ticket as well covering the specific issue you are addressing.
-* Watch for upcoming articles on Spring by http://spring.io/blog[subscribing] to spring.io.
+=== Building reference documentation
 
-Before we accept a non-trivial patch or pull request we will need you to https://cla.pivotal.io/sign/spring[sign the Contributor License Agreement]. Signing the contributor’s agreement does not grant anyone commit rights to the main repository, but it does mean that we can accept your contributions, and you will get an author credit if we do. If you forget to do so, you'll be reminded when you submit a pull request. Active contributors might be asked to join the core team, and given the ability to merge pull requests.
+Building the documentation builds also the project without running tests.
 
-= Running CI tasks locally
+[source,bash]
+----
+ $ ./mvnw clean install -Pdistribute
+----
 
-Since this pipeline is purely Docker-based, it's easy to:
+The generated documentation is available from `target/site/reference/html/index.html`.
 
-* Debug what went wrong on your local machine.
-* Test out a a tweak to your `test.sh` script before sending it out.
-* Experiment against a new image before submitting your pull request.
+== Examples
 
-All of these use cases are great reasons to essentially run what the CI server does on your local machine.
+* https://github.com/spring-projects/spring-data-examples/[Spring Data Examples] contains example projects that explain specific features in more detail.
 
-IMPORTANT: To do this you must have Docker installed on your machine.
+== License
 
-1. `docker run -it --mount type=bind,source="$(pwd)",target=/spring-data-ldap-github adoptopenjdk/openjdk8:latest /bin/bash`
-+
-This will launch the Docker image and mount your source code at `spring-data-ldap-github`.
-+
-2. `cd spring-data-ldap-github`
-+
-Next, run your tests from inside the container:
-+
-3. `./mvnw clean dependency:list test -Dsort` (or whatever profile you need to test out)
-
-Since the container is binding to your source, you can make edits from your IDE and continue to run build jobs.
-
-If you test building the artifact, do this:
-
-1. `docker run -it --mount type=bind,source="$(pwd)",target=/spring-data-ldap-github adoptopenjdk/openjdk8:latest /bin/bash`
-+
-This will launch the Docker image and mount your source code at `spring-data-ldap-github`.
-+
-2. `cd spring-data-ldap-github`
-+
-Next, try to package everything up from inside the container:
-+
-3. `./mvnw -Pci,snapshot -Dmaven.test.skip=true clean package`
-
-NOTE: Docker containers can eat up disk space fast! From time to time, run `docker system prune` to clean out old images.
-
+Spring Data LDAP is Open Source software released under the https://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
