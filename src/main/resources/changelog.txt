@@ -1,6 +1,13 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.2.0.RC2 (2019-08-05)
+-----------------------------------------
+* DATALDAP-123 - Revise readme for a consistent structure.
+* DATALDAP-122 - Release 2.2 RC2 (Moore).
+* DATALDAP-119 - Introduce Jenkins CI.
+
+
 Changes in version 2.1.10.RELEASE (2019-08-05)
 ----------------------------------------------
 * DATALDAP-121 - Release 2.1.10 (Lovelace SR10).
