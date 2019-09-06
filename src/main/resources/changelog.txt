@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.2.0.RC3 (2019-09-06)
+-----------------------------------------
+* DATALDAP-127 - Add HTTPS entries into spring.schemas.
+* DATALDAP-126 - Release 2.2 RC3 (Moore).
+
+
 Changes in version 2.2.0.RC2 (2019-08-05)
 -----------------------------------------
 * DATALDAP-123 - Revise readme for a consistent structure.
