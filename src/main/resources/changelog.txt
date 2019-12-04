@@ -1,6 +1,11 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.2.3.RELEASE (2019-12-04)
+---------------------------------------------
+* DATALDAP-135 - Release 2.2.3 (Moore SR3).
+
+
 Changes in version 2.1.14.RELEASE (2019-12-04)
 ----------------------------------------------
 * DATALDAP-134 - Release 2.1.14 (Lovelace SR14).
@@ -451,4 +456,5 @@ Changes in version 1.0.0.M1 (2016-11-11)
 ----------------------------------------
 * Introducing generic repository implementation for LDAP
 * Automatic implementation of interface query method names on repositories.
+
 
