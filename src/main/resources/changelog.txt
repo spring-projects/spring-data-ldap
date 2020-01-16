@@ -1,6 +1,13 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.3.0.M1 (2020-01-16)
+----------------------------------------
+* DATALDAP-139 - Update copyright years to 2020.
+* DATALDAP-133 - Enable building with JDK11+.
+* DATALDAP-130 - Release 2.3 M1 (Neumann).
+
+
 Changes in version 2.2.4.RELEASE (2020-01-15)
 ---------------------------------------------
 * DATALDAP-139 - Update copyright years to 2020.
@@ -468,6 +475,7 @@ Changes in version 1.0.0.M1 (2016-11-11)
 ----------------------------------------
 * Introducing generic repository implementation for LDAP
 * Automatic implementation of interface query method names on repositories.
+
 
 
 
