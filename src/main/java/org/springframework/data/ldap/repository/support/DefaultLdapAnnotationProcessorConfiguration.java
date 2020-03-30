@@ -17,8 +17,8 @@ package org.springframework.data.ldap.repository.support;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.Map;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.VariableElement;
 
@@ -36,12 +36,14 @@ import com.querydsl.apt.DefaultConfiguration;
  */
 class DefaultLdapAnnotationProcessorConfiguration extends DefaultConfiguration {
 
-	public DefaultLdapAnnotationProcessorConfiguration(RoundEnvironment roundEnv, Map<String, String> options,
-			Collection<String> keywords, Class<? extends Annotation> entitiesAnn, Class<? extends Annotation> entityAnn,
-			@Nullable Class<? extends Annotation> superTypeAnn, @Nullable Class<? extends Annotation> embeddableAnn,
-			@Nullable Class<? extends Annotation> embeddedAnn, Class<? extends Annotation> skipAnn) {
+	public DefaultLdapAnnotationProcessorConfiguration(ProcessingEnvironment processingEnvironment,
+			RoundEnvironment roundEnv, Collection<String> keywords, Class<? extends Annotation> entitiesAnn,
+			Class<? extends Annotation> entityAnn, @Nullable Class<? extends Annotation> superTypeAnn,
+			@Nullable Class<? extends Annotation> embeddableAnn, @Nullable Class<? extends Annotation> embeddedAnn,
+			Class<? extends Annotation> skipAnn) {
 
-		super(roundEnv, options, keywords, entitiesAnn, entityAnn, superTypeAnn, embeddableAnn, embeddedAnn, skipAnn);
+		super(processingEnvironment, roundEnv, keywords, entitiesAnn, entityAnn, superTypeAnn, embeddableAnn, embeddedAnn,
+				skipAnn);
 	}
 
 	/* (non-Javadoc)

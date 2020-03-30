@@ -49,9 +49,8 @@ public class LdapAnnotationProcessor extends AbstractQuerydslProcessor {
 	protected Configuration createConfiguration(RoundEnvironment roundEnv) {
 		processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Running " + getClass().getSimpleName());
 
-		DefaultConfiguration configuration = new DefaultLdapAnnotationProcessorConfiguration(roundEnv,
-				processingEnv.getOptions(), Collections.emptySet(), QueryEntities.class, Entry.class, null, null, null,
-				Transient.class);
+		DefaultConfiguration configuration = new DefaultLdapAnnotationProcessorConfiguration(processingEnv, roundEnv,
+				Collections.emptySet(), QueryEntities.class, Entry.class, null, null, null, Transient.class);
 		configuration.setUseFields(true);
 		configuration.setUseGetters(false);
 
