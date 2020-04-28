@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.3.0.RC2 (2020-04-28)
+-----------------------------------------
+* DATALDAP-151 - Use JDK 14 for Java.NEXT CI testing.
+* DATALDAP-150 - Release 2.3 RC2 (Neumann).
+
+
 Changes in version 2.2.7.RELEASE (2020-04-28)
 ---------------------------------------------
 * DATALDAP-148 - Release 2.2.7 (Moore SR7).
@@ -521,6 +527,7 @@ Changes in version 1.0.0.M1 (2016-11-11)
 ----------------------------------------
 * Introducing generic repository implementation for LDAP
 * Automatic implementation of interface query method names on repositories.
+
 
 
 
