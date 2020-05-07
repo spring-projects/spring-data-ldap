@@ -18,11 +18,11 @@ package org.springframework.data.ldap.repository.support;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.filter.AbsoluteTrueFilter;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -34,18 +34,18 @@ import org.springframework.ldap.query.LdapQuery;
  *
  * @author Mark Paluch
  */
-@RunWith(MockitoJUnitRunner.class)
-public class QuerydslLdapQueryUnitTests {
+@MockitoSettings
+class QuerydslLdapQueryUnitTests {
 
 	@Mock LdapOperations ldapOperations;
 
-	@Before
-	public void before() {
+	@BeforeEach
+	void before() {
 		when(ldapOperations.getObjectDirectoryMapper()).thenReturn(new DefaultObjectDirectoryMapper());
 	}
 
 	@Test // DATALDAP-65
-	public void shouldCreateFilter() {
+	void shouldCreateFilter() {
 
 		QuerydslLdapQuery<UnitTestPerson> query = new QuerydslLdapQuery<>(ldapOperations, UnitTestPerson.class);
 
@@ -55,7 +55,7 @@ public class QuerydslLdapQueryUnitTests {
 	}
 
 	@Test // DATALDAP-65
-	public void shouldCreateEmptyFilter() {
+	void shouldCreateEmptyFilter() {
 
 		QuerydslLdapQuery<UnitTestPerson> query = new QuerydslLdapQuery<>(ldapOperations, UnitTestPerson.class);
 
@@ -65,7 +65,7 @@ public class QuerydslLdapQueryUnitTests {
 	}
 
 	@Test // DATALDAP-65
-	public void shouldCreateEmptyFilterFromWhereNull() {
+	void shouldCreateEmptyFilterFromWhereNull() {
 
 		QuerydslLdapQuery<UnitTestPerson> query = new QuerydslLdapQuery<>(ldapOperations, QPerson.person);
 

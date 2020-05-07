@@ -17,7 +17,7 @@ package org.springframework.data.ldap.core.mapping;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.ldap.odm.annotations.Id;
 
 /**
@@ -25,10 +25,10 @@ import org.springframework.ldap.odm.annotations.Id;
  *
  * @author Mark Paluch
  */
-public class LdapPersistentPropertyUnitTests {
+class LdapPersistentPropertyUnitTests {
 
 	@Test // DATALDAP-60
-	public void shouldConsiderOdmIdAsIdentifier() {
+	void shouldConsiderOdmIdAsIdentifier() {
 
 		LdapMappingContext context = new LdapMappingContext();
 		BasicLdapPersistentEntity<?> entity = context.getRequiredPersistentEntity(Person.class);

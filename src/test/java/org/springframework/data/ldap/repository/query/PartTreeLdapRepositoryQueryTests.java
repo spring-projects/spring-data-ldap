@@ -19,7 +19,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Method;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.ldap.repository.support.BaseUnitTestPerson;
 import org.springframework.data.ldap.repository.support.UnitTestPerson;
@@ -29,15 +30,16 @@ import org.springframework.data.repository.core.support.DefaultRepositoryMetadat
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
  * @author Mark Paluch
  */
+@SpringJUnitConfig
 @ContextConfiguration
-public class PartTreeLdapRepositoryQueryTests extends AbstractJUnit4SpringContextTests {
+class PartTreeLdapRepositoryQueryTests {
 
 	@Autowired private LdapTemplate ldapTemplate;
 
@@ -47,13 +49,13 @@ public class PartTreeLdapRepositoryQueryTests extends AbstractJUnit4SpringContex
 	private ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
 
 	@Test
-	public void testFindByFullName() throws NoSuchMethodException {
+	void testFindByFullName() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullName", String.class), "(cn=John Doe)", "John Doe");
 	}
 
 	// LDAP-314
 	@Test
-	public void testFindByFullNameWithBase() throws NoSuchMethodException {
+	void testFindByFullNameWithBase() throws NoSuchMethodException {
 
 		entityClass = BaseUnitTestPerson.class;
 		targetClass = BaseTestPersonRepository.class;
@@ -64,63 +66,63 @@ public class PartTreeLdapRepositoryQueryTests extends AbstractJUnit4SpringContex
 	}
 
 	@Test
-	public void testFindByFullNameLike() throws NoSuchMethodException {
+	void testFindByFullNameLike() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameLike", String.class), "(cn=*John*)", "*John*");
 	}
 
 	@Test
-	public void testFindByFullNameStartsWith() throws NoSuchMethodException {
+	void testFindByFullNameStartsWith() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameStartsWith", String.class), "(cn=John*)", "John");
 	}
 
 	@Test
-	public void testFindByFullNameEndsWith() throws NoSuchMethodException {
+	void testFindByFullNameEndsWith() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameEndsWith", String.class), "(cn=*John)", "John");
 	}
 
 	@Test
-	public void testFindByFullNameContains() throws NoSuchMethodException {
+	void testFindByFullNameContains() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameContains", String.class), "(cn=*John*)", "John");
 	}
 
 	@Test
-	public void testFindByFullNameGreaterThanEqual() throws NoSuchMethodException {
+	void testFindByFullNameGreaterThanEqual() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameGreaterThanEqual", String.class), "(cn>=John)", "John");
 	}
 
 	@Test
-	public void testFindByFullNameLessThanEqual() throws NoSuchMethodException {
+	void testFindByFullNameLessThanEqual() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameLessThanEqual", String.class), "(cn<=John)", "John");
 	}
 
 	@Test
-	public void testFindByFullNameIsNotNull() throws NoSuchMethodException {
+	void testFindByFullNameIsNotNull() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameIsNotNull"), "(cn=*)");
 	}
 
 	@Test
-	public void testFindByFullNameIsNull() throws NoSuchMethodException {
+	void testFindByFullNameIsNull() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameIsNull"), "(!(cn=*))");
 	}
 
 	@Test
-	public void testFindByFullNameNot() throws NoSuchMethodException {
+	void testFindByFullNameNot() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameNot", String.class), "(!(cn=John Doe))", "John Doe");
 	}
 
 	@Test
-	public void testFindByFullNameNotLike() throws NoSuchMethodException {
+	void testFindByFullNameNotLike() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameNotLike", String.class), "(!(cn=*John*))", "*John*");
 	}
 
 	@Test
-	public void testFindByFullNameAndLastName() throws NoSuchMethodException {
+	void testFindByFullNameAndLastName() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameAndLastName", String.class, String.class),
 				"(&(cn=John Doe)(sn=Doe))", "John Doe", "Doe");
 	}
 
 	@Test
-	public void testFindByFullNameAndLastNameNot() throws NoSuchMethodException {
+	void testFindByFullNameAndLastNameNot() throws NoSuchMethodException {
 		assertFilterForMethod(targetClass.getMethod("findByFullNameAndLastNameNot", String.class, String.class),
 				"(&(cn=John Doe)(!(sn=Doe)))", "John Doe", "Doe");
 	}

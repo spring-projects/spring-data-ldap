@@ -17,7 +17,7 @@ package org.springframework.data.ldap.repository.support;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.odm.core.impl.DefaultObjectDirectoryMapper;
@@ -28,110 +28,110 @@ import com.querydsl.core.types.Expression;
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
  */
-public class QuerydslFilterGeneratorTests {
+class QuerydslFilterGeneratorTests {
 
 	private ObjectDirectoryMapper odm = new DefaultObjectDirectoryMapper();
 	private LdapSerializer tested = new LdapSerializer(odm, UnitTestPerson.class);
 	private QPerson person = QPerson.person;
 
 	@Test
-	public void testEqualsFilter() {
+	void testEqualsFilter() {
 
 		Expression<?> expression = person.fullName.eq("John Doe");
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(cn=John Doe)");
+		assertThat(result).hasToString("(cn=John Doe)");
 	}
 
 	@Test
-	public void testAndFilter() {
+	void testAndFilter() {
 
 		Expression<?> expression = person.fullName.eq("John Doe").and(person.lastName.eq("Doe"));
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(&(cn=John Doe)(sn=Doe))");
+		assertThat(result).hasToString("(&(cn=John Doe)(sn=Doe))");
 	}
 
 	@Test
-	public void testOrFilter() {
+	void testOrFilter() {
 
 		Expression<?> expression = person.fullName.eq("John Doe").or(person.lastName.eq("Doe"));
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(|(cn=John Doe)(sn=Doe))");
+		assertThat(result).hasToString("(|(cn=John Doe)(sn=Doe))");
 	}
 
 	@Test
-	public void testOr() {
+	void testOr() {
 
 		Expression<?> expression = person.fullName.eq("John Doe")
 				.and(person.lastName.eq("Doe").or(person.lastName.eq("Die")));
 
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(&(cn=John Doe)(|(sn=Doe)(sn=Die)))");
+		assertThat(result).hasToString("(&(cn=John Doe)(|(sn=Doe)(sn=Die)))");
 	}
 
 	@Test
-	public void testNot() {
+	void testNot() {
 
 		Expression<?> expression = person.fullName.eq("John Doe").not();
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(!(cn=John Doe))");
+		assertThat(result).hasToString("(!(cn=John Doe))");
 	}
 
 	@Test
-	public void testIsLike() {
+	void testIsLike() {
 
 		Expression<?> expression = person.fullName.like("kalle*");
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(cn=kalle*)");
+		assertThat(result).hasToString("(cn=kalle*)");
 	}
 
 	@Test
-	public void testStartsWith() {
+	void testStartsWith() {
 
 		Expression<?> expression = person.fullName.startsWith("kalle");
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(cn=kalle*)");
+		assertThat(result).hasToString("(cn=kalle*)");
 	}
 
 	@Test
-	public void testEndsWith() {
+	void testEndsWith() {
 
 		Expression<?> expression = person.fullName.endsWith("kalle");
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(cn=*kalle)");
+		assertThat(result).hasToString("(cn=*kalle)");
 	}
 
 	@Test
-	public void testContains() {
+	void testContains() {
 
 		Expression<?> expression = person.fullName.contains("kalle");
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(cn=*kalle*)");
+		assertThat(result).hasToString("(cn=*kalle*)");
 	}
 
 	@Test
-	public void testNotNull() {
+	void testNotNull() {
 
 		Expression<?> expression = person.fullName.isNotNull();
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(cn=*)");
+		assertThat(result).hasToString("(cn=*)");
 	}
 
 	@Test
-	public void testNull() {
+	void testNull() {
 
 		Expression<?> expression = person.fullName.isNull();
 		Filter result = tested.handle(expression);
 
-		assertThat(result.toString()).isEqualTo("(!(cn=*))");
+		assertThat(result).hasToString("(!(cn=*))");
 	}
 }

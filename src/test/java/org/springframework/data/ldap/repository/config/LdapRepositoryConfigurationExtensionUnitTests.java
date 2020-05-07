@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.env.Environment;
@@ -39,32 +39,32 @@ import org.springframework.ldap.odm.annotations.Entry;
  *
  * @author Mark Paluch
  */
-public class LdapRepositoryConfigurationExtensionUnitTests {
+class LdapRepositoryConfigurationExtensionUnitTests {
 
-	StandardAnnotationMetadata metadata = new StandardAnnotationMetadata(Config.class, true);
-	ResourceLoader loader = new PathMatchingResourcePatternResolver();
-	Environment environment = new StandardEnvironment();
-	BeanDefinitionRegistry registry = new DefaultListableBeanFactory();
+	private StandardAnnotationMetadata metadata = new StandardAnnotationMetadata(Config.class, true);
+	private ResourceLoader loader = new PathMatchingResourcePatternResolver();
+	private Environment environment = new StandardEnvironment();
+	private BeanDefinitionRegistry registry = new DefaultListableBeanFactory();
 
-	RepositoryConfigurationSource configurationSource = new AnnotationRepositoryConfigurationSource(metadata,
+	private RepositoryConfigurationSource configurationSource = new AnnotationRepositoryConfigurationSource(metadata,
 			EnableLdapRepositories.class, loader, environment, registry);
 
 	@Test // DATALDAP-60
-	public void isStrictMatchIfDomainTypeIsAnnotatedWithEntry() {
+	void isStrictMatchIfDomainTypeIsAnnotatedWithEntry() {
 
 		LdapRepositoryConfigurationExtension extension = new LdapRepositoryConfigurationExtension();
 		assertHasRepo(SampleRepository.class, extension.getRepositoryConfigurations(configurationSource, loader, true));
 	}
 
 	@Test // DATALDAP-60
-	public void isStrictMatchIfRepositoryExtendsStoreSpecificBase() {
+	void isStrictMatchIfRepositoryExtendsStoreSpecificBase() {
 
 		LdapRepositoryConfigurationExtension extension = new LdapRepositoryConfigurationExtension();
 		assertHasRepo(StoreRepository.class, extension.getRepositoryConfigurations(configurationSource, loader, true));
 	}
 
 	@Test // DATALDAP-60
-	public void isNotStrictMatchIfDomainTypeIsNotAnnotatedWithEntry() {
+	void isNotStrictMatchIfDomainTypeIsNotAnnotatedWithEntry() {
 
 		LdapRepositoryConfigurationExtension extension = new LdapRepositoryConfigurationExtension();
 		assertDoesNotHaveRepo(UnannotatedRepository.class,
@@ -95,7 +95,7 @@ public class LdapRepositoryConfigurationExtensionUnitTests {
 	}
 
 	@EnableLdapRepositories(considerNestedRepositories = true)
-	static class Config {}
+	private static class Config {}
 
 	@Entry(objectClasses = "person")
 	static class Sample {}

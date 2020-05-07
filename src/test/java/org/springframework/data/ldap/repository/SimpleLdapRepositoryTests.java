@@ -16,7 +16,7 @@
 package org.springframework.data.ldap.repository;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -26,12 +26,12 @@ import java.util.Optional;
 import javax.naming.Name;
 import javax.naming.ldap.LdapName;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.ldap.repository.support.SimpleLdapRepository;
 import org.springframework.ldap.NameNotFoundException;
@@ -49,21 +49,21 @@ import org.springframework.ldap.support.LdapUtils;
  * @author Mark Paluch
  * @author Jens Schauder
  */
-@RunWith(MockitoJUnitRunner.class)
-public class SimpleLdapRepositoryTests {
+@MockitoSettings
+class SimpleLdapRepositoryTests {
 
 	@Mock LdapOperations ldapOperationsMock;
 	@Mock ObjectDirectoryMapper odmMock;
 
-	SimpleLdapRepository<Object> tested;
+	private SimpleLdapRepository<Object> tested;
 
-	@Before
-	public void prepareTestedInstance() {
+	@BeforeEach
+	void prepareTestedInstance() {
 		tested = new SimpleLdapRepository<>(ldapOperationsMock, odmMock, Object.class);
 	}
 
 	@Test
-	public void testCount() {
+	void testCount() {
 
 		Filter filterMock = mock(Filter.class);
 		when(odmMock.filterFor(Object.class, null)).thenReturn(filterMock);
@@ -79,7 +79,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testSaveNonPersistableWithIdSet() {
+	void testSaveNonPersistableWithIdSet() {
 
 		Object expectedEntity = new Object();
 
@@ -91,7 +91,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testSaveNonPersistableWithIdChanged() {
+	void testSaveNonPersistableWithIdChanged() {
 
 		Object expectedEntity = new Object();
 		LdapName expectedName = LdapUtils.newLdapName("ou=newlocation");
@@ -104,7 +104,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testSaveNonPersistableWithNoIdCalculatedId() {
+	void testSaveNonPersistableWithNoIdCalculatedId() {
 
 		Object expectedEntity = new Object();
 		LdapName expectedName = LdapUtils.emptyLdapName();
@@ -117,7 +117,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testSavePersistableNewWithDeclaredId() {
+	void testSavePersistableNewWithDeclaredId() {
 
 		Persistable expectedEntity = mock(Persistable.class);
 
@@ -130,7 +130,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testSavePersistableNewWithCalculatedId() {
+	void testSavePersistableNewWithCalculatedId() {
 
 		Persistable expectedEntity = mock(Persistable.class);
 		LdapName expectedName = LdapUtils.emptyLdapName();
@@ -144,7 +144,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testSavePersistableNotNew() {
+	void testSavePersistableNotNew() {
 
 		Persistable expectedEntity = mock(Persistable.class);
 
@@ -157,7 +157,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testFindOneWithName() {
+	void testFindOneWithName() {
 
 		LdapName expectedName = LdapUtils.emptyLdapName();
 		Object expectedResult = new Object();
@@ -170,7 +170,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test // DATALDAP-21
-	public void verifyThatNameNotFoundInFindOneWithNameReturnsEmptyOptional() {
+	void verifyThatNameNotFoundInFindOneWithNameReturnsEmptyOptional() {
 
 		LdapName expectedName = LdapUtils.emptyLdapName();
 
@@ -182,7 +182,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test // DATALDAP-21
-	public void verifyThatNoResultFoundInFindOneWithNameReturnsEmptyOptional() {
+	void verifyThatNoResultFoundInFindOneWithNameReturnsEmptyOptional() {
 
 		LdapName expectedName = LdapUtils.emptyLdapName();
 
@@ -194,7 +194,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testFindAll() {
+	void testFindAll() {
 
 		Name expectedName1 = LdapUtils.newLdapName("ou=aa");
 		Name expectedName2 = LdapUtils.newLdapName("ou=bb");
@@ -215,7 +215,7 @@ public class SimpleLdapRepositoryTests {
 	}
 
 	@Test
-	public void testFindAllWhereOneEntryIsNotFound() {
+	void testFindAllWhereOneEntryIsNotFound() {
 
 		Name expectedName1 = LdapUtils.newLdapName("ou=aa");
 		Name expectedName2 = LdapUtils.newLdapName("ou=bb");
@@ -232,5 +232,4 @@ public class SimpleLdapRepositoryTests {
 
 		assertThat(iterator.hasNext()).isFalse();
 	}
-
 }

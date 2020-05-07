@@ -17,29 +17,27 @@ package org.springframework.data.ldap.repository.config;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.ldap.config.DummyLdapRepository;
 import org.springframework.data.ldap.repository.config.AnnotationConfigTests.Config;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = Config.class)
-public class AnnotationConfigTests {
+@SpringJUnitConfig(classes = Config.class)
+class AnnotationConfigTests {
 
 	@Autowired ApplicationContext context;
 
 	@Test
-	public void testAnnotationConfig() {
+	void testAnnotationConfig() {
 
 		DummyLdapRepository repository = context.getBean(DummyLdapRepository.class);
 		assertThat(repository).isNotNull();

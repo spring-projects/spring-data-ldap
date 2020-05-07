@@ -17,26 +17,24 @@ package org.springframework.data.ldap.config;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Unit test for {@link LdapNamespaceHandler}.
  *
  * @author Mark Paluch
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
-public class LdapNamespaceHandlerTests {
+@SpringJUnitConfig
+class LdapNamespaceHandlerTests {
 
 	@Autowired private ApplicationContext context;
 
 	@Test // DATALDAP-1
-	public void shouldCreateRepository() {
+	void shouldCreateRepository() {
 		assertThat(context.getBean(DummyLdapRepository.class)).isNotNull();
 	}
 }

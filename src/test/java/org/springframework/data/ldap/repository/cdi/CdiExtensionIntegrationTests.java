@@ -23,9 +23,10 @@ import java.util.Collections;
 import javax.enterprise.inject.se.SeContainer;
 import javax.enterprise.inject.se.SeContainerInitializer;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import org.springframework.data.ldap.config.DummyEntity;
 import org.springframework.ldap.core.LdapTemplate;
 
@@ -34,12 +35,12 @@ import org.springframework.ldap.core.LdapTemplate;
  *
  * @author Mark Paluch
  */
-public class CdiExtensionIntegrationTests {
+class CdiExtensionIntegrationTests {
 
-	static SeContainer container;
+	private static SeContainer container;
 
-	@BeforeClass
-	public static void setUp() {
+	@BeforeAll
+	static void setUp() {
 
 		container = SeContainerInitializer.newInstance() //
 				.disableDiscovery() //
@@ -47,13 +48,13 @@ public class CdiExtensionIntegrationTests {
 				.initialize();
 	}
 
-	@AfterClass
-	public static void tearDown() {
+	@AfterAll
+	static void tearDown() {
 		container.close();
 	}
 
 	@Test // DATALDAP-5
-	public void bootstrapsRepositoryCorrectly() {
+	void bootstrapsRepositoryCorrectly() {
 
 		RepositoryClient client = container.select(RepositoryClient.class).get();
 		LdapTemplate ldapTemplateMock = client.getLdapTemplate();
@@ -71,7 +72,7 @@ public class CdiExtensionIntegrationTests {
 	}
 
 	@Test // DATALDAP-5
-	public void returnOneFromCustomImpl() {
+	void returnOneFromCustomImpl() {
 
 		RepositoryClient repositoryConsumer = container.select(RepositoryClient.class).get();
 		assertThat(repositoryConsumer.getSampleRepository().returnOne()).isEqualTo(1);

@@ -17,8 +17,8 @@ package org.springframework.data.ldap.repository.config;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -29,22 +29,20 @@ import org.springframework.data.ldap.repository.support.SimpleLdapRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Unit tests for {@link EnableLdapRepositories#repositoryBaseClass()}.
  *
  * @author Mark Paluch
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = CustomRepositoryBaseClassTests.Config.class)
-public class CustomRepositoryBaseClassTests {
+@SpringJUnitConfig(classes = CustomRepositoryBaseClassTests.Config.class)
+class CustomRepositoryBaseClassTests {
 
 	@Autowired ApplicationContext applicationContext;
 
 	@Test // DATALDAP-2
-	public void shouldImplementCustomizedRepository() {
+	void shouldImplementCustomizedRepository() {
 
 		CustomizedDummyRepository repository = applicationContext.getBean(CustomizedDummyRepository.class);
 		assertThat(repository.returnOne()).isEqualTo(1);
