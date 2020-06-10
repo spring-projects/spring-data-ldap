@@ -1,6 +1,13 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.1.18.RELEASE (2020-06-10)
+----------------------------------------------
+* DATALDAP-156 - Upgrade to Spring Ldap 2.3.3.
+* DATALDAP-155 - Remove Travis CI.
+* DATALDAP-152 - Release 2.1.18 (Lovelace SR18).
+
+
 Changes in version 2.3.0.RELEASE (2020-05-12)
 ---------------------------------------------
 * DATALDAP-157 - Migrate tests to JUnit 5.
