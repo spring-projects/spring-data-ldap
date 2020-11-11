@@ -15,15 +15,6 @@
  */
 package org.springframework.data.ldap.repository.support;
 
-import static org.springframework.ldap.query.LdapQueryBuilder.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import javax.naming.Name;
-
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.ldap.repository.LdapRepository;
@@ -36,6 +27,14 @@ import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.util.Assert;
+
+import javax.naming.Name;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
 /**
  * Base repository implementation for LDAP.
@@ -56,8 +55,8 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	 * Creates a new {@link SimpleLdapRepository}.
 	 *
 	 * @param ldapOperations must not be {@literal null}.
-	 * @param odm must not be {@literal null}.
-	 * @param entityType must not be {@literal null}.
+	 * @param odm            must not be {@literal null}.
+	 * @param entityType     must not be {@literal null}.
 	 */
 	public SimpleLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> entityType) {
 
@@ -222,7 +221,18 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	 */
 	@Override
 	public void deleteAll(Iterable<? extends T> entities) {
+
+		Assert.notNull(entities, "Entities must not be null.");
+
 		entities.forEach(this::delete);
+	}
+
+	@Override
+	public void deleteAllById(Iterable<? extends Name> names) {
+
+		Assert.notNull(names, "Names must not be null.");
+
+		names.forEach(this::deleteById);
 	}
 
 	/* (non-Javadoc)
