@@ -1,6 +1,12 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.4.1 (2020-11-11)
+-------------------------------------
+* DATALDAP-182 - Wording changes.
+* DATALDAP-179 - Release 2.4.1 (2020.0.1).
+
+
 Changes in version 2.4.0 (2020-10-28)
 -------------------------------------
 * DATALDAP-174 - Release 2.4 GA (2020.0.0).
@@ -622,6 +628,7 @@ Changes in version 1.0.0.M1 (2016-11-11)
 ----------------------------------------
 * Introducing generic repository implementation for LDAP
 * Automatic implementation of interface query method names on repositories.
+
 
 
 
