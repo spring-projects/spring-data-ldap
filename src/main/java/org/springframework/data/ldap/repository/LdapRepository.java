@@ -15,6 +15,7 @@
  */
 package org.springframework.data.ldap.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.naming.Name;
@@ -23,12 +24,33 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.ldap.query.LdapQuery;
 
 /**
- * Ldap specific extensions to CrudRepository.
+ * Ldap specific extensions to {@link CrudRepository}.
  *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
  */
 public interface LdapRepository<T> extends CrudRepository<T, Name> {
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#saveAll(java.lang.Iterable)
+	 */
+	@Override
+	<S extends T> List<S> saveAll(Iterable<S> entities);
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#findAll()
+	 */
+	@Override
+	List<T> findAll();
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.CrudRepository#findAllById()
+	 */
+	@Override
+	List<T> findAllById(Iterable<Name> names);
 
 	/**
 	 * Find one entry matching the specified query.
