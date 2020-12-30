@@ -57,13 +57,13 @@ Professional, from-the-source support, with guaranteed response time, is availab
 [[get-started:up-to-date]]
 === Following Development
 
-For information on the Spring Data LDAP source code repository, nightly builds, and snapshot artifacts, see the https://projects.spring.io/spring-data-ldap/[Spring Data LDAP homepage]. You can help make Spring Data best serve the needs of the Spring community by interacting with developers through the community on https://stackoverflow.com/questions/tagged/spring-data[Stackoverflow]. To follow developer activity, look for the mailing list information on the Spring Data LDAP homepage. If you encounter a bug or want to suggest an improvement, please create a ticket on the Spring Data issue https://jira.spring.io/browse/DATALDAP[tracker]. To stay up-to-date with the latest news and announcements in the Spring ecosystem, subscribe to the Spring Community https://spring.io[Portal]. Finally, you can follow the Spring https://spring.io/blog[blog] or the project team on Twitter (https://twitter.com/SpringData[SpringData]).
+For information on the Spring Data LDAP source code repository, nightly builds, and snapshot artifacts, see the https://projects.spring.io/spring-data-ldap/[Spring Data LDAP homepage]. You can help make Spring Data best serve the needs of the Spring community by interacting with developers through the community on https://stackoverflow.com/questions/tagged/spring-data[Stackoverflow]. To follow developer activity, look for the mailing list information on the Spring Data LDAP homepage. If you encounter a bug or want to suggest an improvement, please create a ticket on the Spring Data issue https://github.com/spring-projects/spring-data-ldap/issues[tracker]. To stay up-to-date with the latest news and announcements in the Spring ecosystem, subscribe to the Spring Community https://spring.io[Portal]. Finally, you can follow the Spring https://spring.io/blog[blog] or the project team on Twitter (https://twitter.com/SpringData[SpringData]).
 
 [[get-started:project-metadata]]
 === Project Metadata
 
 * Version Control: https://github.com/spring-projects/spring-data-ldap
-* Bugtracker: https://jira.spring.io/browse/DATALDAP
+* Bugtracker: https://github.com/spring-projects/spring-data-ldap/issues
 * Release repository: https://repo.spring.io/libs-release
 * Milestone repository: https://repo.spring.io/libs-milestone
 * Snapshot repository: https://repo.spring.io/libs-snapshot
