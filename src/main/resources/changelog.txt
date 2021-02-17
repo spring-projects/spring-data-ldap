@@ -1,6 +1,11 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.4.4 (2021-02-17)
+-------------------------------------
+* #241 - Include Bintray plugin repository.
+
+
 Changes in version 2.3.7.RELEASE (2021-02-17)
 ---------------------------------------------
 * DATALDAP-184 - Update CI jobs with Docker Login.
@@ -689,6 +694,7 @@ Changes in version 1.0.0.M1 (2016-11-11)
 ----------------------------------------
 * Introducing generic repository implementation for LDAP
 * Automatic implementation of interface query method names on repositories.
+
 
 
 
