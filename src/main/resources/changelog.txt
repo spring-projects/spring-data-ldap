@@ -1,6 +1,10 @@
 Spring Data LDAP Changelog
 ==========================
 
+Changes in version 2.5.0-M5 (2021-03-17)
+----------------------------------------
+
+
 Changes in version 2.4.6 (2021-03-17)
 -------------------------------------
 
@@ -716,6 +720,7 @@ Changes in version 1.0.0.M1 (2016-11-11)
 ----------------------------------------
 * Introducing generic repository implementation for LDAP
 * Automatic implementation of interface query method names on repositories.
+
 
 
 
