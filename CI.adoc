@@ -1,6 +1,6 @@
 = Continuous Integration
 
-image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2Fmaster&subject=Moore%20(master)[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/]
+image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2Fmain&subject=Moore%20(main)[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/]
 image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2F2.1.x&subject=Lovelace%20(2.1.x)[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/]
 image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2F1.0.x&subject=Ingalls%20(1.0.x)[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/]
 

@@ -1,7 +1,7 @@
 image:https://spring.io/badges/spring-data-ldap/ga.svg[Spring Data LDAP,link=https://projects.spring.io/spring-data-ldap#quick-start]
 image:https://spring.io/badges/spring-data-ldap/snapshot.svg[Spring Data LDAP,link=https://projects.spring.io/spring-data-ldap#quick-start]
 
-= Spring Data LDAP image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2Fmaster&subject=Build[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/] https://gitter.im/spring-projects/spring-data[image:https://badges.gitter.im/spring-projects/spring-data.svg[Gitter]]
+= Spring Data LDAP image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2Fmain&subject=Build[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/] https://gitter.im/spring-projects/spring-data[image:https://badges.gitter.im/spring-projects/spring-data.svg[Gitter]]
 
 The primary goal of the https://projects.spring.io/spring-data[Spring Data] project is to make it easier to build Spring-powered applications that use new data access technologies such as non-relational databases, map-reduce frameworks, and cloud based data services.
 
