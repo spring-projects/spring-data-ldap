@@ -20,9 +20,13 @@ import static org.springframework.data.querydsl.QuerydslUtils.*;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+import org.springframework.data.ldap.core.mapping.LdapMappingContext;
 import org.springframework.data.ldap.repository.query.AnnotatedLdapRepositoryQuery;
 import org.springframework.data.ldap.repository.query.LdapQueryMethod;
 import org.springframework.data.ldap.repository.query.PartTreeLdapRepositoryQuery;
+import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.core.EntityInformation;
@@ -50,6 +54,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 
 	private final LdapQueryLookupStrategy queryLookupStrategy;
 	private final LdapOperations ldapOperations;
+	private final MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext;
 
 	/**
 	 * Creates a new {@link LdapRepositoryFactory}.
@@ -62,6 +67,24 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 
 		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations);
 		this.ldapOperations = ldapOperations;
+		this.mappingContext = new LdapMappingContext();
+	}
+
+	/**
+	 * Creates a new {@link LdapRepositoryFactory}.
+	 *
+	 * @param ldapOperations must not be {@literal null}.
+	 * @param mappingContext must not be {@literal null}.
+	 */
+	LdapRepositoryFactory(LdapOperations ldapOperations,
+			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext) {
+
+		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+		Assert.notNull(mappingContext, "LdapMappingContext must not be null!");
+
+		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations);
+		this.ldapOperations = ldapOperations;
+		this.mappingContext = mappingContext;
 	}
 
 	/* (non-Javadoc)
@@ -92,7 +115,8 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 */
 	@Override
 	protected Object getTargetRepository(RepositoryInformation information) {
-		return getTargetRepositoryViaReflection(information, ldapOperations, ldapOperations.getObjectDirectoryMapper(),
+		return getTargetRepositoryViaReflection(information, ldapOperations, mappingContext,
+				ldapOperations.getObjectDirectoryMapper(),
 				information.getDomainType());
 	}
 

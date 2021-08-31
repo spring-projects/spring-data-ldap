@@ -27,6 +27,9 @@ import javax.naming.Name;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.ldap.repository.LdapRepository;
+import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.util.Optionals;
 import org.springframework.lang.Nullable;
 import org.springframework.ldap.NameNotFoundException;
@@ -62,6 +65,27 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	public SimpleLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> entityType) {
 
 		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+		Assert.notNull(odm, "ObjectDirectoryMapper must not be null!");
+		Assert.notNull(entityType, "Entity type must not be null!");
+
+		this.ldapOperations = ldapOperations;
+		this.odm = odm;
+		this.entityType = entityType;
+	}
+
+	/**
+	 * Creates a new {@link SimpleLdapRepository}.
+	 *
+	 * @param ldapOperations must not be {@literal null}.
+	 * @param odm must not be {@literal null}.
+	 * @param entityType must not be {@literal null}.
+	 */
+	SimpleLdapRepository(LdapOperations ldapOperations,
+			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> context,
+			ObjectDirectoryMapper odm, Class<T> entityType) {
+
+		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+		Assert.notNull(context, "MappingContext must not be null!");
 		Assert.notNull(odm, "ObjectDirectoryMapper must not be null!");
 		Assert.notNull(entityType, "Entity type must not be null!");
 

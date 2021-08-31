@@ -18,6 +18,8 @@ package org.springframework.data.ldap.repository.support;
 import javax.naming.Name;
 
 import org.springframework.data.ldap.core.mapping.LdapMappingContext;
+import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
@@ -39,6 +41,7 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 
 	private @Nullable LdapOperations ldapOperations;
 	private boolean mappingContextConfigured = false;
+	private @Nullable MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext;
 
 	/**
 	 * Creates a new {@link LdapRepositoryFactoryBean} for the given repository interface.
@@ -64,6 +67,7 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 	public void setMappingContext(MappingContext<?, ?> mappingContext) {
 
 		super.setMappingContext(mappingContext);
+		this.mappingContext = mappingContext;
 		this.mappingContextConfigured = true;
 	}
 
@@ -76,7 +80,8 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 
 		Assert.state(ldapOperations != null, "LdapOperations must be set");
 
-		return new LdapRepositoryFactory(ldapOperations);
+		return mappingContext != null ? new LdapRepositoryFactory(ldapOperations, mappingContext)
+				: new LdapRepositoryFactory(ldapOperations);
 	}
 
 	/*

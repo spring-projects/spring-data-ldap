@@ -16,6 +16,10 @@
 
 package org.springframework.data.ldap.repository.support;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 import javax.naming.Name;
@@ -30,6 +34,8 @@ import org.springframework.ldap.odm.annotations.Transient;
  * @author Mattias Hellborg Arthursson
  */
 @Entry(objectClasses = {"inetOrgPerson", "organizationalPerson", "person", "top"})
+@AllArgsConstructor
+@NoArgsConstructor
 public class UnitTestPerson {
     @Id
     private Name dn;
