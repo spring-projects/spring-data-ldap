@@ -30,7 +30,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -46,6 +45,7 @@ import org.springframework.data.projection.ProjectionInformation;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.FluentQuery;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
@@ -139,29 +139,40 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 	 */
 	@Override
 	public long count(Predicate predicate) {
-		return findAll(predicate).size();
+		return findBy(predicate, FluentQuery.FetchableFluentQuery::count);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#exists(com.querydsl.core.types.Predicate)
 	 */
 	public boolean exists(Predicate predicate) {
-		return count(predicate) > 0;
+		return findBy(predicate, FluentQuery.FetchableFluentQuery::exists);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate, org.springframework.data.domain.Sort)
 	 */
 	public Iterable<T> findAll(Predicate predicate, Sort sort) {
-		throw new UnsupportedOperationException();
-	}
 
+		Assert.notNull(sort, "Pageable must not be null!");
+
+		if (sort.isUnsorted()) {
+			return findAll(predicate);
+		}
+
+		throw new UnsupportedOperationException("Sorting is not supported");
+	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.OrderSpecifier[])
 	 */
 	public Iterable<T> findAll(OrderSpecifier<?>... orders) {
-		throw new UnsupportedOperationException();
+
+		if (orders.length == 0) {
+			return findAll();
+		}
+
+		throw new UnsupportedOperationException("Sorting is not supported");
 	}
 
 	/* (non-Javadoc)
@@ -169,7 +180,12 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 	 */
 	@Override
 	public Iterable<T> findAll(Predicate predicate, OrderSpecifier<?>... orders) {
-		throw new UnsupportedOperationException();
+
+		if (orders.length == 0) {
+			return findAll(predicate);
+		}
+
+		throw new UnsupportedOperationException("Sorting is not supported");
 	}
 
 	/* (non-Javadoc)
@@ -177,7 +193,20 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 	 */
 	@Override
 	public Page<T> findAll(Predicate predicate, Pageable pageable) {
-		throw new UnsupportedOperationException();
+
+		Assert.notNull(pageable, "Pageable must not be null!");
+
+		if (pageable.isUnpaged()) {
+			return PageableExecutionUtils.getPage(findAll(predicate), pageable, () -> count(predicate));
+		}
+
+		if (pageable.getSort().isUnsorted() && pageable.getPageNumber() == 0) {
+
+			return PageableExecutionUtils.getPage(queryFor(predicate, q -> q.countLimit(pageable.getPageSize())).list(),
+					pageable, () -> count(predicate));
+		}
+
+		throw new UnsupportedOperationException("Pagination and Sorting is not supported");
 	}
 
 	/*
@@ -189,7 +218,6 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 	public <S extends T, R> R findBy(Predicate predicate,
 			Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 
-		Assert.notNull(predicate, "Predicate must not be null!");
 		Assert.notNull(queryFunction, "Query function must not be null!");
 
 		return queryFunction.apply(new FluentQuerydsl<>(predicate, (Class<S>) entityType));
@@ -202,6 +230,9 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 	}
 
 	private QuerydslLdapQuery<T> queryFor(Predicate predicate, Consumer<LdapQueryBuilder> queryBuilderConsumer) {
+
+		Assert.notNull(predicate, "Predicate must not be null!");
+
 		return new QuerydslLdapQuery<>(ldapOperations, entityType, queryBuilderConsumer).where(predicate);
 	}
 
@@ -281,7 +312,7 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 			}
 
 			T one = results.get(0);
-			return getConversionFunction(entityType, resultType).apply(one);
+			return getConversionFunction().apply(one);
 		}
 
 		/*
@@ -299,8 +330,9 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 			}
 
 			T one = results.get(0);
-			return getConversionFunction(entityType, resultType).apply(one);
+			return getConversionFunction().apply(one);
 		}
+
 
 		/*
 		 * (non-Javadoc)
@@ -319,7 +351,21 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 		public Page<R> page(Pageable pageable) {
 
 			Assert.notNull(pageable, "Pageable must not be null!");
-			throw new UnsupportedOperationException();
+
+			if (pageable.isUnpaged()) {
+				return PageableExecutionUtils.getPage(all(), pageable, this::count);
+			}
+
+			if (pageable.getSort().isUnsorted() && pageable.getPageNumber() == 0) {
+
+				Function<Object, R> conversionFunction = getConversionFunction();
+
+				return PageableExecutionUtils.getPage(
+						findTop(pageable.getPageSize()).stream().map(conversionFunction).collect(Collectors.toList()), pageable,
+						this::count);
+			}
+
+			throw new UnsupportedOperationException("Pagination and Sorting is not supported");
 		}
 
 		/*
@@ -329,7 +375,7 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 		@Override
 		public Stream<R> stream() {
 
-			Function<Object, R> conversionFunction = getConversionFunction(entityType, resultType);
+			Function<Object, R> conversionFunction = getConversionFunction();
 
 			return search(null, QuerydslLdapQuery::list).stream().map(conversionFunction);
 		}
@@ -390,6 +436,10 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 			return o -> (P) converter.convert(o);
 		}
 
+		private Function<Object, R> getConversionFunction() {
+			return getConversionFunction(entityType, resultType);
+		}
+
 		private List<String> getProjection() {
 
 			if (projection.isEmpty()) {
@@ -410,5 +460,7 @@ public class QuerydslLdapRepository<T> extends SimpleLdapRepository<T>
 
 			return projection;
 		}
+
 	}
+
 }

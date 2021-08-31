@@ -35,6 +35,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.LdapOperations;
@@ -167,6 +170,43 @@ class QuerydslLdapRepositoryUnitTests {
 	}
 
 	@Test // GH-269
+	void findByShouldReturnFirstPage() {
+
+		when(ldapOperations.find(any(LdapQuery.class), eq(UnitTestPerson.class)))
+				.thenReturn(Collections.singletonList(walter));
+		when(ldapOperations.search(any(LdapQuery.class), any(ContextMapper.class))).thenReturn(Arrays.asList(true, true));
+
+		Page<PersonProjection> page = repository.findBy(QPerson.person.fullName.eq("Walter"),
+				it -> it.as(PersonProjection.class).page(PageRequest.of(0, 1, Sort.unsorted())));
+		assertThat(page.getContent().get(0).getLastName()).isEqualTo("White");
+		assertThat(page.getTotalPages()).isEqualTo(2);
+
+		ArgumentCaptor<LdapQuery> captor = ArgumentCaptor.forClass(LdapQuery.class);
+
+		verify(ldapOperations).find(captor.capture(), any());
+
+		LdapQuery query = captor.getValue();
+
+		assertThat(query.countLimit()).isEqualTo(1);
+	}
+
+	@Test // GH-269
+	void shouldRejectNextPage() {
+
+		assertThatExceptionOfType(UnsupportedOperationException.class)
+				.isThrownBy(() -> repository.findBy(QPerson.person.fullName.eq("Walter"),
+						it -> it.as(PersonProjection.class).page(PageRequest.of(1, 1, Sort.unsorted()))));
+	}
+
+	@Test // GH-269
+	void shouldRejectSortedPage() {
+
+		assertThatExceptionOfType(UnsupportedOperationException.class)
+				.isThrownBy(() -> repository.findBy(QPerson.person.fullName.eq("Walter"),
+						it -> it.as(PersonProjection.class).page(PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "foo")))));
+	}
+
+	@Test // GH-269
 	void findByShouldReturnStream() {
 
 		when(ldapOperations.find(any(LdapQuery.class), eq(UnitTestPerson.class))).thenReturn(Arrays.asList(walter, hank));
@@ -191,7 +231,7 @@ class QuerydslLdapRepositoryUnitTests {
 	@Test // GH-269
 	void findByShouldReturnCount() {
 
-		when(ldapOperations.find(any(LdapQuery.class), eq(UnitTestPerson.class))).thenReturn(Arrays.asList(walter, hank));
+		when(ldapOperations.search(any(LdapQuery.class), any(ContextMapper.class))).thenReturn(Arrays.asList(true, true));
 
 		long count = repository.findBy(QPerson.person.fullName.eq("Walter"), FluentQuery.FetchableFluentQuery::count);
 

@@ -17,6 +17,7 @@ package org.springframework.data.ldap.repository.support;
 
 import static org.springframework.data.querydsl.QuerydslUtils.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
@@ -115,7 +116,15 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 */
 	@Override
 	protected Object getTargetRepository(RepositoryInformation information) {
-		return getTargetRepositoryViaReflection(information, ldapOperations, mappingContext,
+
+		boolean acceptsMappingContext = acceptsMappingContext(information);
+
+		if (acceptsMappingContext) {
+			return getTargetRepositoryViaReflection(information, ldapOperations, mappingContext,
+					ldapOperations.getObjectDirectoryMapper(), information.getDomainType());
+		}
+
+		return getTargetRepositoryViaReflection(information, ldapOperations,
 				ldapOperations.getObjectDirectoryMapper(),
 				information.getDomainType());
 	}
@@ -130,9 +139,35 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		return Optional.of(queryLookupStrategy);
 	}
 
+	/**
+	 * Allow creation of repository base classes that do not accept a {@link LdapMappingContext} that was introduced with
+	 * version 2.6.
+	 *
+	 * @param information
+	 * @return
+	 */
+	private static boolean acceptsMappingContext(RepositoryInformation information) {
+
+		Class<?> repositoryBaseClass = information.getRepositoryBaseClass();
+
+		Constructor<?>[] declaredConstructors = repositoryBaseClass.getDeclaredConstructors();
+
+		boolean acceptsMappingContext = false;
+
+		for (Constructor<?> declaredConstructor : declaredConstructors) {
+			Class<?>[] parameterTypes = declaredConstructor.getParameterTypes();
+
+			if (parameterTypes.length == 4 && parameterTypes[1].isAssignableFrom(LdapMappingContext.class)) {
+				acceptsMappingContext = true;
+			}
+		}
+
+		return acceptsMappingContext;
+	}
+
 	private static final class LdapQueryLookupStrategy implements QueryLookupStrategy {
 
-		private LdapOperations ldapOperations;
+		private final LdapOperations ldapOperations;
 
 		/**
 		 * @param ldapOperations must not be {@literal null}.
