@@ -224,6 +224,7 @@ The following table provides samples of the keywords that you can use with query
 
 |===
 
+include::../{spring-data-commons-docs}/repository-projections.adoc[leveloffset=+2]
 
 === QueryDSL Support
 Basic QueryDSL support is included in Spring LDAP. This support includes the following:

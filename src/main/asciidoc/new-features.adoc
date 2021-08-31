@@ -1,6 +1,11 @@
 [[new-features]]
 = New and Noteworthy
 
+[[new-features.2.6]]
+== What's New in Spring Data LDAP 2.6
+* <<repositories.query-streaming,Repository query methods returning a `Stream`>> from the underlying result `List`.
+* <<projections,Interface and DTO projections returned by query methods>>.
+
 [[new-features.2.1]]
 == What's New in Spring Data LDAP 2.1
 * CDI extension to create LDAP repositories within a CDI container.

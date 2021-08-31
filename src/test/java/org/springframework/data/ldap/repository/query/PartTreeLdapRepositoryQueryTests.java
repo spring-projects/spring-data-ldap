@@ -22,8 +22,10 @@ import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.ldap.core.mapping.LdapMappingContext;
 import org.springframework.data.ldap.repository.support.BaseUnitTestPerson;
 import org.springframework.data.ldap.repository.support.UnitTestPerson;
+import org.springframework.data.mapping.model.EntityInstantiators;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.repository.core.support.DefaultRepositoryMetadata;
@@ -135,9 +137,10 @@ class PartTreeLdapRepositoryQueryTests {
 			Object... expectedParams) {
 
 		LdapQueryMethod queryMethod = new LdapQueryMethod(targetMethod, repositoryMetadata, factory);
-		PartTreeLdapRepositoryQuery tested = new PartTreeLdapRepositoryQuery(queryMethod, entityClass, ldapTemplate);
+		PartTreeLdapRepositoryQuery tested = new PartTreeLdapRepositoryQuery(queryMethod, entityClass, ldapTemplate,
+				new LdapMappingContext(), new EntityInstantiators());
 
-		LdapQuery query = tested.createQuery(expectedParams);
+		LdapQuery query = tested.createQuery(new LdapParametersParameterAccessor(queryMethod, expectedParams));
 		String base = query.base().toString();
 		assertThat(base).isEqualTo(expectedBase);
 		assertThat(query.filter().encode()).isEqualTo(expectedFilter);

@@ -18,12 +18,11 @@ package org.springframework.data.ldap.repository.query;
 import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.PropertyPath;
-import org.springframework.data.repository.query.Parameters;
-import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
@@ -45,26 +44,28 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 
 	private final Class<?> entityType;
 	private final ObjectDirectoryMapper mapper;
+	private final List<String> inputProperties;
 
 	/**
 	 * Constructs a new {@link LdapQueryCreator}.
 	 *
 	 * @param tree must not be {@literal null}.
-	 * @param parameters must not be {@literal null}.
 	 * @param entityType must not be {@literal null}.
 	 * @param mapper must not be {@literal null}.
 	 * @param values must not be {@literal null}.
+	 * @param inputProperties must not be {@literal null}.
 	 */
-	LdapQueryCreator(PartTree tree, Parameters<?, ?> parameters, Class<?> entityType, ObjectDirectoryMapper mapper,
-			Object[] values) {
+	LdapQueryCreator(PartTree tree, Class<?> entityType, ObjectDirectoryMapper mapper,
+			LdapParameterAccessor parameterAccessor, List<String> inputProperties) {
 
-		super(tree, new ParametersParameterAccessor(parameters, values));
+		super(tree, parameterAccessor);
 
 		Assert.notNull(entityType, "Entity type must not be null!");
 		Assert.notNull(mapper, "ObjectDirectoryMapper must not be null!");
 
 		this.entityType = entityType;
 		this.mapper = mapper;
+		this.inputProperties = inputProperties;
 	}
 
 	/* (non-Javadoc)
@@ -79,6 +80,10 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 
 		if (entry != null) {
 			query = query.base(entry.base());
+		}
+
+		if (!inputProperties.isEmpty()) {
+			query.attributes(inputProperties.toArray(new String[0]));
 		}
 
 		ConditionCriteria criteria = query.where(getAttribute(part));

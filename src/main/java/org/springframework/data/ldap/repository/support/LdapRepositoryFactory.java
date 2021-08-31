@@ -28,6 +28,7 @@ import org.springframework.data.ldap.repository.query.PartTreeLdapRepositoryQuer
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.context.MappingContext;
+import org.springframework.data.mapping.model.EntityInstantiators;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.core.EntityInformation;
@@ -56,6 +57,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	private final LdapQueryLookupStrategy queryLookupStrategy;
 	private final LdapOperations ldapOperations;
 	private final MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext;
+	private final EntityInstantiators instantiators = new EntityInstantiators();
 
 	/**
 	 * Creates a new {@link LdapRepositoryFactory}.
@@ -66,9 +68,9 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 
 		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
 
-		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations);
 		this.ldapOperations = ldapOperations;
 		this.mappingContext = new LdapMappingContext();
+		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext);
 	}
 
 	/**
@@ -83,7 +85,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
 		Assert.notNull(mappingContext, "LdapMappingContext must not be null!");
 
-		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations);
+		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext);
 		this.ldapOperations = ldapOperations;
 		this.mappingContext = mappingContext;
 	}
@@ -168,12 +170,15 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	private static final class LdapQueryLookupStrategy implements QueryLookupStrategy {
 
 		private final LdapOperations ldapOperations;
+		private final EntityInstantiators instantiators;
+		private final MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext;
 
-		/**
-		 * @param ldapOperations must not be {@literal null}.
-		 */
-		LdapQueryLookupStrategy(LdapOperations ldapOperations) {
+		public LdapQueryLookupStrategy(LdapOperations ldapOperations, EntityInstantiators instantiators,
+				MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext) {
+
 			this.ldapOperations = ldapOperations;
+			this.instantiators = instantiators;
+			this.mappingContext = mappingContext;
 		}
 
 		@Override
@@ -184,9 +189,9 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 			Class<?> domainType = metadata.getDomainType();
 
 			if (queryMethod.hasQueryAnnotation()) {
-				return new AnnotatedLdapRepositoryQuery(queryMethod, domainType, ldapOperations);
+				return new AnnotatedLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators);
 			} else {
-				return new PartTreeLdapRepositoryQuery(queryMethod, domainType, ldapOperations);
+				return new PartTreeLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators);
 			}
 		}
 	}

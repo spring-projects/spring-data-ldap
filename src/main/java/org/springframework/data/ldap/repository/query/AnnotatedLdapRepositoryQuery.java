@@ -18,6 +18,10 @@ package org.springframework.data.ldap.repository.query;
 import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
 import org.springframework.data.ldap.repository.Query;
+import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.context.MappingContext;
+import org.springframework.data.mapping.model.EntityInstantiators;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.util.Assert;
@@ -38,10 +42,14 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	 * @param queryMethod the QueryMethod.
 	 * @param entityType the managed class.
 	 * @param ldapOperations the LdapOperations instance to use.
+	 * @param mappingContext must not be {@literal null}.
+	 * @param instantiators must not be {@literal null}.
 	 */
-	public AnnotatedLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations) {
+	public AnnotatedLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations,
+			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
+			EntityInstantiators instantiators) {
 
-		super(queryMethod, entityType, ldapOperations);
+		super(queryMethod, entityType, ldapOperations, mappingContext, instantiators);
 
 		Assert.notNull(queryMethod.getQueryAnnotation(), "Annotation must be present");
 		Assert.hasLength(queryMethod.getQueryAnnotation().value(), "Query filter must be specified");
@@ -50,15 +58,15 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.ldap.repository.query.AbstractLdapRepositoryQuery#createQuery(java.lang.Object[])
+	 * @see org.springframework.data.ldap.repository.query.AbstractLdapRepositoryQuery#createQuery(org.springframework.data.ldap.repository.query.LdapParameterAccessor)
 	 */
 	@Override
-	protected LdapQuery createQuery(Object[] parameters) {
+	protected LdapQuery createQuery(LdapParameterAccessor parameters) {
 
 		return query().base(queryAnnotation.base()) //
 				.searchScope(queryAnnotation.searchScope()) //
 				.countLimit(queryAnnotation.countLimit()) //
 				.timeLimit(queryAnnotation.timeLimit()) //
-				.filter(queryAnnotation.value(), parameters);
+				.filter(queryAnnotation.value(), parameters.getBindableParameterValues());
 	}
 }

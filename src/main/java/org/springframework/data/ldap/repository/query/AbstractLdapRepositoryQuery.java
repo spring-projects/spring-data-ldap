@@ -15,10 +15,17 @@
  */
 package org.springframework.data.ldap.repository.query;
 
-import org.springframework.dao.EmptyResultDataAccessException;
+import static org.springframework.data.ldap.repository.query.LdapQueryExecution.*;
+
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.ldap.repository.Query;
+import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.context.MappingContext;
+import org.springframework.data.mapping.model.EntityInstantiators;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.data.repository.query.ResultProcessor;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.util.Assert;
@@ -34,6 +41,8 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 	private final LdapQueryMethod queryMethod;
 	private final Class<?> entityType;
 	private final LdapOperations ldapOperations;
+	private final MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext;
+	private final EntityInstantiators instantiators;
 
 	/**
 	 * Creates a new {@link AbstractLdapRepositoryQuery} instance given {@link LdapQuery}, {@link Class} and
@@ -42,8 +51,12 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 	 * @param queryMethod must not be {@literal null}.
 	 * @param entityType must not be {@literal null}.
 	 * @param ldapOperations must not be {@literal null}.
+	 * @param mappingContext must not be {@literal null}.
+	 * @param instantiators must not be {@literal null}.
 	 */
-	public AbstractLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations) {
+	public AbstractLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations,
+			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
+			EntityInstantiators instantiators) {
 
 		Assert.notNull(queryMethod, "LdapQueryMethod must not be null!");
 		Assert.notNull(entityType, "Entity type must not be null!");
@@ -52,6 +65,8 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 		this.queryMethod = queryMethod;
 		this.entityType = entityType;
 		this.ldapOperations = ldapOperations;
+		this.mappingContext = mappingContext;
+		this.instantiators = instantiators;
 	}
 
 	/* (non-Javadoc)
@@ -61,16 +76,28 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 	@SuppressWarnings("ConstantConditions")
 	public final Object execute(Object[] parameters) {
 
-		LdapQuery query = createQuery(parameters);
+		LdapParametersParameterAccessor parameterAccessor = new LdapParametersParameterAccessor(queryMethod, parameters);
+		LdapQuery query = createQuery(parameterAccessor);
+
+		ResultProcessor processor = queryMethod.getResultProcessor().withDynamicProjection(parameterAccessor);
+		Class<?> typeToRead = processor.getReturnedType().getDomainType();
+
+		ResultProcessingConverter converter = new ResultProcessingConverter(processor, mappingContext, instantiators);
+		ResultProcessingExecution execution = new ResultProcessingExecution(
+				getLdapQueryExecutionToWrap(typeToRead, converter), converter);
+
+		return execution.execute(query);
+	}
+
+	private LdapQueryExecution getLdapQueryExecutionToWrap(Class<?> typeToRead,
+			Converter<Object, Object> resultProcessing) {
 
 		if (queryMethod.isCollectionQuery()) {
-			return ldapOperations.find(query, entityType);
+			return new CollectionExecution(ldapOperations, typeToRead);
+		} else if (queryMethod.isStreamQuery()) {
+			return new StreamExecution(ldapOperations, typeToRead, resultProcessing);
 		} else {
-			try {
-				return ldapOperations.findOne(query, entityType);
-			} catch (EmptyResultDataAccessException e) {
-				return null;
-			}
+			return new FindOneExecution(ldapOperations, typeToRead);
 		}
 	}
 
@@ -80,7 +107,7 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 	 * @param parameters must not be {@literal null}.
 	 * @return
 	 */
-	protected abstract LdapQuery createQuery(Object[] parameters);
+	protected abstract LdapQuery createQuery(LdapParameterAccessor parameters);
 
 	/**
 	 * @return
