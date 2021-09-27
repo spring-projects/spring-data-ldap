@@ -17,8 +17,6 @@ package org.springframework.data.ldap.repository.support;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import javax.annotation.Generated;
-
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.EntityPathBase;
@@ -29,7 +27,6 @@ import com.querydsl.core.types.dsl.StringPath;
 /**
  * QPerson is a Querydsl query type for Person
  */
-@Generated("com.mysema.query.codegen.EntitySerializer")
 public class QPerson extends EntityPathBase<UnitTestPerson> {
 
 	private static final long serialVersionUID = -1526737794;

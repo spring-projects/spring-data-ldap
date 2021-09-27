@@ -17,8 +17,8 @@ package org.springframework.data.ldap.repository.cdi;
 
 import static org.mockito.Mockito.*;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;

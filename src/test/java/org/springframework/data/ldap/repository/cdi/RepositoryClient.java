@@ -15,9 +15,8 @@
  */
 package org.springframework.data.ldap.repository.cdi;
 
+import jakarta.inject.Inject;
 import lombok.Getter;
-
-import javax.inject.Inject;
 
 import org.springframework.ldap.core.LdapTemplate;
 
