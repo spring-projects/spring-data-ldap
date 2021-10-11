@@ -20,7 +20,7 @@ import javax.naming.Name;
 
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 import org.springframework.lang.Nullable;
-import org.springframework.ldap.odm.core.impl.DefaultObjectDirectoryMapper;
+import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 
 /**
  * ODM-based {@link org.springframework.data.repository.core.EntityInformation} for LDAP entities.
@@ -32,16 +32,17 @@ import org.springframework.ldap.odm.core.impl.DefaultObjectDirectoryMapper;
  */
 class LdapEntityInformation<T> extends AbstractEntityInformation<T, Name> {
 
-	private final DefaultObjectDirectoryMapper MAPPER = new DefaultObjectDirectoryMapper();
+	private final ObjectDirectoryMapper odm;
 
-	public LdapEntityInformation(Class<T> domainClass) {
+	public LdapEntityInformation(Class<T> domainClass, ObjectDirectoryMapper odm) {
 		super(domainClass);
+		this.odm = odm;
 	}
 
 	@Nullable
 	@Override
 	public Name getId(T entity) {
-		return MAPPER.getId(entity);
+		return odm.getId(entity);
 	}
 
 	@Override

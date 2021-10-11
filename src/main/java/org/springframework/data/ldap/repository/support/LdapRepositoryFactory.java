@@ -16,11 +16,13 @@
 package org.springframework.data.ldap.repository.support;
 
 import static org.springframework.data.querydsl.QuerydslUtils.*;
+import static org.springframework.data.repository.core.support.RepositoryComposition.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.ldap.core.mapping.LdapMappingContext;
 import org.springframework.data.ldap.repository.query.AnnotatedLdapRepositoryQuery;
 import org.springframework.data.ldap.repository.query.LdapQueryMethod;
@@ -94,9 +96,9 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getEntityInformation(java.lang.Class)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T, ID> EntityInformation<T, ID> getEntityInformation(Class<T> domainClass) {
-		return new LdapEntityInformation(domainClass);
+		return new LdapEntityInformation(domainClass, ldapOperations.getObjectDirectoryMapper());
 	}
 
 	/*
@@ -105,11 +107,46 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 */
 	@Override
 	protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
+		return SimpleLdapRepository.class;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getRepositoryFragments(org.springframework.data.repository.core.RepositoryMetadata)
+	 */
+	@Override
+	protected RepositoryFragments getRepositoryFragments(RepositoryMetadata metadata) {
+		return getRepositoryFragments(metadata, this.ldapOperations);
+	}
+
+	/**
+	 * Creates {@link RepositoryFragments} based on {@link RepositoryMetadata} to add LDAP-specific extensions. Typically,
+	 * adds a {@link QuerydslLdapPredicateExecutor} if the repository interface uses Querydsl.
+	 * <p>
+	 * Can be overridden by subclasses to customize {@link RepositoryFragments}.
+	 *
+	 * @param metadata repository metadata.
+	 * @param operations the LDAP operations manager.
+	 * @return
+	 * @since 2.6
+	 */
+	protected RepositoryFragments getRepositoryFragments(RepositoryMetadata metadata, LdapOperations operations) {
 
 		boolean isQueryDslRepository = QUERY_DSL_PRESENT
 				&& QuerydslPredicateExecutor.class.isAssignableFrom(metadata.getRepositoryInterface());
 
-		return isQueryDslRepository ? QuerydslLdapRepository.class : SimpleLdapRepository.class;
+		if (isQueryDslRepository) {
+
+			if (metadata.isReactiveRepository()) {
+				throw new InvalidDataAccessApiUsageException(
+						"Cannot combine Querydsl and reactive repository support in a single interface");
+			}
+
+			return RepositoryFragments.just(new QuerydslLdapPredicateExecutor<>(
+					getEntityInformation(metadata.getDomainType()), getProjectionFactory(), operations, mappingContext));
+		}
+
+		return RepositoryFragments.empty();
 	}
 
 	/*

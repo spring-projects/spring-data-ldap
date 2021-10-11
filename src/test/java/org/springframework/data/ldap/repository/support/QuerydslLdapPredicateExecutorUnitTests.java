@@ -38,6 +38,8 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.ldap.core.mapping.LdapMappingContext;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.LdapOperations;
@@ -45,24 +47,24 @@ import org.springframework.ldap.odm.core.impl.DefaultObjectDirectoryMapper;
 import org.springframework.ldap.query.LdapQuery;
 
 /**
- * Unit tests for {@link QuerydslLdapRepository}.
+ * Unit tests for {@link QuerydslLdapPredicateExecutor}.
  *
  * @author Mark Paluch
  */
 @MockitoSettings
-class QuerydslLdapRepositoryUnitTests {
+class QuerydslLdapPredicateExecutorUnitTests {
 
 	@Mock LdapOperations ldapOperations;
 
 	UnitTestPerson walter, hank;
 
-	QuerydslLdapRepository<UnitTestPerson> repository;
+	QuerydslLdapPredicateExecutor<UnitTestPerson> repository;
 
 	@BeforeEach
 	void before() throws Exception {
 		when(ldapOperations.getObjectDirectoryMapper()).thenReturn(new DefaultObjectDirectoryMapper());
-		repository = new QuerydslLdapRepository<>(ldapOperations, ldapOperations.getObjectDirectoryMapper(),
-				UnitTestPerson.class);
+		repository = new QuerydslLdapPredicateExecutor<>(UnitTestPerson.class, new SpelAwareProxyProjectionFactory(),
+				ldapOperations, new LdapMappingContext());
 
 		walter = new UnitTestPerson(new LdapName("cn=walter"), "Walter", "White", Collections.emptyList(), "US",
 				"Heisenberg", "000");
