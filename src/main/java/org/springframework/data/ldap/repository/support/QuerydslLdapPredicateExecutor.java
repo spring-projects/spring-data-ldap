@@ -67,7 +67,7 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 	/**
 	 * Creates a new {@link QuerydslLdapPredicateExecutor}.
 	 *
-	 * @param entityInformation must not be {@literal null}.
+	 * @param entityType must not be {@literal null}.
 	 * @param projectionFactory must not be {@literal null}.
 	 * @param ldapOperations must not be {@literal null}.
 	 * @param mappingContext must not be {@literal null}.
