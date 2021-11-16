@@ -31,8 +31,9 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.ProcessBean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.data.repository.cdi.CdiRepositoryBean;
 import org.springframework.data.repository.cdi.CdiRepositoryExtensionSupport;
 import org.springframework.ldap.core.LdapOperations;
@@ -45,7 +46,7 @@ import org.springframework.ldap.core.LdapOperations;
  */
 public class LdapRepositoryExtension extends CdiRepositoryExtensionSupport {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LdapRepositoryExtension.class);
+	private static final Log LOG = LogFactory.getLog(LdapRepositoryExtension.class);
 
 	private final Map<Set<Annotation>, Bean<LdapOperations>> ldapOperations = new HashMap<>();
 
