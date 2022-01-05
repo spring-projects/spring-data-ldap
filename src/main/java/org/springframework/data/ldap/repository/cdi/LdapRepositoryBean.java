@@ -58,10 +58,6 @@ public class LdapRepositoryBean<T> extends CdiRepositoryBean<T> {
 		this.operations = operations;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.cdi.CdiRepositoryBean#create(jakarta.enterprise.context.spi.CreationalContext, java.lang.Class)
-	 */
 	@Override
 	protected T create(CreationalContext<T> creationalContext, Class<T> repositoryType) {
 
@@ -70,10 +66,6 @@ public class LdapRepositoryBean<T> extends CdiRepositoryBean<T> {
 		return create(() -> new LdapRepositoryFactory(ldapOperations), repositoryType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.cdi.CdiRepositoryBean#getScope()
-	 */
 	@Override
 	public Class<? extends Annotation> getScope() {
 		return operations.getScope();

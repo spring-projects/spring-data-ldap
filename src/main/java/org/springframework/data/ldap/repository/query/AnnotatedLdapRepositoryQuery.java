@@ -57,9 +57,6 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 		queryAnnotation = queryMethod.getRequiredQueryAnnotation();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.ldap.repository.query.AbstractLdapRepositoryQuery#createQuery(org.springframework.data.ldap.repository.query.LdapParameterAccessor)
-	 */
 	@Override
 	protected LdapQuery createQuery(LdapParameterAccessor parameters) {
 

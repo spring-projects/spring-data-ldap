@@ -46,17 +46,11 @@ public class LdapPersistentProperty extends AnnotationBasedPersistentProperty<Ld
 		super(property, owner, simpleTypeHolder);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.mapping.model.AbstractPersistentProperty#createAssociation()
-	 */
 	@Override
 	protected Association<LdapPersistentProperty> createAssociation() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.mapping.model.AnnotationBasedPersistentProperty#isIdProperty()
-	 */
 	@Override
 	public boolean isIdProperty() {
 		return isId.get();

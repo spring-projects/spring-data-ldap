@@ -48,53 +48,30 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 	private static final String ATT_LDAP_TEMPLATE_REF = "ldap-template-ref";
 	private static final String MAPPING_CONTEXT_BEAN_NAME = "ldapMappingContext";
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#getModuleName()
-	 */
 	@Override
 	public String getModuleName() {
 		return "LDAP";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#getModulePrefix()
-	 */
 	@Override
 	protected String getModulePrefix() {
 		return "ldap";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtension#getRepositoryFactoryClassName()
-	 */
 	public String getRepositoryFactoryBeanClassName() {
 		return LdapRepositoryFactoryBean.class.getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#getIdentifyingAnnotations()
-	 */
 	@Override
 	protected Collection<Class<? extends Annotation>> getIdentifyingAnnotations() {
 		return Collections.singleton(Entry.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#getIdentifyingTypes()
-	 */
 	@Override
 	protected Collection<Class<?>> getIdentifyingTypes() {
 		return Collections.singleton(LdapRepository.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#postProcess(org.springframework.beans.factory.support.BeanDefinitionBuilder, org.springframework.data.repository.config.XmlRepositoryConfigurationSource)
-	 */
 	@Override
 	public void postProcess(BeanDefinitionBuilder builder, XmlRepositoryConfigurationSource config) {
 
@@ -109,9 +86,6 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 		builder.addPropertyReference("mappingContext", MAPPING_CONTEXT_BEAN_NAME);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#postProcess(org.springframework.beans.factory.support.BeanDefinitionBuilder, org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource)
-	 */
 	@Override
 	public void postProcess(BeanDefinitionBuilder builder, AnnotationRepositoryConfigurationSource config) {
 
@@ -134,10 +108,6 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport#useRepositoryConfiguration(org.springframework.data.repository.core.RepositoryMetadata)
-	 */
 	@Override
 	protected boolean useRepositoryConfiguration(RepositoryMetadata metadata) {
 		return !metadata.isReactiveRepository();

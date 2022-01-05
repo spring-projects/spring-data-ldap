@@ -110,41 +110,25 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 		this.mappingContext = mappingContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findOne(com.querydsl.core.types.Predicate)
-	 */
 	@Override
 	public Optional<T> findOne(Predicate predicate) {
 		return findBy(predicate, Function.identity()).one();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate)
-	 */
 	@Override
 	public List<T> findAll(Predicate predicate) {
 		return queryFor(predicate).list();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#count(com.querydsl.core.types.Predicate)
-	 */
 	@Override
 	public long count(Predicate predicate) {
 		return findBy(predicate, FluentQuery.FetchableFluentQuery::count);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#exists(com.querydsl.core.types.Predicate)
-	 */
 	public boolean exists(Predicate predicate) {
 		return findBy(predicate, FluentQuery.FetchableFluentQuery::exists);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate, org.springframework.data.domain.Sort)
-	 */
 	public Iterable<T> findAll(Predicate predicate, Sort sort) {
 
 		Assert.notNull(sort, "Pageable must not be null!");
@@ -156,9 +140,6 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 		throw new UnsupportedOperationException("Sorting is not supported");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.OrderSpecifier[])
-	 */
 	public Iterable<T> findAll(OrderSpecifier<?>... orders) {
 
 		if (orders.length == 0) {
@@ -168,9 +149,6 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 		throw new UnsupportedOperationException("Sorting is not supported");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate, com.querydsl.core.types.OrderSpecifier[])
-	 */
 	@Override
 	public Iterable<T> findAll(Predicate predicate, OrderSpecifier<?>... orders) {
 
@@ -181,9 +159,6 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 		throw new UnsupportedOperationException("Sorting is not supported");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QueryDslPredicateExecutor#findAll(com.querydsl.core.types.Predicate, org.springframework.data.domain.Pageable)
-	 */
 	@Override
 	public Page<T> findAll(Predicate predicate, Pageable pageable) {
 
@@ -202,10 +177,6 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 		throw new UnsupportedOperationException("Pagination and Sorting is not supported");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.querydsl.QuerydslPredicateExecutor#findBy(com.querydsl.core.types.Predicate, java.util.function.Function)
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <S extends T, R> R findBy(Predicate predicate,
@@ -254,19 +225,11 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 			this.projection = projection;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#sortBy(org.springframework.data.domain.Sort)
-		 */
 		@Override
 		public FetchableFluentQuery<R> sortBy(Sort sort) {
 			throw new UnsupportedOperationException();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#as(java.lang.Class)
-		 */
 		@Override
 		public <R1> FetchableFluentQuery<R1> as(Class<R1> resultType) {
 
@@ -275,10 +238,6 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 			return new FluentQuerydsl<>(predicate, sort, resultType, projection);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#project(java.util.Collection)
-		 */
 		@Override
 		public FetchableFluentQuery<R> project(Collection<String> properties) {
 
@@ -287,10 +246,6 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 			return new FluentQuerydsl<>(predicate, sort, resultType, new ArrayList<>(properties));
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#oneValue()
-		 */
 		@Nullable
 		@Override
 		public R oneValue() {
@@ -309,10 +264,6 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 			return getConversionFunction().apply(one);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#firstValue()
-		 */
 		@Nullable
 		@Override
 		public R firstValue() {
@@ -327,19 +278,11 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 			return getConversionFunction().apply(one);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#all()
-		 */
 		@Override
 		public List<R> all() {
 			return stream().collect(Collectors.toList());
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#page(org.springframework.data.domain.Pageable)
-		 */
 		@Override
 		public Page<R> page(Pageable pageable) {
 
@@ -361,10 +304,6 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 			throw new UnsupportedOperationException("Pagination and Sorting is not supported");
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#stream()
-		 */
 		@Override
 		public Stream<R> stream() {
 
@@ -373,19 +312,11 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 			return search(null, QuerydslLdapQuery::list).stream().map(conversionFunction);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#count()
-		 */
 		@Override
 		public long count() {
 			return search(null, q -> q.search(it -> true)).size();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery#exists()
-		 */
 		@Override
 		public boolean exists() {
 			return !search(1, q -> q.search(it -> true)).isEmpty();

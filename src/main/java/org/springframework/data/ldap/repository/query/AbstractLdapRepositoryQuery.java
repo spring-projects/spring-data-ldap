@@ -69,9 +69,6 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 		this.instantiators = instantiators;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.query.RepositoryQuery#execute(java.lang.Object[])
-	 */
 	@Override
 	@SuppressWarnings("ConstantConditions")
 	public final Object execute(Object[] parameters) {
@@ -116,9 +113,6 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 		return entityType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.query.RepositoryQuery#getQueryMethod()
-	 */
 	@Override
 	public final QueryMethod getQueryMethod() {
 		return queryMethod;

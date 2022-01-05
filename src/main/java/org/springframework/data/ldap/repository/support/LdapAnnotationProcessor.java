@@ -42,9 +42,6 @@ import com.querydsl.core.annotations.QueryEntities;
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class LdapAnnotationProcessor extends AbstractQuerydslProcessor {
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.apt.AbstractQuerydslProcessor#createConfiguration(javax.annotation.processing.RoundEnvironment)
-	 */
 	@Override
 	protected Configuration createConfiguration(RoundEnvironment roundEnv) {
 		processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Running " + getClass().getSimpleName());

@@ -46,17 +46,11 @@ class DefaultLdapAnnotationProcessorConfiguration extends DefaultConfiguration {
 				skipAnn);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.apt.DefaultConfiguration#isBlockedField(javax.lang.model.element.VariableElement)
-	 */
 	@Override
 	public boolean isBlockedField(VariableElement field) {
 		return super.isBlockedField(field) || field.getAnnotation(Id.class) != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.apt.DefaultConfiguration#isValidField(javax.lang.model.element.VariableElement)
-	 */
 	@Override
 	public boolean isValidField(VariableElement field) {
 		return super.isValidField(field) && field.getAnnotation(Id.class) == null;

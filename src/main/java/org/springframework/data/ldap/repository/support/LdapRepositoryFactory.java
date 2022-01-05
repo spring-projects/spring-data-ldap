@@ -92,28 +92,17 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		this.mappingContext = mappingContext;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getEntityInformation(java.lang.Class)
-	 */
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T, ID> EntityInformation<T, ID> getEntityInformation(Class<T> domainClass) {
 		return new LdapEntityInformation(domainClass, ldapOperations.getObjectDirectoryMapper());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getRepositoryBaseClass(org.springframework.data.repository.core.RepositoryMetadata)
-	 */
 	@Override
 	protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
 		return SimpleLdapRepository.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getRepositoryFragments(org.springframework.data.repository.core.RepositoryMetadata)
-	 */
 	@Override
 	protected RepositoryFragments getRepositoryFragments(RepositoryMetadata metadata) {
 		return getRepositoryFragments(metadata, this.ldapOperations);
@@ -149,10 +138,6 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		return RepositoryFragments.empty();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getTargetRepository(org.springframework.data.repository.core.RepositoryInformation)
-	 */
 	@Override
 	protected Object getTargetRepository(RepositoryInformation information) {
 
@@ -168,10 +153,6 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 				information.getDomainType());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getQueryLookupStrategy(org.springframework.data.repository.query.QueryLookupStrategy.Key, org.springframework.data.repository.query.EvaluationContextProvider)
-	 */
 	@Override
 	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable Key key,
 			QueryMethodEvaluationContextProvider evaluationContextProvider) {

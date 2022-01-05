@@ -59,10 +59,6 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		this.ldapOperations = ldapOperations;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport#setMappingContext(org.springframework.data.mapping.context.MappingContext)
-	 */
 	@Override
 	public void setMappingContext(MappingContext<?, ?> mappingContext) {
 
@@ -71,10 +67,6 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 		this.mappingContextConfigured = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport#createRepositoryFactory()
-	 */
 	@Override
 	protected RepositoryFactorySupport createRepositoryFactory() {
 
@@ -84,10 +76,6 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 				: new LdapRepositoryFactory(ldapOperations);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport#afterPropertiesSet()
-	 */
 	@Override
 	public void afterPropertiesSet() {
 

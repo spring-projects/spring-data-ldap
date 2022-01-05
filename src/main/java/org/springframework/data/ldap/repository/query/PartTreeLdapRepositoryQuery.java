@@ -62,9 +62,6 @@ public class PartTreeLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 		objectDirectoryMapper = ldapOperations.getObjectDirectoryMapper();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.ldap.repository.query.AbstractLdapRepositoryQuery#createQuery(org.springframework.data.ldap.repository.query.LdapParameterAccessor)
-	 */
 	@Override
 	protected LdapQuery createQuery(LdapParameterAccessor parameters) {
 

@@ -92,9 +92,6 @@ public class QuerydslLdapQuery<K> implements FilteredClause<QuerydslLdapQuery<K>
 		this.filterGenerator = new LdapSerializer(ldapOperations.getObjectDirectoryMapper(), this.entityType);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.core.FilteredClause#where(com.querydsl.core.types.Predicate[])
-	 */
 	@Override
 	public QuerydslLdapQuery<K> where(Predicate... o) {
 

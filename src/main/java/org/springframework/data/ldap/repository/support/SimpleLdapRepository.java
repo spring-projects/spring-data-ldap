@@ -98,10 +98,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	// Methods from CrudRepository
 	// -------------------------------------------------------------------------
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#save(java.lang.Object)
-	 */
 	@Override
 	public <S extends T> S save(S entity) {
 
@@ -118,10 +114,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		return entity;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#saveAll(java.lang.Iterable)
-	 */
 	@Override
 	public <S extends T> List<S> saveAll(Iterable<S> entities) {
 
@@ -130,10 +122,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 				.collect(Collectors.toList());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#findById(java.io.Serializable)
-	 */
 	@Override
 	public Optional<T> findById(Name name) {
 
@@ -146,10 +134,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#existsById(java.io.Serializable)
-	 */
 	@Override
 	public boolean existsById(Name name) {
 
@@ -158,19 +142,11 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		return findById(name).isPresent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#findAll()
-	 */
 	@Override
 	public List<T> findAll() {
 		return ldapOperations.findAll(entityType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#findAllById(java.lang.Iterable)
-	 */
 	@Override
 	public List<T> findAllById(Iterable<Name> names) {
 
@@ -180,10 +156,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 				.collect(Collectors.toList());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#count()
-	 */
 	@Override
 	public long count() {
 
@@ -195,10 +167,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		return callback.getNoOfRows();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#deleteById(java.io.Serializable)
-	 */
 	@Override
 	public void deleteById(Name name) {
 
@@ -207,10 +175,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		ldapOperations.unbind(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Object)
-	 */
 	@Override
 	public void delete(T entity) {
 
@@ -219,10 +183,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		ldapOperations.delete(entity);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#deleteAllById(java.lang.Iterable)
-	 */
 	@Override
 	public void deleteAllById(Iterable<? extends Name> names) {
 
@@ -231,10 +191,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		names.forEach(this::deleteById);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#deleteAll(java.lang.Iterable)
-	 */
 	@Override
 	public void deleteAll(Iterable<? extends T> entities) {
 
@@ -243,10 +199,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		entities.forEach(this::delete);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#deleteAll()
-	 */
 	@Override
 	public void deleteAll() {
 		deleteAll(findAll());
@@ -256,10 +208,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	// Methods from LdapRepository
 	// ------------------------------------------------------------------------
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.ldap.repository.LdapRepository#findOne(org.springframework.ldap.query.LdapQuery)
-	 */
 	@Override
 	public Optional<T> findOne(LdapQuery ldapQuery) {
 
@@ -272,10 +220,6 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.ldap.repository.LdapRepository#findAll(org.springframework.ldap.query.LdapQuery)
-	 */
 	@Override
 	public List<T> findAll(LdapQuery ldapQuery) {
 

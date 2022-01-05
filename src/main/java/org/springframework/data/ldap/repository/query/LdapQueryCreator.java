@@ -68,9 +68,6 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 		this.inputProperties = inputProperties;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.query.parser.AbstractQueryCreator#create(org.springframework.data.repository.query.parser.Part, java.util.Iterator)
-	 */
 	@Override
 	protected ContainerCriteria create(Part part, Iterator<Object> iterator) {
 
@@ -138,9 +135,6 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 		return mapper.attributeFor(entityType, path.getSegment());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.query.parser.AbstractQueryCreator#and(org.springframework.data.repository.query.parser.Part, java.lang.Object, java.util.Iterator)
-	 */
 	@Override
 	protected ContainerCriteria and(Part part, ContainerCriteria base, Iterator<Object> iterator) {
 		ConditionCriteria criteria = base.and(getAttribute(part));
@@ -148,17 +142,11 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 		return appendCondition(part, iterator, criteria);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.query.parser.AbstractQueryCreator#or(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	protected ContainerCriteria or(ContainerCriteria base, ContainerCriteria criteria) {
 		return base.or(criteria);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.query.parser.AbstractQueryCreator#complete(java.lang.Object, org.springframework.data.domain.Sort)
-	 */
 	@Override
 	protected LdapQuery complete(ContainerCriteria criteria, Sort sort) {
 		return criteria;

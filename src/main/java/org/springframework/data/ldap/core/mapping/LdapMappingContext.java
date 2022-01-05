@@ -35,17 +35,11 @@ public class LdapMappingContext extends AbstractMappingContext<BasicLdapPersiste
 		setSimpleTypeHolder(LdapSimpleTypes.HOLDER);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.mapping.context.AbstractMappingContext#createPersistentEntity(org.springframework.data.util.TypeInformation)
-	 */
 	@Override
 	protected <T> BasicLdapPersistentEntity<?> createPersistentEntity(TypeInformation<T> typeInformation) {
 		return new BasicLdapPersistentEntity<>(typeInformation);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.mapping.context.AbstractMappingContext#createPersistentProperty(org.springframework.data.mapping.model.Property, org.springframework.data.mapping.model.MutablePersistentEntity, org.springframework.data.mapping.model.SimpleTypeHolder)
-	 */
 	@Override
 	protected LdapPersistentProperty createPersistentProperty(Property property, BasicLdapPersistentEntity<?> owner,
 			SimpleTypeHolder simpleTypeHolder) {

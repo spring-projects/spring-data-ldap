@@ -55,25 +55,16 @@ class LdapSerializer implements Visitor<Object, Void> {
 		return (Filter) expression.accept(this, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.core.types.Visitor#visit(com.querydsl.core.types.Constant, java.lang.Object)
-	 */
 	@Override
 	public Object visit(Constant<?> expr, Void context) {
 		return expr.getConstant().toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.core.types.Visitor#visit(com.querydsl.core.types.FactoryExpression, java.lang.Object)
-	 */
 	@Override
 	public Object visit(FactoryExpression<?> expr, Void context) {
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.core.types.Visitor#visit(com.querydsl.core.types.Operation, java.lang.Object)
-	 */
 	@Override
 	public Object visit(Operation<?> expr, Void context) {
 
@@ -116,33 +107,21 @@ class LdapSerializer implements Visitor<Object, Void> {
 		return odm.attributeFor(entityType, (String) expr.getArg(0).accept(this, null));
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.core.types.Visitor#visit(com.querydsl.core.types.ParamExpression, java.lang.Object)
-	 */
 	@Override
 	public Object visit(ParamExpression<?> expr, Void context) {
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.core.types.Visitor#visit(com.querydsl.core.types.Path, java.lang.Object)
-	 */
 	@Override
 	public Object visit(Path<?> expr, Void context) {
 		return expr.getMetadata().getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.core.types.Visitor#visit(com.querydsl.core.types.SubQueryExpression, java.lang.Object)
-	 */
 	@Override
 	public Object visit(SubQueryExpression<?> expr, Void context) {
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.querydsl.core.types.Visitor#visit(com.querydsl.core.types.TemplateExpression, java.lang.Object)
-	 */
 	@Override
 	public Object visit(TemplateExpression<?> expr, Void context) {
 		throw new UnsupportedOperationException();

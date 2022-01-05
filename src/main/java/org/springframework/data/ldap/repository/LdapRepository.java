@@ -31,24 +31,12 @@ import org.springframework.ldap.query.LdapQuery;
  */
 public interface LdapRepository<T> extends CrudRepository<T, Name> {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#saveAll(java.lang.Iterable)
-	 */
 	@Override
 	<S extends T> List<S> saveAll(Iterable<S> entities);
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#findAll()
-	 */
 	@Override
 	List<T> findAll();
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#findAllById()
-	 */
 	@Override
 	List<T> findAllById(Iterable<Name> names);
 
