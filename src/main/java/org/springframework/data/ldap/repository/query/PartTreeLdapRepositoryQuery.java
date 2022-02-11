@@ -22,7 +22,6 @@ import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.EntityInstantiators;
-import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.ReturnedType;
 import org.springframework.data.repository.query.parser.PartTree;
@@ -39,7 +38,6 @@ import org.springframework.ldap.query.LdapQuery;
 public class PartTreeLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
 	private final PartTree partTree;
-	private final Parameters<?, ?> parameters;
 	private final ObjectDirectoryMapper objectDirectoryMapper;
 
 	/**
@@ -58,7 +56,6 @@ public class PartTreeLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 		super(queryMethod, entityType, ldapOperations, mappingContext, instantiators);
 
 		partTree = new PartTree(queryMethod.getName(), entityType);
-		parameters = queryMethod.getParameters();
 		objectDirectoryMapper = ldapOperations.getObjectDirectoryMapper();
 	}
 

@@ -21,6 +21,7 @@ import java.util.Optional;
 import javax.naming.Name;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.ldap.query.LdapQuery;
 
 /**
@@ -29,16 +30,7 @@ import org.springframework.ldap.query.LdapQuery;
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
  */
-public interface LdapRepository<T> extends CrudRepository<T, Name> {
-
-	@Override
-	<S extends T> List<S> saveAll(Iterable<S> entities);
-
-	@Override
-	List<T> findAll();
-
-	@Override
-	List<T> findAllById(Iterable<Name> names);
+public interface LdapRepository<T> extends ListCrudRepository<T, Name> {
 
 	/**
 	 * Find one entry matching the specified query.
@@ -55,5 +47,5 @@ public interface LdapRepository<T> extends CrudRepository<T, Name> {
 	 * @param ldapQuery the query specification.
 	 * @return the entries matching the query.
 	 */
-	Iterable<T> findAll(LdapQuery ldapQuery);
+	List<T> findAll(LdapQuery ldapQuery);
 }

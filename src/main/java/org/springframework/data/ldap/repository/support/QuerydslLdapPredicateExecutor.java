@@ -38,6 +38,7 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.EntityInstantiators;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.ProjectionInformation;
+import org.springframework.data.querydsl.ListQuerydslPredicateExecutor;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.query.FluentQuery;
@@ -56,7 +57,7 @@ import com.querydsl.core.types.Predicate;
  * @author Mark Paluch
  * @since 2.6
  */
-public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecutor<T> {
+public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateExecutor<T> {
 
 	private final EntityInformation<T, ?> entityInformation;
 	private final ProjectionFactory projectionFactory;
@@ -129,7 +130,7 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 		return findBy(predicate, FluentQuery.FetchableFluentQuery::exists);
 	}
 
-	public Iterable<T> findAll(Predicate predicate, Sort sort) {
+	public List<T> findAll(Predicate predicate, Sort sort) {
 
 		Assert.notNull(sort, "Pageable must not be null!");
 
@@ -140,7 +141,7 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 		throw new UnsupportedOperationException("Sorting is not supported");
 	}
 
-	public Iterable<T> findAll(OrderSpecifier<?>... orders) {
+	public List<T> findAll(OrderSpecifier<?>... orders) {
 
 		if (orders.length == 0) {
 			return findAll();
@@ -150,7 +151,7 @@ public class QuerydslLdapPredicateExecutor<T> implements QuerydslPredicateExecut
 	}
 
 	@Override
-	public Iterable<T> findAll(Predicate predicate, OrderSpecifier<?>... orders) {
+	public List<T> findAll(Predicate predicate, OrderSpecifier<?>... orders) {
 
 		if (orders.length == 0) {
 			return findAll(predicate);
