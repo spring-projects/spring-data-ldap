@@ -17,6 +17,7 @@ package org.springframework.data.ldap.repository.query;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.convert.DtoInstantiatingConverter;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.context.MappingContext;
