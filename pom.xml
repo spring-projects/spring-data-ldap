@@ -1,312 +1,467 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  	
-  <modelVersion>4.0.0</modelVersion>
-  	
-  <groupId>org.springframework.data</groupId>
-  	
-  <artifactId>spring-data-ldap</artifactId>
-  	
-  <version>3.0.0-SNAPSHOT</version>
-  	
-  <name>Spring Data LDAP</name>
-  	
-  <description>Spring Data integration for LDAP</description>
-  	
-  <url>https://github.com/spring-projects/spring-data-ldap</url>
-  	
-  <parent>
-    		
-    <groupId>org.springframework.data.build</groupId>
-    		
-    <artifactId>spring-data-parent</artifactId>
-    		
-    <version>3.0.0-M4</version>
     	
-  </parent>
-  	
-  <properties>
-    		
-    <spring-ldap>3.0.0-M2</spring-ldap>
-    		
-    <springdata.commons>3.0.0-M4</springdata.commons>
-    		
-    <java-module-name>spring.data.ldap</java-module-name>
-    	
-  </properties>
-  	
-  <developers>
-    		
-    <developer>
-      			
-      <id>rwinch</id>
-      			
-      <name>Rob Winch</name>
-      			
-      <email>rwinch at pivotal.io</email>
-      			
-      <organization>Pivotal</organization>
-      			
-      <organizationUrl>https://www.pivotal.io</organizationUrl>
-      			
-      <roles>
-        				
-        <role>Project Lead</role>
-        			
-      </roles>
-      			
-      <timezone>-6</timezone>
-      		
-    </developer>
-    		
-    <developer>
-      			
-      <id>mpaluch</id>
-      			
-      <name>Mark Paluch</name>
-      			
-      <email>mpaluch at pivotal.io</email>
-      			
-      <organization>Pivotal</organization>
-      			
-      <organizationUrl>https://www.pivotal.io</organizationUrl>
-      			
-      <roles>
-        				
-        <role>Developer</role>
-        			
-      </roles>
-      			
-      <timezone>+1</timezone>
-      		
-    </developer>
-    	
-  </developers>
-  	
-  <dependencies>
-    		
-    <dependency>
-      			
-      <groupId>org.springframework</groupId>
-      			
-      <artifactId>spring-context</artifactId>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>org.springframework</groupId>
-      			
-      <artifactId>spring-tx</artifactId>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>org.springframework.ldap</groupId>
-      			
-      <artifactId>spring-ldap-core</artifactId>
-      			
-      <version>${spring-ldap}</version>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>${project.groupId}</groupId>
-      			
-      <artifactId>spring-data-commons</artifactId>
-      			
-      <version>${springdata.commons}</version>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>com.querydsl</groupId>
-      			
-      <artifactId>querydsl-mongodb</artifactId>
-      			
-      <version>${querydsl}</version>
-      			
-      <optional>true</optional>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>com.querydsl</groupId>
-      			
-      <artifactId>querydsl-apt</artifactId>
-      			
-      <version>${querydsl}</version>
-      			
-      <scope>provided</scope>
-      		
-    </dependency>
-    		
-    <!-- CDI -->
-    		
-    <dependency>
-      			
-      <groupId>jakarta.enterprise</groupId>
-      			
-      <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      			
-      <version>${cdi}</version>
-      			
-      <optional>true</optional>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>jakarta.annotation</groupId>
-      			
-      <artifactId>jakarta.annotation-api</artifactId>
-      			
-      <version>${jakarta-annotation-api}</version>
-      			
-      <scope>test</scope>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>org.apache.openwebbeans</groupId>
-      			
-      <artifactId>openwebbeans-se</artifactId>
-      			
-      <classifier>jakarta</classifier>
-      			
-      <version>${webbeans}</version>
-      			
-      <scope>test</scope>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>org.apache.openwebbeans</groupId>
-      			
-      <artifactId>openwebbeans-spi</artifactId>
-      			
-      <classifier>jakarta</classifier>
-      			
-      <version>${webbeans}</version>
-      			
-      <scope>test</scope>
-      		
-    </dependency>
-    		
-    <dependency>
-      			
-      <groupId>org.apache.openwebbeans</groupId>
-      			
-      <artifactId>openwebbeans-impl</artifactId>
-      			
-      <classifier>jakarta</classifier>
-      			
-      <version>${webbeans}</version>
-      			
-      <scope>test</scope>
-      		
-    </dependency>
-    	
-  </dependencies>
-  	
-  <repositories>
-    		
-    <repository>
-      			
-      <id>spring-libs-milestone</id>
-      			
-      <url>https://repo.spring.io/libs-milestone</url>
-      		
-    </repository>
-    	
-  </repositories>
-  	
-  <pluginRepositories>
-    		
-    <pluginRepository>
-      			
-      <id>spring-plugins-release</id>
-      			
-      <url>https://repo.spring.io/plugins-release</url>
-      		
-    </pluginRepository>
-    	
-  </pluginRepositories>
-  	
-  <build>
-    		
-    <plugins>
-      			
-      <plugin>
-        				
-        <groupId>org.apache.maven.plugins</groupId>
-        				
-        <artifactId>maven-assembly-plugin</artifactId>
-        			
-      </plugin>
-      			
-      <plugin>
-        				
-        <groupId>org.asciidoctor</groupId>
-        				
-        <artifactId>asciidoctor-maven-plugin</artifactId>
-        				
-        <configuration>
-          					
-          <attributes>
-            						
-            <version>${project.version}</version>
-            						
-            <projectName>${project.name}</projectName>
-            						
-            <projectVersion>${project.version}</projectVersion>
-            						
-            <aspectjVersion>${aspectj}</aspectjVersion>
-            						
-            <querydslVersion>${querydsl}</querydslVersion>
-            						
-            <springVersion>${spring}</springVersion>
-            						
-            <releasetrainVersion>${releasetrain}</releasetrainVersion>
-            						
-            <springLdapVersion>${spring-ldap}</springLdapVersion>
-            						
-            <allow-uri-read>true</allow-uri-read>
-            						
-            <toclevels>3</toclevels>
-            						
-            <numbered>true</numbered>
-            					
-          </attributes>
-          				
-        </configuration>
-        			
-      </plugin>
-      		
-    </plugins>
-    	
-  </build>
-  	
-  <profiles>
-    		
-    <profile>
-      			
-      <id>springldap-next</id>
-      			
-      <properties>
-        				
-        <spring-ldap>2.3.2.BUILD-SNAPSHOT</spring-ldap>
-        			
-      </properties>
-      		
-    </profile>
-    	
-  </profiles>
   
+  <modelVersion>4.0.0</modelVersion>
+    	
+  
+  <groupId>org.springframework.data</groupId>
+    	
+  
+  <artifactId>spring-data-ldap</artifactId>
+    	
+  
+  <version>3.0.0-SNAPSHOT</version>
+    	
+  
+  <name>Spring Data LDAP</name>
+    	
+  
+  <description>Spring Data integration for LDAP</description>
+    	
+  
+  <url>https://github.com/spring-projects/spring-data-ldap</url>
+    	
+  
+  <parent>
+        		
+    
+    <groupId>org.springframework.data.build</groupId>
+        		
+    
+    <artifactId>spring-data-parent</artifactId>
+        		
+    
+    <version>3.0.0-SNAPSHOT</version>
+        	
+  
+  </parent>
+    	
+  
+  <properties>
+        		
+    
+    <spring-ldap>3.0.0-M2</spring-ldap>
+        		
+    
+    <springdata.commons>3.0.0-SNAPSHOT</springdata.commons>
+        		
+    
+    <java-module-name>spring.data.ldap</java-module-name>
+        	
+  
+  </properties>
+    	
+  
+  <developers>
+        		
+    
+    <developer>
+            			
+      
+      <id>rwinch</id>
+            			
+      
+      <name>Rob Winch</name>
+            			
+      
+      <email>rwinch at pivotal.io</email>
+            			
+      
+      <organization>Pivotal</organization>
+            			
+      
+      <organizationUrl>https://www.pivotal.io</organizationUrl>
+            			
+      
+      <roles>
+                				
+        
+        <role>Project Lead</role>
+                			
+      
+      </roles>
+            			
+      
+      <timezone>-6</timezone>
+            		
+    
+    </developer>
+        		
+    
+    <developer>
+            			
+      
+      <id>mpaluch</id>
+            			
+      
+      <name>Mark Paluch</name>
+            			
+      
+      <email>mpaluch at pivotal.io</email>
+            			
+      
+      <organization>Pivotal</organization>
+            			
+      
+      <organizationUrl>https://www.pivotal.io</organizationUrl>
+            			
+      
+      <roles>
+                				
+        
+        <role>Developer</role>
+                			
+      
+      </roles>
+            			
+      
+      <timezone>+1</timezone>
+            		
+    
+    </developer>
+        	
+  
+  </developers>
+    	
+  
+  <dependencies>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>org.springframework</groupId>
+            			
+      
+      <artifactId>spring-context</artifactId>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>org.springframework</groupId>
+            			
+      
+      <artifactId>spring-tx</artifactId>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>org.springframework.ldap</groupId>
+            			
+      
+      <artifactId>spring-ldap-core</artifactId>
+            			
+      
+      <version>${spring-ldap}</version>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>${project.groupId}</groupId>
+            			
+      
+      <artifactId>spring-data-commons</artifactId>
+            			
+      
+      <version>${springdata.commons}</version>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>com.querydsl</groupId>
+            			
+      
+      <artifactId>querydsl-mongodb</artifactId>
+            			
+      
+      <version>${querydsl}</version>
+            			
+      
+      <optional>true</optional>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>com.querydsl</groupId>
+            			
+      
+      <artifactId>querydsl-apt</artifactId>
+            			
+      
+      <version>${querydsl}</version>
+            			
+      
+      <scope>provided</scope>
+            		
+    
+    </dependency>
+        		
+    
+    <!-- CDI -->
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>jakarta.enterprise</groupId>
+            			
+      
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            			
+      
+      <version>${cdi}</version>
+            			
+      
+      <optional>true</optional>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>jakarta.annotation</groupId>
+            			
+      
+      <artifactId>jakarta.annotation-api</artifactId>
+            			
+      
+      <version>${jakarta-annotation-api}</version>
+            			
+      
+      <scope>test</scope>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>org.apache.openwebbeans</groupId>
+            			
+      
+      <artifactId>openwebbeans-se</artifactId>
+            			
+      
+      <classifier>jakarta</classifier>
+            			
+      
+      <version>${webbeans}</version>
+            			
+      
+      <scope>test</scope>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>org.apache.openwebbeans</groupId>
+            			
+      
+      <artifactId>openwebbeans-spi</artifactId>
+            			
+      
+      <classifier>jakarta</classifier>
+            			
+      
+      <version>${webbeans}</version>
+            			
+      
+      <scope>test</scope>
+            		
+    
+    </dependency>
+        		
+    
+    <dependency>
+            			
+      
+      <groupId>org.apache.openwebbeans</groupId>
+            			
+      
+      <artifactId>openwebbeans-impl</artifactId>
+            			
+      
+      <classifier>jakarta</classifier>
+            			
+      
+      <version>${webbeans}</version>
+            			
+      
+      <scope>test</scope>
+            		
+    
+    </dependency>
+        	
+  
+  </dependencies>
+    	
+  
+  <repositories>
+        		
+    
+    <repository>
+            			
+      
+      <id>spring-libs-snapshot</id>
+            			
+      
+      <url>https://repo.spring.io/libs-snapshot</url>
+            		
+    
+    </repository>
+        	
+  
+  </repositories>
+    	
+  
+  <pluginRepositories>
+        		
+    
+    <pluginRepository>
+            			
+      
+      <id>spring-plugins-release</id>
+            			
+      
+      <url>https://repo.spring.io/plugins-release</url>
+            		
+    
+    </pluginRepository>
+        	
+  
+  </pluginRepositories>
+    	
+  
+  <build>
+        		
+    
+    <plugins>
+            			
+      
+      <plugin>
+                				
+        
+        <groupId>org.apache.maven.plugins</groupId>
+                				
+        
+        <artifactId>maven-assembly-plugin</artifactId>
+                			
+      
+      </plugin>
+            			
+      
+      <plugin>
+                				
+        
+        <groupId>org.asciidoctor</groupId>
+                				
+        
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+                				
+        
+        <configuration>
+                    					
+          
+          <attributes>
+                        						
+            
+            <version>${project.version}</version>
+                        						
+            
+            <projectName>${project.name}</projectName>
+                        						
+            
+            <projectVersion>${project.version}</projectVersion>
+                        						
+            
+            <aspectjVersion>${aspectj}</aspectjVersion>
+                        						
+            
+            <querydslVersion>${querydsl}</querydslVersion>
+                        						
+            
+            <springVersion>${spring}</springVersion>
+                        						
+            
+            <releasetrainVersion>${releasetrain}</releasetrainVersion>
+                        						
+            
+            <springLdapVersion>${spring-ldap}</springLdapVersion>
+                        						
+            
+            <allow-uri-read>true</allow-uri-read>
+                        						
+            
+            <toclevels>3</toclevels>
+                        						
+            
+            <numbered>true</numbered>
+                        					
+          
+          </attributes>
+                    				
+        
+        </configuration>
+                			
+      
+      </plugin>
+            		
+    
+    </plugins>
+        	
+  
+  </build>
+    	
+  
+  <profiles>
+        		
+    
+    <profile>
+            			
+      
+      <id>springldap-next</id>
+            			
+      
+      <properties>
+                				
+        
+        <spring-ldap>2.3.2.BUILD-SNAPSHOT</spring-ldap>
+                			
+      
+      </properties>
+            		
+    
+    </profile>
+        	
+  
+  </profiles>
+    
+
 </project>
