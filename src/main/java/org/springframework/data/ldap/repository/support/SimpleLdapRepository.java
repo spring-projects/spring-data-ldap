@@ -64,9 +64,9 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	 */
 	public SimpleLdapRepository(LdapOperations ldapOperations, ObjectDirectoryMapper odm, Class<T> entityType) {
 
-		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
-		Assert.notNull(odm, "ObjectDirectoryMapper must not be null!");
-		Assert.notNull(entityType, "Entity type must not be null!");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null");
+		Assert.notNull(odm, "ObjectDirectoryMapper must not be null");
+		Assert.notNull(entityType, "Entity type must not be null");
 
 		this.ldapOperations = ldapOperations;
 		this.odm = odm;
@@ -84,10 +84,10 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> context,
 			ObjectDirectoryMapper odm, Class<T> entityType) {
 
-		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
-		Assert.notNull(context, "MappingContext must not be null!");
-		Assert.notNull(odm, "ObjectDirectoryMapper must not be null!");
-		Assert.notNull(entityType, "Entity type must not be null!");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null");
+		Assert.notNull(context, "MappingContext must not be null");
+		Assert.notNull(odm, "ObjectDirectoryMapper must not be null");
+		Assert.notNull(entityType, "Entity type must not be null");
 
 		this.ldapOperations = ldapOperations;
 		this.odm = odm;
@@ -186,7 +186,7 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	@Override
 	public void deleteAllById(Iterable<? extends Name> names) {
 
-		Assert.notNull(names, "Names must not be null.");
+		Assert.notNull(names, "Names must not be null");
 
 		names.forEach(this::deleteById);
 	}
@@ -194,7 +194,7 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 	@Override
 	public void deleteAll(Iterable<? extends T> entities) {
 
-		Assert.notNull(entities, "Entities must not be null.");
+		Assert.notNull(entities, "Entities must not be null");
 
 		entities.forEach(this::delete);
 	}

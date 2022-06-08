@@ -60,8 +60,8 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 
 		super(tree, parameterAccessor);
 
-		Assert.notNull(entityType, "Entity type must not be null!");
-		Assert.notNull(mapper, "ObjectDirectoryMapper must not be null!");
+		Assert.notNull(entityType, "Entity type must not be null");
+		Assert.notNull(mapper, "ObjectDirectoryMapper must not be null");
 
 		this.entityType = entityType;
 		this.mapper = mapper;

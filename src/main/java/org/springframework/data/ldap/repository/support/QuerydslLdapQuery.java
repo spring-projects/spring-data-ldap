@@ -82,9 +82,9 @@ public class QuerydslLdapQuery<K> implements FilteredClause<QuerydslLdapQuery<K>
 	public QuerydslLdapQuery(LdapOperations ldapOperations, Class<K> entityType,
 			Consumer<LdapQueryBuilder> queryCustomizer) {
 
-		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
-		Assert.notNull(entityType, "Type must not be null!");
-		Assert.notNull(queryCustomizer, "Query customizer must not be null!");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null");
+		Assert.notNull(entityType, "Type must not be null");
+		Assert.notNull(queryCustomizer, "Query customizer must not be null");
 
 		this.ldapOperations = ldapOperations;
 		this.entityType = entityType;

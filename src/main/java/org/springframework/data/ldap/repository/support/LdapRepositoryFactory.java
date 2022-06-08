@@ -68,7 +68,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	 */
 	public LdapRepositoryFactory(LdapOperations ldapOperations) {
 
-		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null");
 
 		this.ldapOperations = ldapOperations;
 		this.mappingContext = new LdapMappingContext();
@@ -84,8 +84,8 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	LdapRepositoryFactory(LdapOperations ldapOperations,
 			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext) {
 
-		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
-		Assert.notNull(mappingContext, "LdapMappingContext must not be null!");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null");
+		Assert.notNull(mappingContext, "LdapMappingContext must not be null");
 
 		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext);
 		this.ldapOperations = ldapOperations;

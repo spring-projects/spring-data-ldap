@@ -77,10 +77,10 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 			LdapOperations ldapOperations,
 			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext) {
 
-		Assert.notNull(entityType, "Entity type must not be null!");
-		Assert.notNull(projectionFactory, "ProjectionFactory must not be null!");
-		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
-		Assert.notNull(mappingContext, "MappingContext must not be null!");
+		Assert.notNull(entityType, "Entity type must not be null");
+		Assert.notNull(projectionFactory, "ProjectionFactory must not be null");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null");
+		Assert.notNull(mappingContext, "MappingContext must not be null");
 
 		this.entityInformation = new LdapEntityInformation<>(entityType, ldapOperations.getObjectDirectoryMapper());
 		this.ldapOperations = ldapOperations;
@@ -100,10 +100,10 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 			LdapOperations ldapOperations,
 			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext) {
 
-		Assert.notNull(entityInformation, "EntityInformation must not be null!");
-		Assert.notNull(projectionFactory, "ProjectionFactory must not be null!");
-		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
-		Assert.notNull(mappingContext, "MappingContext must not be null!");
+		Assert.notNull(entityInformation, "EntityInformation must not be null");
+		Assert.notNull(projectionFactory, "ProjectionFactory must not be null");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null");
+		Assert.notNull(mappingContext, "MappingContext must not be null");
 
 		this.entityInformation = entityInformation;
 		this.ldapOperations = ldapOperations;
@@ -132,7 +132,7 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 
 	public List<T> findAll(Predicate predicate, Sort sort) {
 
-		Assert.notNull(sort, "Pageable must not be null!");
+		Assert.notNull(sort, "Pageable must not be null");
 
 		if (sort.isUnsorted()) {
 			return findAll(predicate);
@@ -163,7 +163,7 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 	@Override
 	public Page<T> findAll(Predicate predicate, Pageable pageable) {
 
-		Assert.notNull(pageable, "Pageable must not be null!");
+		Assert.notNull(pageable, "Pageable must not be null");
 
 		if (pageable.isUnpaged()) {
 			return PageableExecutionUtils.getPage(findAll(predicate), pageable, () -> count(predicate));
@@ -183,7 +183,7 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 	public <S extends T, R> R findBy(Predicate predicate,
 			Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 
-		Assert.notNull(queryFunction, "Query function must not be null!");
+		Assert.notNull(queryFunction, "Query function must not be null");
 
 		return queryFunction.apply(new FluentQuerydsl<>(predicate, (Class<S>) entityInformation.getJavaType()));
 	}
@@ -196,7 +196,7 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 
 	private QuerydslLdapQuery<T> queryFor(Predicate predicate, Consumer<LdapQueryBuilder> queryBuilderConsumer) {
 
-		Assert.notNull(predicate, "Predicate must not be null!");
+		Assert.notNull(predicate, "Predicate must not be null");
 
 		return new QuerydslLdapQuery<>(ldapOperations, entityInformation.getJavaType(), queryBuilderConsumer)
 				.where(predicate);
@@ -234,7 +234,7 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 		@Override
 		public <R1> FetchableFluentQuery<R1> as(Class<R1> resultType) {
 
-			Assert.notNull(projection, "Projection target type must not be null!");
+			Assert.notNull(projection, "Projection target type must not be null");
 
 			return new FluentQuerydsl<>(predicate, sort, resultType, projection);
 		}
@@ -242,7 +242,7 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 		@Override
 		public FetchableFluentQuery<R> project(Collection<String> properties) {
 
-			Assert.notNull(properties, "Projection properties must not be null!");
+			Assert.notNull(properties, "Projection properties must not be null");
 
 			return new FluentQuerydsl<>(predicate, sort, resultType, new ArrayList<>(properties));
 		}
@@ -287,7 +287,7 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 		@Override
 		public Page<R> page(Pageable pageable) {
 
-			Assert.notNull(pageable, "Pageable must not be null!");
+			Assert.notNull(pageable, "Pageable must not be null");
 
 			if (pageable.isUnpaged()) {
 				return PageableExecutionUtils.getPage(all(), pageable, this::count);

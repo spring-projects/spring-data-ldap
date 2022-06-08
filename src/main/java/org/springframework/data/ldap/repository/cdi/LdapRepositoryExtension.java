@@ -50,7 +50,7 @@ public class LdapRepositoryExtension extends CdiRepositoryExtensionSupport {
 	private final Map<Set<Annotation>, Bean<LdapOperations>> ldapOperations = new HashMap<>();
 
 	public LdapRepositoryExtension() {
-		LOG.info("Activating CDI extension for Spring Data LDAP repositories.");
+		LOG.info("Activating CDI extension for Spring Data LDAP repositories");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -62,7 +62,7 @@ public class LdapRepositoryExtension extends CdiRepositoryExtensionSupport {
 			if (type instanceof Class<?> && LdapOperations.class.isAssignableFrom((Class<?>) type)) {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug(
-							String.format("Discovered %s with qualifiers %s.", LdapOperations.class.getName(), bean.getQualifiers()));
+							String.format("Discovered %s with qualifiers %s", LdapOperations.class.getName(), bean.getQualifiers()));
 				}
 
 				// Store the EntityManager bean using its qualifiers.
@@ -82,7 +82,7 @@ public class LdapRepositoryExtension extends CdiRepositoryExtensionSupport {
 			CdiRepositoryBean<?> repositoryBean = createRepositoryBean(repositoryType, qualifiers, beanManager);
 
 			if (LOG.isInfoEnabled()) {
-				LOG.info(String.format("Registering bean for %s with qualifiers %s.", repositoryType.getName(), qualifiers));
+				LOG.info(String.format("Registering bean for %s with qualifiers %s", repositoryType.getName(), qualifiers));
 			}
 
 			// Register the bean to the container.
@@ -107,7 +107,7 @@ public class LdapRepositoryExtension extends CdiRepositoryExtensionSupport {
 		Bean<LdapOperations> LdapOperations = this.ldapOperations.get(qualifiers);
 
 		if (LdapOperations == null) {
-			throw new UnsatisfiedResolutionException(String.format("Unable to resolve a bean for '%s' with qualifiers %s.",
+			throw new UnsatisfiedResolutionException(String.format("Unable to resolve a bean for '%s' with qualifiers %s",
 					LdapOperations.class.getName(), qualifiers));
 		}
 

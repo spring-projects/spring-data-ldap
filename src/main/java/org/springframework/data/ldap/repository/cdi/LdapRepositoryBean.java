@@ -54,7 +54,7 @@ public class LdapRepositoryBean<T> extends CdiRepositoryBean<T> {
 
 		super(qualifiers, repositoryType, beanManager, detector);
 
-		Assert.notNull(operations, "LdapOperations bean must not be null!");
+		Assert.notNull(operations, "LdapOperations bean must not be null");
 		this.operations = operations;
 	}
 

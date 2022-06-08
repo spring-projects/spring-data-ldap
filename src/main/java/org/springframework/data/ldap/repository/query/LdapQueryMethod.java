@@ -83,6 +83,6 @@ public class LdapQueryMethod extends QueryMethod {
 			return queryAnnotation;
 		}
 
-		throw new IllegalStateException("Required @Query annotation is not present!");
+		throw new IllegalStateException("Required @Query annotation is not present");
 	}
 }

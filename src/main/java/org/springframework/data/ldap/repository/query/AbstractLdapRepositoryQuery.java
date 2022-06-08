@@ -58,9 +58,9 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
 			EntityInstantiators instantiators) {
 
-		Assert.notNull(queryMethod, "LdapQueryMethod must not be null!");
-		Assert.notNull(entityType, "Entity type must not be null!");
-		Assert.notNull(ldapOperations, "LdapOperations must not be null!");
+		Assert.notNull(queryMethod, "LdapQueryMethod must not be null");
+		Assert.notNull(entityType, "Entity type must not be null");
+		Assert.notNull(ldapOperations, "LdapOperations must not be null");
 
 		this.queryMethod = queryMethod;
 		this.entityType = entityType;
