@@ -68,7 +68,34 @@ Right now, this interface serves only typing purposes, but we can add additional
 
 .General LDAP repository Spring configuration
 ====
-[source,xml]
+.Java
+[source,java,role="primary"]
+----
+@Configuration
+@EnableLdapRepositories("com.acme.*.repositories")
+class MyConfig {
+
+  @Bean
+  ContextSource contextSource() {
+
+    LdapContextSource ldapContextSource = new LdapContextSource();
+
+    ldapContextSource.setUserDn("cn=Admin");
+    ldapContextSource.setPassword("secret");
+    ldapContextSource.setUrl("ldap://127.0.0.1:389");
+
+    return ldapContextSource;
+  }
+
+  @Bean
+  LdapTemplate ldapTemplate(ContextSource contextSource) {
+    return new LdapTemplate(contextSource);
+  }
+}
+----
+
+.XML
+[source,xml,role="secondary"]
 ----
 
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -94,34 +121,10 @@ Right now, this interface serves only typing purposes, but we can add additional
 ----
 ====
 
-This namespace element causes the base packages to be scanned for interfaces that extend `LdapRepository` and create Spring beans for each one found. By default the repositories get an autowired `LdapTemplate` Spring bean that is called `ldapTemplate`, so you only need to configure `ldap-template-ref` explicitly if you deviate from this convention.
+This configuration causes the base packages to be scanned for interfaces that extend `LdapRepository` and create Spring beans for each one found.
+By default, the repositories get an autowired `LdapTemplate` Spring bean that is called `ldapTemplate`, so you only need to configure `ldap-template-ref` explicitly if you deviate from this convention.
 
-If you want to go with Java configuration, use the `@EnableLdapRepositories` annotation. The annotation carries the same attributes as the namespace element. If no base package is configured, the infrastructure scans the package of the annotated configuration class. The following example shows how to set up Java configuration:
-
-.Java configuration for repositories
-====
-[source,java]
-----
-@Configuration
-@EnableLdapRepositories
-class ApplicationConfig {
-
-    @Bean
-    ContextSource contextSource() {
-
-        LdapContextSource ldapContextSource = new LdapContextSource();
-        ldapContextSource.setUrl("ldap://127.0.0.1:389");
-
-        return ldapContextSource;
-    }
-
-    @Bean
-    LdapTemplate ldapTemplate(ContextSource contextSource) {
-        return new LdapTemplate(contextSource);
-    }
-}
-----
-====
+If you want to go with Java configuration, use the `@EnableLdapRepositories` annotation. The annotation carries the same attributes as the namespace element. If no base package is configured, the infrastructure scans the package of the annotated configuration class.
 
 Because our domain repository extends `CrudRepository`, it provides you with CRUD operations as well as methods for access to the entities. Working with the repository instance is a matter of dependency injecting it into a client.
 
@@ -131,14 +134,14 @@ We can add paging access to our repository, as follows:
 ====
 [source,java]
 ----
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith({SpringExtension.class})
 @ContextConfiguration
-public class PersonRepositoryTests {
+class PersonRepositoryTests {
 
     @Autowired PersonRepository repository;
 
     @Test
-    public void readAll() {
+    void readAll() {
 
       List<Person> persons = repository.findAll();
       assertThat(persons.isEmpty(), is(false));
@@ -158,7 +161,7 @@ Most of the data access operations you usually trigger on a repository result in
 ====
 [source,java]
 ----
-public interface PersonRepository extends PagingAndSortingRepository<Person, String> {
+interface PersonRepository extends PagingAndSortingRepository<Person, String> {
 
     List<Person> findByLastname(String lastname);                            <1>
 
