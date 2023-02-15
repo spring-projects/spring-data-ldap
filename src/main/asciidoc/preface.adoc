@@ -30,16 +30,16 @@ you must configure some parts of the library by using Spring.
 
 To learn more about Spring, you can refer to the comprehensive {spring-framework-docs}[documentation]
 that explains the Spring Framework in detail. There are a lot of articles, blog entries, and books on Spring.
-See the Spring Framework https://projects.spring.io/spring-framework/[home page] for more information.
+See the Spring Framework https://spring.io/projects/spring-framework/[home page] for more information.
 
 While it is not important to know the Spring APIs, you do need to understand the concepts behind them. At a minimum, the idea behind IoC should be familiar for whatever IoC container you choose to use.
 
-To learn more about Spring, you can refer to the comprehensive documentation that explains the Spring Framework in detail. You can find a lot of articles, blog entries, and books on Spring. See the Spring framework https://spring.io/docs[home page ] for more information.
+To learn more about Spring, you can refer to the comprehensive documentation that explains the Spring Framework in detail. You can find a lot of articles, blog entries, and books on Spring. See the Spring framework https://spring.io/projects[home page] for more information.
 
 [[requirements]]
 == Requirements
 
-Spring Data LDAP 2.x binaries requires JDK level 8.0 or later, https://spring.io/docs[Spring Framework] {springVersion} or later, and https://projects.spring.io/spring-ldap[Spring LDAP] {springLdapVersion} or later.
+Spring Data LDAP 2.x binaries requires JDK level 8.0 or later, https://spring.io/projects/spring-framework/[Spring Framework] {springVersion} or later, and https://spring.io/projects/spring-ldap[Spring LDAP] {springLdapVersion} or later.
 
 [[get-started:help]]
 == Additional Help Resources
@@ -57,7 +57,7 @@ Professional, from-the-source support, with guaranteed response time, is availab
 [[get-started:up-to-date]]
 === Following Development
 
-For information on the Spring Data LDAP source code repository, nightly builds, and snapshot artifacts, see the https://projects.spring.io/spring-data-ldap/[Spring Data LDAP homepage]. You can help make Spring Data best serve the needs of the Spring community by interacting with developers through the community on https://stackoverflow.com/questions/tagged/spring-data[Stackoverflow]. To follow developer activity, look for the mailing list information on the Spring Data LDAP homepage. If you encounter a bug or want to suggest an improvement, please create a ticket on the Spring Data issue https://github.com/spring-projects/spring-data-ldap/issues[tracker]. To stay up-to-date with the latest news and announcements in the Spring ecosystem, subscribe to the Spring Community https://spring.io[Portal]. Finally, you can follow the Spring https://spring.io/blog[blog] or the project team on Twitter (https://twitter.com/SpringData[SpringData]).
+For information on the Spring Data LDAP source code repository, nightly builds, and snapshot artifacts, see the https://spring.io/projects/spring-data-ldap/[Spring Data LDAP homepage]. You can help make Spring Data best serve the needs of the Spring community by interacting with developers through the community on https://stackoverflow.com/questions/tagged/spring-data[Stackoverflow]. To follow developer activity, look for the mailing list information on the Spring Data LDAP homepage. If you encounter a bug or want to suggest an improvement, please create a ticket on the Spring Data issue https://github.com/spring-projects/spring-data-ldap/issues[tracker]. To stay up-to-date with the latest news and announcements in the Spring ecosystem, subscribe to the Spring Community https://spring.io[Portal]. Finally, you can follow the Spring https://spring.io/blog[blog] or the project team on Twitter (https://twitter.com/SpringData[SpringData]).
 
 [[get-started:project-metadata]]
 === Project Metadata
