@@ -18,8 +18,6 @@ package org.springframework.data.ldap.repository.support;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import lombok.Data;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
-
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -114,7 +111,7 @@ class QuerydslLdapPredicateExecutorUnitTests {
 		assertThat(interfaceProjection.getLastName()).isEqualTo("White");
 
 		PersonDto dto = repository.findBy(QPerson.person.fullName.eq("Walter"), it -> it.as(PersonDto.class).firstValue());
-		assertThat(dto.getLastName()).isEqualTo("White");
+		assertThat(dto.lastName()).isEqualTo("White");
 
 		ArgumentCaptor<LdapQuery> captor = ArgumentCaptor.forClass(LdapQuery.class);
 
@@ -137,7 +134,7 @@ class QuerydslLdapPredicateExecutorUnitTests {
 		assertThat(interfaceProjection.getLastName()).isEqualTo("White");
 
 		PersonDto dto = repository.findBy(QPerson.person.fullName.eq("Walter"), it -> it.as(PersonDto.class).oneValue());
-		assertThat(dto.getLastName()).isEqualTo("White");
+		assertThat(dto.lastName()).isEqualTo("White");
 
 		ArgumentCaptor<LdapQuery> captor = ArgumentCaptor.forClass(LdapQuery.class);
 
@@ -257,9 +254,7 @@ class QuerydslLdapPredicateExecutorUnitTests {
 		String getLastName();
 	}
 
-	@Data
-	static class PersonDto {
+	record PersonDto(String lastName) {
 
-		String lastName;
 	}
 }

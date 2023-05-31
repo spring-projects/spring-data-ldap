@@ -16,10 +16,6 @@
 
 package org.springframework.data.ldap.repository.support;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 import javax.naming.Name;
@@ -33,32 +29,37 @@ import org.springframework.ldap.odm.annotations.Transient;
 /**
  * @author Mattias Hellborg Arthursson
  */
-@Entry(objectClasses = {"inetOrgPerson", "organizationalPerson", "person", "top"})
-@AllArgsConstructor
-@NoArgsConstructor
+@Entry(objectClasses = { "inetOrgPerson", "organizationalPerson", "person", "top" })
+
 public class UnitTestPerson {
-    @Id
-    private Name dn;
+	@Id private Name dn;
 
-    @Attribute(name = "cn")
-    @DnAttribute("cn")
-    private String fullName;
+	@Attribute(name = "cn")
+	@DnAttribute("cn") private String fullName;
 
-    @Attribute(name = "sn")
-    private String lastName;
+	@Attribute(name = "sn") private String lastName;
 
-    @Attribute(name = "description")
-    private List<String> description;
+	@Attribute(name = "description") private List<String> description;
 
-    @Transient
-    @DnAttribute("c")
-    private String country;
+	@Transient
+	@DnAttribute("c") private String country;
 
-    @Transient
-    @DnAttribute("ou")
-    private String company;
+	@Transient
+	@DnAttribute("ou") private String company;
 
-    // This should be automatically found
-    private String telephoneNumber;
+	// This should be automatically found
+	private String telephoneNumber;
 
+	public UnitTestPerson() {}
+
+	public UnitTestPerson(Name dn, String fullName, String lastName, List<String> description, String country,
+			String company, String telephoneNumber) {
+		this.dn = dn;
+		this.fullName = fullName;
+		this.lastName = lastName;
+		this.description = description;
+		this.country = country;
+		this.company = company;
+		this.telephoneNumber = telephoneNumber;
+	}
 }

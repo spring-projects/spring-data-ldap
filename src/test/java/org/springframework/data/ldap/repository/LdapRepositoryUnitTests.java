@@ -19,8 +19,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import lombok.Data;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
-
 import org.springframework.data.ldap.repository.support.LdapRepositoryFactory;
 import org.springframework.data.ldap.repository.support.UnitTestPerson;
 import org.springframework.ldap.core.LdapOperations;
@@ -92,14 +89,14 @@ class LdapRepositoryUnitTests {
 		PersonDto walter = repository.findByLastName("White", PersonDto.class);
 
 		assertThat(walter).isNotNull();
-		assertThat(walter.getLastName()).isEqualTo("White");
+		assertThat(walter.lastName()).isEqualTo("White");
 
 		ArgumentCaptor<LdapQuery> captor = ArgumentCaptor.forClass(LdapQuery.class);
 
 		verify(ldapOperations).findOne(captor.capture(), any());
 
 		LdapQuery query = captor.getValue();
-		assertThat(query.attributes()).isNullOrEmpty();
+		assertThat(query.attributes()).contains("lastName");
 	}
 
 	@Test
@@ -135,9 +132,6 @@ class LdapRepositoryUnitTests {
 		String getLastName();
 	}
 
-	@Data
-	static class PersonDto {
-
-		String lastName;
+	record PersonDto(String lastName) {
 	}
 }

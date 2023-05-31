@@ -16,16 +16,22 @@
 package org.springframework.data.ldap.repository.cdi;
 
 import jakarta.inject.Inject;
-import lombok.Getter;
 
 import org.springframework.ldap.core.LdapTemplate;
 
 /**
  * @author Mark Paluch
  */
-@Getter
 class RepositoryClient {
 
 	@Inject SampleRepository sampleRepository;
 	@Inject LdapTemplate ldapTemplate;
+
+	public SampleRepository getSampleRepository() {
+		return sampleRepository;
+	}
+
+	public LdapTemplate getLdapTemplate() {
+		return ldapTemplate;
+	}
 }
