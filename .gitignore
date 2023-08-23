@@ -15,3 +15,7 @@ src/ant/.ant-targets-upload-dist.xml
 atlassian-ide-plugin.xml
 /.gradle/
 /.idea/
+package.json
+package-lock.json
+node
+node_modules

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -134,25 +135,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>org.asciidoctor</groupId>
-				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<configuration>
-					<attributes>
-						<version>${project.version}</version>
-						<projectName>${project.name}</projectName>
-						<projectVersion>${project.version}</projectVersion>
-						<aspectjVersion>${aspectj}</aspectjVersion>
-						<querydslVersion>${querydsl}</querydslVersion>
-						<springVersion>${spring}</springVersion>
-						<releasetrainVersion>${releasetrain}</releasetrainVersion>
-						<springLdapVersion>${spring-ldap}</springLdapVersion>
-						<allow-uri-read>true</allow-uri-read>
-						<toclevels>3</toclevels>
-						<numbered>true</numbered>
-					</attributes>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -162,6 +144,29 @@
 			<properties>
 				<spring-ldap>2.3.2.BUILD-SNAPSHOT</spring-ldap>
 			</properties>
+		</profile>
+		<profile>
+			<id>antora</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.spring.maven.antora</groupId>
+						<artifactId>antora-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>antora-process-resources</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/antora/resources/antora-resources</directory>
+						<filtering>true</filtering>
+					</resource>
+				</resources>
+			</build>
 		</profile>
 	</profiles>
 
