@@ -1,6 +1,3 @@
-image:https://spring.io/badges/spring-data-ldap/ga.svg[Spring Data LDAP,link=https://projects.spring.io/spring-data-ldap#quick-start]
-image:https://spring.io/badges/spring-data-ldap/snapshot.svg[Spring Data LDAP,link=https://projects.spring.io/spring-data-ldap#quick-start]
-
 = Spring Data LDAP image:https://jenkins.spring.io/buildStatus/icon?job=spring-data-ldap%2Fmain&subject=Build[link=https://jenkins.spring.io/view/SpringData/job/spring-data-ldap/] https://gitter.im/spring-projects/spring-data[image:https://badges.gitter.im/spring-projects/spring-data.svg[Gitter]]
 
 The primary goal of the https://projects.spring.io/spring-data[Spring Data] project is to make it easier to build Spring-powered applications that use new data access technologies such as non-relational databases, map-reduce frameworks, and cloud based data services.
@@ -96,7 +93,7 @@ If you'd rather like the latest snapshots of the upcoming major version, use our
 Having trouble with Spring Data? We’d love to help!
 
 * Check the
-https://docs.spring.io/spring-data/ldap/docs/current/reference/html/[reference documentation], and https://docs.spring.io/spring-data/ldap/docs/current/api/[Javadocs].
+https://docs.spring.io/spring-data/ldap/reference/[reference documentation], and https://docs.spring.io/spring-data/ldap/docs/current/api/[Javadocs].
 * Learn the Spring basics – Spring Data builds on Spring Framework, check the https://spring.io[spring.io] web-site for a wealth of reference documentation.
 If you are just starting out with Spring, try one of the https://spring.io/guides[guides].
 * If you are upgrading, check out the https://docs.spring.io/spring-data/ldap/docs/current/changelog.txt[changelog] for "`new and noteworthy`" features.
@@ -125,7 +122,7 @@ You also need JDK 1.8.
  $ ./mvnw clean install
 ----
 
-If you want to build with the regular `mvn` command, you will need https://maven.apache.org/run-maven/index.html[Maven v3.5.0 or above].
+If you want to build with the regular `mvn` command, you will need https://maven.apache.org/run-maven/index.html[Maven v3.8.0 or above].
 
 _Also see link:CONTRIBUTING.adoc[CONTRIBUTING.adoc] if you wish to submit pull requests, and in particular please sign the https://cla.pivotal.io/sign/spring[Contributor’s Agreement] before your first non-trivial change._
 
@@ -135,10 +132,10 @@ Building the documentation builds also the project without running tests.
 
 [source,bash]
 ----
- $ ./mvnw clean install -Pdistribute
+ $ ./mvnw clean install -Pantora
 ----
 
-The generated documentation is available from `target/site/reference/html/index.html`.
+The generated documentation is available from `target/antora/site/index.html`.
 
 == Examples
 
