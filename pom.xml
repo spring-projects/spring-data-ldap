@@ -19,7 +19,7 @@
 	</parent>
 
 	<properties>
-		<spring-ldap>3.2.0-M1</spring-ldap>
+		<spring-ldap>3.2.0-M3</spring-ldap>
 		<springdata.commons>3.2.0-SNAPSHOT</springdata.commons>
 		<java-module-name>spring.data.ldap</java-module-name>
 	</properties>
