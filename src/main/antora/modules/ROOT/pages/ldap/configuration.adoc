@@ -13,7 +13,7 @@ All Spring LDAP repositories must work with entities annotated with the ODM anno
 
 Since all ODM managed classes must have a Distinguished Name as the ID, all Spring LDAP repositories must have the ID type parameter set to `javax.naming.Name`.
 
-Indeed, the built-in `LdapRepository` only takes one type parameter: the managed entity class, which defaults the ID to `javax.naming.Name`.
+Indeed, the built-in javadoc:org.springframework.data.ldap.repository.LdapRepository[] only takes one type parameter: the managed entity class, which defaults the ID to `javax.naming.Name`.
 
 Due to specifics of the LDAP protocol, paging and sorting are not supported for Spring LDAP repositories.
 
