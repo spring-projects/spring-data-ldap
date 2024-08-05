@@ -18,4 +18,4 @@ atlassian-ide-plugin.xml
 package-lock.json
 node
 node_modules
-.mvn/.gradle-enterprise
+.mvn/.develocity
