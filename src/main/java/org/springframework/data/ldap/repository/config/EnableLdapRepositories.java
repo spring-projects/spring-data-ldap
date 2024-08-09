@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.ldap.repository.support.LdapRepositoryFactoryBean;
@@ -34,6 +35,7 @@ import org.springframework.data.repository.query.QueryLookupStrategy.Key;
  *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
+ * @author Christoph Strobl
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -113,6 +115,13 @@ public @interface EnableLdapRepositories {
 	 * @return
 	 */
 	Class<?> repositoryBaseClass() default DefaultRepositoryBaseClass.class;
+
+	/**
+	 * Configure a specific {@link BeanNameGenerator} to be used when creating the repository beans.
+	 * @return the {@link BeanNameGenerator} to be used or the base {@link BeanNameGenerator} interface to indicate context default.
+	 * @since 3.4
+	 */
+	Class<? extends BeanNameGenerator> nameGenerator() default BeanNameGenerator.class;
 
 	/**
 	 * Configures the name of the {@link org.springframework.ldap.core.LdapTemplate} bean to be used with the repositories
