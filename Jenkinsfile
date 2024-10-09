@@ -67,7 +67,7 @@ pipeline {
 					steps {
 						script {
 							docker.withRegistry(p['docker.proxy.registry'], p['docker.proxy.credentials']) {
-								docker.image(p['docker.java.next.image']).inside(p['docker.java.inside.docker']) {
+								docker.image(p['docker.java.next.image']).inside(p['docker.java.inside.basic']) {
 									sh 'MAVEN_OPTS="-Duser.name=' + "${p['jenkins.user.name']}" + ' -Duser.home=/tmp/jenkins-home" ' +
 										"./mvnw -s settings.xml clean dependency:list test -Dsort -U -B"
 								}
