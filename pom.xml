@@ -21,6 +21,7 @@
 		<spring-ldap>3.2.8</spring-ldap>
 		<springdata.commons>3.5.0-SNAPSHOT</springdata.commons>
 		<java-module-name>spring.data.ldap</java-module-name>
+		<unboundid-ldapsdk>7.0.1</unboundid-ldapsdk>
 	</properties>
 
 	<developers>
@@ -106,6 +107,20 @@
 			<groupId>org.apache.openwebbeans</groupId>
 			<artifactId>openwebbeans-se</artifactId>
 			<version>${webbeans}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-test</artifactId>
+			<version>${spring-ldap}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.unboundid</groupId>
+			<artifactId>unboundid-ldapsdk</artifactId>
+			<version>${unboundid-ldapsdk}</version>
 			<scope>test</scope>
 		</dependency>
 
