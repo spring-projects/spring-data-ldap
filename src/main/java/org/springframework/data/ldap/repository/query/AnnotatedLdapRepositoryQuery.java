@@ -18,6 +18,7 @@ package org.springframework.data.ldap.repository.query;
 import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
 import org.springframework.data.expression.ValueEvaluationContext;
+import org.springframework.data.expression.ValueEvaluationContextProvider;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
@@ -67,6 +68,7 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	 * @param mappingContext          must not be {@literal null}.
 	 * @param instantiators           must not be {@literal null}.
 	 * @param valueExpressionDelegate must not be {@literal null}
+	 * @since 3.4
 	 */
 	public AnnotatedLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations,
 			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
@@ -85,8 +87,10 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
 	@Override
 	protected LdapQuery createQuery(LdapParameterAccessor parameters) {
-		ValueEvaluationContext evaluationContext = valueExpressionDelegate.createValueContextProvider(
-				getQueryMethod().getParameters()).getEvaluationContext(parameters.getBindableParameterValues(), stringBasedQuery.getExpressionDependencies());
+		ValueEvaluationContextProvider valueContextProvider = valueExpressionDelegate.createValueContextProvider(
+				getQueryMethod().getParameters());
+		ValueEvaluationContext evaluationContext = valueContextProvider.getEvaluationContext(
+				parameters.getBindableParameterValues(), stringBasedQuery.getExpressionDependencies());
 		String boundQuery = stringBasedQuery.bindQuery(parameters,
 				new ContextualValueExpressionEvaluator(valueExpressionDelegate, evaluationContext));
 
