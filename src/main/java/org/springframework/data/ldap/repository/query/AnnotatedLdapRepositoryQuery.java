@@ -44,11 +44,11 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	/**
 	 * Construct a new instance.
 	 *
-	 * @param queryMethod             the QueryMethod.
-	 * @param entityType              the managed class.
-	 * @param ldapOperations          the LdapOperations instance to use.
-	 * @param mappingContext          must not be {@literal null}.
-	 * @param instantiators           must not be {@literal null}.
+	 * @param queryMethod the QueryMethod.
+	 * @param entityType the managed class.
+	 * @param ldapOperations the LdapOperations instance to use.
+	 * @param mappingContext must not be {@literal null}.
+	 * @param instantiators must not be {@literal null}.
 	 * @deprecated use the constructor with {@link ValueExpressionDelegate}
 	 */
 	@Deprecated(since = "3.4")
@@ -62,11 +62,11 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	/**
 	 * Construct a new instance.
 	 *
-	 * @param queryMethod             the QueryMethod.
-	 * @param entityType              the managed class.
-	 * @param ldapOperations          the LdapOperations instance to use.
-	 * @param mappingContext          must not be {@literal null}.
-	 * @param instantiators           must not be {@literal null}.
+	 * @param queryMethod the QueryMethod.
+	 * @param entityType the managed class.
+	 * @param ldapOperations the LdapOperations instance to use.
+	 * @param mappingContext must not be {@literal null}.
+	 * @param instantiators must not be {@literal null}.
 	 * @param valueExpressionDelegate must not be {@literal null}
 	 * @since 3.4
 	 */
@@ -87,10 +87,13 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
 	@Override
 	protected LdapQuery createQuery(LdapParameterAccessor parameters) {
-		ValueEvaluationContextProvider valueContextProvider = valueExpressionDelegate.createValueContextProvider(
-				getQueryMethod().getParameters());
-		ValueEvaluationContext evaluationContext = valueContextProvider.getEvaluationContext(
-				parameters.getBindableParameterValues(), stringBasedQuery.getExpressionDependencies());
+
+		ValueEvaluationContextProvider valueContextProvider = valueExpressionDelegate
+				.createValueContextProvider(getQueryMethod().getParameters());
+
+		ValueEvaluationContext evaluationContext = valueContextProvider
+				.getEvaluationContext(parameters.getBindableParameterValues(), stringBasedQuery.getExpressionDependencies());
+
 		String boundQuery = stringBasedQuery.bindQuery(parameters,
 				new ContextualValueExpressionEvaluator(valueExpressionDelegate, evaluationContext));
 

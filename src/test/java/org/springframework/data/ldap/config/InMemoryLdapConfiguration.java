@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,11 @@
  */
 package org.springframework.data.ldap.config;
 
+import jakarta.annotation.PreDestroy;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
-import com.unboundid.ldap.listener.InMemoryListenerConfig;
-import com.unboundid.ldap.sdk.LDAPException;
-import com.unboundid.ldap.sdk.schema.Schema;
-import com.unboundid.ldif.LDIFReader;
-import jakarta.annotation.PreDestroy;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,6 +35,12 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import com.unboundid.ldap.listener.InMemoryDirectoryServer;
+import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
+import com.unboundid.ldap.listener.InMemoryListenerConfig;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldif.LDIFReader;
 
 /**
  * Taken from Spring Boot
@@ -63,10 +63,6 @@ public class InMemoryLdapConfiguration {
 			throws LDAPException {
 		String[] baseDn = StringUtils.toStringArray(this.embeddedProperties.getBaseDn());
 		InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig(baseDn);
-		if (this.embeddedProperties.getCredential().isAvailable()) {
-			config.addAdditionalBindCredentials(this.embeddedProperties.getCredential().getUsername(),
-					this.embeddedProperties.getCredential().getPassword());
-		}
 		setSchema(config);
 		InMemoryListenerConfig listenerConfig = InMemoryListenerConfig.createLDAPConfig("LDAP",
 				this.embeddedProperties.getPort());
@@ -86,10 +82,6 @@ public class InMemoryLdapConfiguration {
 		LdapContextSource source = new LdapContextSource();
 		Assert.notEmpty(properties.getBaseDn(), "Base DN must be set with at least one value");
 		source.setBase(properties.getBaseDn().get(0));
-		if (embeddedProperties.getCredential().isAvailable()) {
-			source.setUserDn(embeddedProperties.getCredential().getUsername());
-			source.setPassword(embeddedProperties.getCredential().getPassword());
-		}
 		source.setUrls(determineUrls(environment, properties.getPort()));
 		return source;
 	}
@@ -104,25 +96,7 @@ public class InMemoryLdapConfiguration {
 	}
 
 	private void setSchema(InMemoryDirectoryServerConfig config) {
-		if (!this.embeddedProperties.getValidation().isEnabled()) {
 			config.setSchema(null);
-			return;
-		}
-		Resource schema = this.embeddedProperties.getValidation().getSchema();
-		if (schema != null) {
-			setSchema(config, schema);
-		}
-	}
-
-	private void setSchema(InMemoryDirectoryServerConfig config, Resource resource) {
-		try {
-			Schema defaultSchema = Schema.getDefaultStandardSchema();
-			Schema schema = Schema.getSchema(resource.getInputStream());
-			config.setSchema(Schema.mergeSchemas(defaultSchema, schema));
-		}
-		catch (Exception ex) {
-			throw new IllegalStateException("Unable to load schema " + resource.getDescription(), ex);
-		}
 	}
 
 	private void importLdif(ApplicationContext applicationContext) {

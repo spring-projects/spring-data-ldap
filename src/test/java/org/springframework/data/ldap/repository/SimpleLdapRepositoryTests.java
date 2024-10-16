@@ -60,8 +60,6 @@ class SimpleLdapRepositoryTests {
 	@BeforeEach
 	void prepareTestedInstance() {
 		tested = new SimpleLdapRepository<>(ldapOperationsMock, odmMock, Object.class);
-
-
 	}
 
 	@Test
