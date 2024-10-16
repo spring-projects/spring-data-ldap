@@ -30,13 +30,13 @@ public interface QueryRepository extends LdapRepository<SchemaEntry> {
 	@Query(value = "(cn=:fullName)")
 	List<SchemaEntry> namedParameters(@Param("fullName") String fullName, @Param("lastName") String lastName);
 
-	@Query(value = "(cn=?1)")
+	@Query(value = "(cn=?0)")
 	List<SchemaEntry> indexedParameters(String fullName, String lastName);
 
-	@Query(value = "(cn=#{'John ' + 'Doe'})")
+	@Query(value = "(cn=:#{'John ' + 'Doe'})")
 	List<SchemaEntry> spelParameters();
 
-	@Query( value = "(cn=${full.name})")
+	@Query( value = "(cn=?${full.name})")
 	List<SchemaEntry> propertyPlaceholderParameters();
 
 }

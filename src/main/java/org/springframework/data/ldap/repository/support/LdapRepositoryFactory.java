@@ -151,7 +151,8 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 				information.getDomainType());
 	}
 
-	@Override protected Optional<QueryLookupStrategy> getQueryLookupStrategy(Key key,
+	@Override
+	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(Key key,
 			ValueExpressionDelegate valueExpressionDelegate) {
 		return Optional.of(new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext, valueExpressionDelegate));
 	}

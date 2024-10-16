@@ -18,8 +18,7 @@ package org.springframework.data.ldap.repository.query;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -44,47 +43,39 @@ class ValueExpressionLdapRepositoryQueryTests {
 
 	@Autowired private QueryRepository queryRepository;
 
-	@ParameterizedTest
-	@EnumSource(QueryType.class)
-	void should_work_with_value_expression(QueryType queryType) {
-		List<SchemaEntry> objects = queryType.run(queryRepository);
+	@Test
+	void shouldWorkWithNamedParameters() {
+		List<SchemaEntry> objects = queryRepository.namedParameters("John Doe", "Bar");
 
+		assertThatReturnedObjectIsJohnDoe(objects);
+	}
+
+	@Test
+	void shouldWorkWithIndexParameters() {
+		List<SchemaEntry> objects = queryRepository.indexedParameters("John Doe", "Bar");
+
+		assertThatReturnedObjectIsJohnDoe(objects);
+	}
+
+	@Test
+	void shouldWorkWithSpelExpressions() {
+		List<SchemaEntry> objects = queryRepository.spelParameters();
+
+		assertThatReturnedObjectIsJohnDoe(objects);
+	}
+
+	@Test
+	void shouldWorkWithPropertyPlaceholders() {
+		List<SchemaEntry> objects = queryRepository.propertyPlaceholderParameters();
+
+		assertThatReturnedObjectIsJohnDoe(objects);
+	}
+
+	private static void assertThatReturnedObjectIsJohnDoe(List<SchemaEntry> objects) {
 		assertThat(objects).hasSize(1);
 		assertThat(objects.get(0).fullName).isEqualTo("John Doe");
 		assertThat(objects.get(0).lastName).isEqualTo("Doe");
 	}
-
-	interface RunnableTestCase {
-		List<SchemaEntry> run(QueryRepository queryRepository);
-	}
-
-	enum QueryType implements RunnableTestCase {
-		NAMED_QUERY {
-			@Override
-			public List<SchemaEntry> run(QueryRepository queryRepository) {
-				return queryRepository.namedParameters("John Doe", "Bar");
-			}
-		},
-		INDEXED_PARAMS_QUERY {
-			@Override
-			public List<SchemaEntry> run(QueryRepository queryRepository) {
-				return queryRepository.indexedParameters("John Doe", "Bar");
-			}
-		},
-		SPEL_QUERY {
-			@Override
-			public List<SchemaEntry> run(QueryRepository queryRepository) {
-				return queryRepository.spelParameters();
-			}
-		},
-		PROPERTY_PLACEHOLDER_QUERY {
-			@Override
-			public List<SchemaEntry> run(QueryRepository queryRepository) {
-				return queryRepository.propertyPlaceholderParameters();
-			}
-		}
-	}
-
 
 	@Configuration(proxyBeanMethods = false)
 	@Import(InMemoryLdapConfiguration.class)
