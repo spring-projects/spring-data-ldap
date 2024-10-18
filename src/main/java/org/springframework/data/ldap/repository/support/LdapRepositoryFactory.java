@@ -42,6 +42,7 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.data.repository.query.ValueExpressionDelegate;
 import org.springframework.lang.Nullable;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.util.Assert;
@@ -56,7 +57,6 @@ import org.springframework.util.Assert;
  */
 public class LdapRepositoryFactory extends RepositoryFactorySupport {
 
-	private final LdapQueryLookupStrategy queryLookupStrategy;
 	private final LdapOperations ldapOperations;
 	private final MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext;
 	private final EntityInstantiators instantiators = new EntityInstantiators();
@@ -72,7 +72,6 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 
 		this.ldapOperations = ldapOperations;
 		this.mappingContext = new LdapMappingContext();
-		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext);
 	}
 
 	/**
@@ -87,7 +86,6 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		Assert.notNull(ldapOperations, "LdapOperations must not be null");
 		Assert.notNull(mappingContext, "LdapMappingContext must not be null");
 
-		this.queryLookupStrategy = new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext);
 		this.ldapOperations = ldapOperations;
 		this.mappingContext = mappingContext;
 	}
@@ -154,9 +152,9 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	}
 
 	@Override
-	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable Key key,
-			QueryMethodEvaluationContextProvider evaluationContextProvider) {
-		return Optional.of(queryLookupStrategy);
+	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(Key key,
+			ValueExpressionDelegate valueExpressionDelegate) {
+		return Optional.of(new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext, valueExpressionDelegate));
 	}
 
 	/**
@@ -185,19 +183,9 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		return acceptsMappingContext;
 	}
 
-	private static final class LdapQueryLookupStrategy implements QueryLookupStrategy {
-
-		private final LdapOperations ldapOperations;
-		private final EntityInstantiators instantiators;
-		private final MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext;
-
-		public LdapQueryLookupStrategy(LdapOperations ldapOperations, EntityInstantiators instantiators,
-				MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext) {
-
-			this.ldapOperations = ldapOperations;
-			this.instantiators = instantiators;
-			this.mappingContext = mappingContext;
-		}
+	private record LdapQueryLookupStrategy(LdapOperations ldapOperations,
+			EntityInstantiators instantiators, MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
+			ValueExpressionDelegate valueExpressionDelegate) implements QueryLookupStrategy {
 
 		@Override
 		public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory,
@@ -207,7 +195,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 			Class<?> domainType = metadata.getDomainType();
 
 			if (queryMethod.hasQueryAnnotation()) {
-				return new AnnotatedLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators);
+				return new AnnotatedLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators, valueExpressionDelegate);
 			} else {
 				return new PartTreeLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators);
 			}
