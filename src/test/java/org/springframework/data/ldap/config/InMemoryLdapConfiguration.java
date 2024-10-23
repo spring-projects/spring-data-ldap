@@ -74,11 +74,9 @@ public class InMemoryLdapConfiguration {
 		return this.server;
 	}
 
-
 	@Bean
 	@DependsOn("directoryServer")
-	LdapContextSource ldapContextSource(Environment environment, EmbeddedLdapProperties properties,
-			EmbeddedLdapProperties embeddedProperties) {
+	LdapContextSource ldapContextSource(Environment environment, EmbeddedLdapProperties properties) {
 		LdapContextSource source = new LdapContextSource();
 		Assert.notEmpty(properties.getBaseDn(), "Base DN must be set with at least one value");
 		source.setBase(properties.getBaseDn().get(0));

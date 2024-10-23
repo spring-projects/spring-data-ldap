@@ -76,3 +76,91 @@ The following table provides samples of the keywords that you can use with query
 | `(!(Firstname=name))`
 
 |===
+
+[[ldap.query-methods.at-query]]
+== Using `@Query`
+
+If you need to use a custom query that can't be derived from the method name, you can use the `@Query` annotation to define the query.
+As queries are tied to the Java method that runs them, you can actually bind parameters to be passed to the query.
+
+The following example shows a query created with the `@Query` annotation:
+
+.Declare query at the query method using `@Query`
+====
+[source,java]
+----
+interface PersonRepository extends LdapRepository<Person, Long> {
+
+  @Query("(&(employmentType=*)(!(employmentType=Hired))(mail=:emailAddress))")
+  Person findEmployeeByEmailAddress(String emailAddress);
+
+}
+----
+====
+
+NOTE: Spring Data supports named (parameter names prefixed with `:`) and positional parameter binding (in the form of zero-based `?0`).
+We recommend using named parameters for easier readability.
+Also, using positional parameters makes query methods a little error-prone when refactoring regarding the parameter position.
+
+[[ldap.encoding]]
+== Parameter Encoding
+
+Query parameters of String-based queries are encoded according to https://datatracker.ietf.org/doc/html/rfc2254[RFC2254].
+This can lead to undesired escaping of certain characters.
+You can specify your own encoder through the `@LdapEncode` annotation that defines which javadoc:org.springframework.data.ldap.repository.LdapEncoder[] to use.
+
+`@LdapEncode` applies to individual parameters of a query method.
+It is not applies for derived queries or Value Expressions (SpEL, Property Placeholders).
+
+.Declare a custom `LdapEncoder` for a query method
+====
+[source,java]
+----
+interface PersonRepository extends LdapRepository<Person, Long> {
+
+  @Query("(&(employmentType=*)(!(employmentType=Hired))(firstName=:firstName))")
+  Person findEmployeeByFirstNameLike(@LdapEncode(MyLikeEncoder.class) String firstName);
+
+}
+----
+====
+
+[[ldap.query.spel-expressions]]
+== Using SpEL Expressions
+
+Spring Data allows you to use SpEL expressions in your query methods.
+SpEL expressions are part of Spring Data's xref:ldap/value-expressions.adoc[Value Expressions] support.
+SpEL expressions can be used to manipulate query method arguments as well as to invoke bean methods.
+Method arguments can be accessed by name or index as demonstrated in the following example.
+
+.Using SpEL expressions in Repository Query Methods
+====
+[source,java]
+----
+@Query("(&(firstName=?#{[0]})(mail=:?#{principal.emailAddress}))")
+List<Person> findByFirstnameAndCurrentUserWithCustomQuery(String firstname);
+----
+====
+
+NOTE: Values provided by SpEL expressions are not escaped according to RFC2254.
+You have to ensure that the values are properly escaped if needed.
+Consider using Spring Ldap's `org.springframework.ldap.support.LdapEncoder` helper class.
+
+[[ldap.query.property-placeholders]]
+== Using Property Placeholders
+
+Property Placeholders (see xref:ldap/value-expressions.adoc[Value Expressions]) can help to easily customize your queries based on configuration properties from Spring's `Environment`.
+These are useful for queries that need to be customized based on the environment or configuration.
+
+.Using Property Placeholders in Repository Query Methods
+====
+[source,java]
+----
+@Query("(&(firstName=?0)(stage=:?${myapp.stage:dev}))")
+List<Person> findByFirstnameAndStageWithCustomQuery(String firstname);
+----
+====
+
+NOTE: Values provided by Property Placeholders are not escaped according to RFC2254.
+You have to ensure that the values are properly escaped if needed.
+Consider using Spring Ldap's `org.springframework.ldap.support.LdapEncoder` helper class.
