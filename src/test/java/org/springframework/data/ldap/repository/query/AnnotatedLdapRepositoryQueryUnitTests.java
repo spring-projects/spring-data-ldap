@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.springframework.data.ldap.repository.query;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -26,14 +28,17 @@ import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.mapping.model.EntityInstantiators;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.repository.core.support.DefaultRepositoryMetadata;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.query.ValueExpressionDelegate;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-class AnnotatedLdapRepositoryQueryTests {
+/**
+ * Unit tests for {@link AnnotatedLdapRepositoryQuery}
+ *
+ * @author Marcin Grzejszczak
+ * @author Mark Paluch
+ */
+class AnnotatedLdapRepositoryQueryUnitTests {
 
 	LdapOperations ldapOperations = Mockito.mock();
 
@@ -41,18 +46,31 @@ class AnnotatedLdapRepositoryQueryTests {
 
 	@Test
 	void shouldEncodeQuery() throws NoSuchMethodException {
-		LdapQueryMethod method = queryMethod("namedParameters");
+
+		LdapQueryMethod method = queryMethod("namedParameters", String.class);
 		AnnotatedLdapRepositoryQuery query = repositoryQuery(method);
 
 		LdapQuery ldapQuery = query.createQuery(
-				new LdapParametersParameterAccessor(method, new Object[] { "John)(cn=Doe)", "foo" }));
+				new LdapParametersParameterAccessor(method, new Object[] { "John)(cn=Doe)" }));
 
 		assertThat(ldapQuery.filter().encode()).isEqualTo("(cn=John\\29\\28cn=Doe\\29)");
 	}
 
 	@Test
+	void messageFormatParametersShouldWork() throws NoSuchMethodException {
+
+		LdapQueryMethod method = queryMethod("messageFormatParameters", String.class);
+		AnnotatedLdapRepositoryQuery query = repositoryQuery(method);
+
+		LdapQuery ldapQuery = query.createQuery(new LdapParametersParameterAccessor(method, new Object[] { "John" }));
+
+		assertThat(ldapQuery.filter().encode()).isEqualTo("(cn=John)");
+	}
+
+	@Test
 	void shouldEncodeBase() throws NoSuchMethodException {
-		LdapQueryMethod method = queryMethod("baseNamedParameters");
+
+		LdapQueryMethod method = queryMethod("baseNamedParameters", String.class, String.class);
 		AnnotatedLdapRepositoryQuery query = repositoryQuery(method);
 
 		LdapQuery ldapQuery = query.createQuery(
@@ -61,8 +79,8 @@ class AnnotatedLdapRepositoryQueryTests {
 		assertThat(ldapQuery.base()).hasToString("cn=John\\29");
 	}
 
-	private LdapQueryMethod queryMethod(String methodName) throws NoSuchMethodException {
-		return new LdapQueryMethod(QueryRepository.class.getMethod(methodName, String.class, String.class),
+	private LdapQueryMethod queryMethod(String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
+		return new LdapQueryMethod(QueryRepository.class.getMethod(methodName, parameterTypes),
 				new DefaultRepositoryMetadata(QueryRepository.class), new SpelAwareProxyProjectionFactory());
 	}
 
@@ -74,10 +92,13 @@ class AnnotatedLdapRepositoryQueryTests {
 	interface QueryRepository extends LdapRepository<SchemaEntry> {
 
 		@Query(value = "(cn=:fullName)")
-		List<SchemaEntry> namedParameters(@Param("fullName") String fullName, @Param("lastName") String lastName);
+		List<SchemaEntry> namedParameters(String fullName);
+
+		@Query(value = "(cn={0})")
+		List<SchemaEntry> messageFormatParameters(String fullName);
 
 		@Query(base = ":dc", value = "(cn=:fullName)")
-		List<SchemaEntry> baseNamedParameters(@Param("fullName") String fullName, @Param("dc") String dc);
+		List<SchemaEntry> baseNamedParameters(String fullName, String dc);
 
 	}
 }

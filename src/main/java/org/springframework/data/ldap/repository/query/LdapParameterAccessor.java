@@ -23,7 +23,7 @@ import org.springframework.data.repository.query.ParameterAccessor;
  * @author Mark Paluch
  * @since 2.6
  */
-interface LdapParameterAccessor extends ParameterAccessor {
+public interface LdapParameterAccessor extends ParameterAccessor {
 
 	/**
 	 * Returns the bindable parameter values of the underlying query method.

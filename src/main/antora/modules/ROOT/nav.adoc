@@ -13,10 +13,12 @@
 ** xref:repositories/namespace-reference.adoc[]
 ** xref:repositories/query-keywords-reference.adoc[]
 ** xref:repositories/query-return-types-reference.adoc[]
+
 * xref:ldap.adoc[]
 ** xref:ldap/configuration.adoc[]
 ** xref:ldap/usage.adoc[]
 ** xref:ldap/query-methods.adoc[]
+** xref:ldap/value-expressions.adoc[]
 ** xref:ldap/querydsl.adoc[]
 ** xref:ldap/cdi-integration.adoc[]
 

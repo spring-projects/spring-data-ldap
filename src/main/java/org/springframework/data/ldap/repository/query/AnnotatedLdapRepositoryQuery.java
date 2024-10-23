@@ -39,9 +39,9 @@ import org.springframework.util.Assert;
 public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
 	private final Query queryAnnotation;
-	private final ValueExpressionDelegate valueExpressionDelegate;
-	private final StringBasedQuery stringBasedQuery;
-	private final StringBasedQuery stringBasedBase;
+	private final StringBasedQuery query;
+	private final StringBasedQuery base;
+	private final ValueEvaluationContextProvider valueContextProvider;
 
 	/**
 	 * Construct a new instance.
@@ -70,7 +70,7 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	 * @param mappingContext must not be {@literal null}.
 	 * @param instantiators must not be {@literal null}.
 	 * @param valueExpressionDelegate must not be {@literal null}
-	 * @since 3.4
+	 * @since 3.5
 	 */
 	public AnnotatedLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations,
 			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
@@ -81,34 +81,32 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 		Assert.notNull(queryMethod.getQueryAnnotation(), "Annotation must be present");
 		Assert.hasLength(queryMethod.getQueryAnnotation().value(), "Query filter must be specified");
 
-		queryAnnotation = queryMethod.getRequiredQueryAnnotation();
-		this.valueExpressionDelegate = valueExpressionDelegate;
-		stringBasedQuery = new StringBasedQuery(queryAnnotation.value(), queryMethod.getParameters(), valueExpressionDelegate);
-		stringBasedBase = new StringBasedQuery(queryAnnotation.base(), queryMethod.getParameters(), valueExpressionDelegate);
+		this.queryAnnotation = queryMethod.getRequiredQueryAnnotation();
+		this.query = new StringBasedQuery(queryAnnotation.value(), queryMethod.getParameters(), valueExpressionDelegate);
+		this.base = new StringBasedQuery(queryAnnotation.base(), queryMethod.getParameters(), valueExpressionDelegate);
+		this.valueContextProvider = valueExpressionDelegate.createValueContextProvider(getQueryMethod().getParameters());
 	}
 
 	@Override
 	protected LdapQuery createQuery(LdapParameterAccessor parameters) {
 
-		ValueEvaluationContextProvider valueContextProvider = valueExpressionDelegate
-				.createValueContextProvider(getQueryMethod().getParameters());
+		String query = bind(parameters, valueContextProvider, this.query);
+		String base = bind(parameters, valueContextProvider, this.base);
 
-		String boundQuery = bind(parameters, valueContextProvider, stringBasedQuery);
-
-		String boundBase = bind(parameters, valueContextProvider, stringBasedBase);
-
-		return query().base(boundBase) //
+		return query().base(base) //
 				.searchScope(queryAnnotation.searchScope()) //
 				.countLimit(queryAnnotation.countLimit()) //
 				.timeLimit(queryAnnotation.timeLimit()) //
-				.filter(boundQuery);
+				.filter(query, parameters.getBindableParameterValues());
 	}
 
 	private String bind(LdapParameterAccessor parameters, ValueEvaluationContextProvider valueContextProvider, StringBasedQuery query) {
+
 		ValueEvaluationContext evaluationContext = valueContextProvider
 				.getEvaluationContext(parameters.getBindableParameterValues(), query.getExpressionDependencies());
+
 		return query.bindQuery(parameters,
-				new ContextualValueExpressionEvaluator(valueExpressionDelegate, evaluationContext));
+				expression -> expression.evaluate(evaluationContext));
 	}
 
 }

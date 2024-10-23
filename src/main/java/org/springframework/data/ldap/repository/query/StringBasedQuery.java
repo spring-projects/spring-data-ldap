@@ -15,20 +15,27 @@
  */
 package org.springframework.data.ldap.repository.query;
 
+import static org.springframework.data.ldap.repository.query.StringBasedQuery.BindingContext.*;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.data.ldap.repository.query.BindingContext.ParameterBinding;
-import org.springframework.data.mapping.model.ValueExpressionEvaluator;
+import org.springframework.data.expression.ValueExpression;
+import org.springframework.data.expression.ValueExpressionParser;
+import org.springframework.data.repository.query.Parameter;
+import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ValueExpressionDelegate;
 import org.springframework.data.spel.ExpressionDependencies;
 import org.springframework.lang.Nullable;
+import org.springframework.ldap.support.LdapEncoder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -36,18 +43,13 @@ import org.springframework.util.StringUtils;
  * String-based Query abstracting a query with parameter bindings.
  *
  * @author Marcin Grzejszczak
- * @since 3.4
+ * @since 3.5
  */
 class StringBasedQuery {
 
 	private final String query;
-
 	private final Parameters<?, ?> parameters;
-
-	private final ValueExpressionDelegate expressionParser;
-
 	private final List<ParameterBinding> queryParameterBindings = new ArrayList<>();
-
 	private final ExpressionDependencies expressionDependencies;
 
 	/**
@@ -57,12 +59,11 @@ class StringBasedQuery {
 	 * @param parameters must not be {@literal null}.
 	 * @param expressionParser must not be {@literal null}.
 	 */
-	StringBasedQuery(String query, Parameters<?, ?> parameters, ValueExpressionDelegate expressionParser) {
+	public StringBasedQuery(String query, Parameters<?, ?> parameters, ValueExpressionDelegate expressionParser) {
 
-		this.query = ParameterBindingParser.INSTANCE.parseAndCollectParameterBindingsFromQueryIntoBindings(query,
-				this.queryParameterBindings);
+		this.query = ParameterBindingParser.parseAndCollectParameterBindingsFromQueryIntoBindings(query,
+				this.queryParameterBindings, expressionParser);
 		this.parameters = parameters;
-		this.expressionParser = expressionParser;
 		this.expressionDependencies = createExpressionDependencies();
 	}
 
@@ -77,7 +78,7 @@ class StringBasedQuery {
 		for (ParameterBinding binding : queryParameterBindings) {
 			if (binding.isExpression()) {
 				dependencies
-						.add(expressionParser.parse(binding.getRequiredExpression()).getExpressionDependencies());
+						.add(binding.getRequiredExpression().getExpressionDependencies());
 			}
 		}
 
@@ -100,17 +101,17 @@ class StringBasedQuery {
 	 * @param evaluator must not be {@literal null}.
 	 * @return the bound String query containing formatted parameters.
 	 */
-	String bindQuery(LdapParameterAccessor parameterAccessor, ValueExpressionEvaluator evaluator) {
+	public String bindQuery(LdapParameterAccessor parameterAccessor, Function<ValueExpression, Object> evaluator) {
 
 		Assert.notNull(parameterAccessor, "LdapParameterAccessor must not be null");
-		Assert.notNull(evaluator, "SpELExpressionEvaluator must not be null");
+		Assert.notNull(evaluator, "ExpressionEvaluator must not be null");
 
 		BindingContext bindingContext = new BindingContext(this.parameters, parameterAccessor, this.queryParameterBindings,
 				evaluator);
 
 		List<Object> arguments = bindingContext.getBindingValues();
 
-		return ParameterBinder.INSTANCE.bind(this.query, arguments);
+		return ParameterBinder.bind(this.query, arguments);
 	}
 
 	/**
@@ -118,54 +119,7 @@ class StringBasedQuery {
 	 *
 	 * @author Mark Paluch
 	 */
-	enum ParameterBinder {
-
-		INSTANCE;
-
-		private static final String ARGUMENT_PLACEHOLDER = "?_param_?";
-		private static final Pattern ARGUMENT_PLACEHOLDER_PATTERN = Pattern.compile(Pattern.quote(ARGUMENT_PLACEHOLDER));
-
-		public String bind(String input, List<Object> parameters) {
-
-			if (parameters.isEmpty()) {
-				return input;
-			}
-
-			StringBuilder result = new StringBuilder();
-
-			int startIndex = 0;
-			int currentPosition = 0;
-			int parameterIndex = 0;
-
-			Matcher matcher = ARGUMENT_PLACEHOLDER_PATTERN.matcher(input);
-
-			while (currentPosition < input.length()) {
-
-				if (!matcher.find()) {
-					break;
-				}
-
-				int exprStart = matcher.start();
-
-				result.append(input.subSequence(startIndex, exprStart)).append(parameters.get(parameterIndex));
-
-				parameterIndex++;
-				currentPosition = matcher.end();
-				startIndex = currentPosition;
-			}
-
-			return result.append(input.subSequence(currentPosition, input.length())).toString();
-		}
-	}
-
-	/**
-	 * A parser that extracts the parameter bindings from a given query string.
-	 *
-	 * @author Mark Paluch
-	 */
-	enum ParameterBindingParser {
-
-		INSTANCE;
+	static class ParameterBindingParser {
 
 		private static final char CURRLY_BRACE_OPEN = '{';
 		private static final char CURRLY_BRACE_CLOSE = '}';
@@ -177,7 +131,9 @@ class StringBasedQuery {
 		private static final Pattern INDEX_BASED_PROPERTY_PLACEHOLDER_PATTERN = Pattern.compile("\\?\\$\\{");
 		private static final Pattern NAME_BASED_PROPERTY_PLACEHOLDER_PATTERN = Pattern.compile("\\:\\$\\{");
 
-		private static final Set<Pattern> VALUE_EXPRESSION_PATTERNS = Set.of(INDEX_BASED_EXPRESSION_PATTERN, NAME_BASED_EXPRESSION_PATTERN, INDEX_BASED_PROPERTY_PLACEHOLDER_PATTERN, NAME_BASED_PROPERTY_PLACEHOLDER_PATTERN);
+		private static final Set<Pattern> VALUE_EXPRESSION_PATTERNS = Set.of(INDEX_BASED_EXPRESSION_PATTERN,
+				NAME_BASED_EXPRESSION_PATTERN, INDEX_BASED_PROPERTY_PLACEHOLDER_PATTERN,
+				NAME_BASED_PROPERTY_PLACEHOLDER_PATTERN);
 
 		private static final String ARGUMENT_PLACEHOLDER = "?_param_?";
 
@@ -186,9 +142,11 @@ class StringBasedQuery {
 		 *
 		 * @param input can be {@literal null} or empty.
 		 * @param bindings must not be {@literal null}.
+		 * @param expressionParser must not be {@literal null}.
 		 * @return a list of {@link ParameterBinding}s found in the given {@code input}.
 		 */
-		public String parseAndCollectParameterBindingsFromQueryIntoBindings(String input, List<ParameterBinding> bindings) {
+		public static String parseAndCollectParameterBindingsFromQueryIntoBindings(String input,
+				List<ParameterBinding> bindings, ValueExpressionParser expressionParser) {
 
 			if (!StringUtils.hasText(input)) {
 				return input;
@@ -196,11 +154,11 @@ class StringBasedQuery {
 
 			Assert.notNull(bindings, "Parameter bindings must not be null");
 
-			return transformQueryAndCollectExpressionParametersIntoBindings(input, bindings);
+			return transformQueryAndCollectExpressionParametersIntoBindings(input, bindings, expressionParser);
 		}
 
 		private static String transformQueryAndCollectExpressionParametersIntoBindings(String input,
-				List<ParameterBinding> bindings) {
+				List<ParameterBinding> bindings, ValueExpressionParser expressionParser) {
 
 			StringBuilder result = new StringBuilder();
 
@@ -243,13 +201,11 @@ class StringBasedQuery {
 				result.append(ARGUMENT_PLACEHOLDER);
 
 				if (isValueExpression(matcher)) {
-					bindings.add(
-							ParameterBinding
-							.expression(input.substring(exprStart + 1, currentPosition), true));
+					bindings.add(ParameterBinding
+							.expression(expressionParser.parse(input.substring(exprStart + 1, currentPosition)), true));
 				} else {
 					if (matcher.pattern() == INDEX_PARAMETER_BINDING_PATTERN) {
-						bindings
-								.add(ParameterBinding.indexed(Integer.parseInt(matcher.group(1))));
+						bindings.add(ParameterBinding.indexed(Integer.parseInt(matcher.group(1))));
 					} else {
 						bindings.add(ParameterBinding.named(matcher.group(1)));
 					}
@@ -288,6 +244,193 @@ class StringBasedQuery {
 			}
 
 			return (matcherMap.isEmpty() ? null : matcherMap.values().iterator().next());
+		}
+	}
+
+	/**
+	 * A parser that extracts the parameter bindings from a given query string.
+	 *
+	 * @author Mark Paluch
+	 */
+	static class ParameterBinder {
+
+
+		private static final String ARGUMENT_PLACEHOLDER = "?_param_?";
+		private static final Pattern ARGUMENT_PLACEHOLDER_PATTERN = Pattern.compile(Pattern.quote(ARGUMENT_PLACEHOLDER));
+
+		public static String bind(String input, List<Object> parameters) {
+
+			if (parameters.isEmpty()) {
+				return input;
+			}
+
+			StringBuilder result = new StringBuilder();
+
+			int startIndex = 0;
+			int currentPosition = 0;
+			int parameterIndex = 0;
+
+			Matcher matcher = ARGUMENT_PLACEHOLDER_PATTERN.matcher(input);
+
+			while (currentPosition < input.length()) {
+
+				if (!matcher.find()) {
+					break;
+				}
+
+				int exprStart = matcher.start();
+
+				result.append(input.subSequence(startIndex, exprStart)).append(parameters.get(parameterIndex));
+
+				parameterIndex++;
+				currentPosition = matcher.end();
+				startIndex = currentPosition;
+			}
+
+			return result.append(input.subSequence(currentPosition, input.length())).toString();
+		}
+	}
+
+	/**
+	 * Value object capturing the binding context to provide {@link #getBindingValues() binding values} for queries.
+	 *
+	 * @author Mark Paluch
+	 */
+	static class BindingContext {
+
+		private final Parameters<?, ?> parameters;
+		private final ParameterAccessor parameterAccessor;
+		private final List<ParameterBinding> bindings;
+		private final Function<ValueExpression, Object> evaluator;
+
+		/**
+		 * Create new {@link BindingContext}.
+		 */
+		BindingContext(Parameters<?, ?> parameters, ParameterAccessor parameterAccessor, List<ParameterBinding> bindings,
+				Function<ValueExpression, Object> evaluator) {
+
+			this.parameters = parameters;
+			this.parameterAccessor = parameterAccessor;
+			this.bindings = bindings;
+			this.evaluator = evaluator;
+		}
+
+		/**
+		 * @return {@literal true} when list of bindings is not empty.
+		 */
+		private boolean hasBindings() {
+			return !bindings.isEmpty();
+		}
+
+		/**
+		 * Bind values provided by {@link LdapParameterAccessor} to placeholders in {@link BindingContext} while considering
+		 * potential conversions and parameter types.
+		 *
+		 * @return {@literal null} if given {@code raw} value is empty.
+		 */
+		public List<Object> getBindingValues() {
+
+			if (!hasBindings()) {
+				return Collections.emptyList();
+			}
+
+			List<Object> parameters = new ArrayList<>(bindings.size());
+
+			for (ParameterBinding binding : bindings) {
+				Object parameterValueForBinding = getParameterValueForBinding(binding);
+				parameters.add(parameterValueForBinding);
+			}
+
+			return parameters;
+		}
+
+		/**
+		 * Return the value to be used for the given {@link ParameterBinding}.
+		 *
+		 * @param binding must not be {@literal null}.
+		 * @return the value used for the given {@link ParameterBinding}.
+		 */
+		@Nullable
+		private Object getParameterValueForBinding(ParameterBinding binding) {
+
+			if (binding.isExpression()) {
+				return evaluator.apply(binding.getRequiredExpression());
+			}
+
+			Object value = binding.isNamed()
+					? parameterAccessor.getBindableValue(getParameterIndex(parameters, binding.getRequiredParameterName()))
+					: parameterAccessor.getBindableValue(binding.getParameterIndex());
+			return value == null ? null : LdapEncoder.filterEncode(value.toString());
+		}
+
+		private int getParameterIndex(Parameters<?, ?> parameters, String parameterName) {
+
+			for (Parameter parameter : parameters) {
+
+				if (parameter.getName().filter(it -> it.equals(parameterName)).isPresent()) {
+					return parameter.getIndex();
+				}
+			}
+
+			throw new IllegalArgumentException(
+					String.format("Invalid parameter name; Cannot resolve parameter [%s]", parameterName));
+		}
+
+		/**
+		 * A generic parameter binding with name or position information.
+		 *
+		 * @author Mark Paluch
+		 */
+		static class ParameterBinding {
+
+			private final int parameterIndex;
+			private final @Nullable ValueExpression expression;
+			private final @Nullable String parameterName;
+
+			private ParameterBinding(int parameterIndex, @Nullable ValueExpression expression,
+					@Nullable String parameterName) {
+
+				this.parameterIndex = parameterIndex;
+				this.expression = expression;
+				this.parameterName = parameterName;
+			}
+
+			static ParameterBinding expression(ValueExpression expression, boolean quoted) {
+				return new ParameterBinding(-1, expression, null);
+			}
+
+			static ParameterBinding indexed(int parameterIndex) {
+				return new ParameterBinding(parameterIndex, null, null);
+			}
+
+			static ParameterBinding named(String name) {
+				return new ParameterBinding(-1, null, name);
+			}
+
+			boolean isNamed() {
+				return (parameterName != null);
+			}
+
+			int getParameterIndex() {
+				return parameterIndex;
+			}
+
+			ValueExpression getRequiredExpression() {
+
+				Assert.state(expression != null, "ParameterBinding is not an expression");
+				return expression;
+			}
+
+			boolean isExpression() {
+				return (this.expression != null);
+			}
+
+			String getRequiredParameterName() {
+
+				Assert.state(parameterName != null, "ParameterBinding is not named");
+
+				return parameterName;
+			}
 		}
 	}
 }
