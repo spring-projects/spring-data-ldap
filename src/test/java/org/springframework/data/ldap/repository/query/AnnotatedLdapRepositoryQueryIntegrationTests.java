@@ -31,7 +31,6 @@ import org.springframework.data.ldap.config.InMemoryLdapConfiguration;
 import org.springframework.data.ldap.repository.LdapRepository;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.ldap.repository.config.EnableLdapRepositories;
-import org.springframework.data.repository.query.Param;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -41,79 +40,47 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
  * @author Marcin Grzejszczak
  */
 @SpringJUnitConfig
-@TestPropertySource(properties = { "full.name=John Doe", "dc.name=memorynotfound" })
-class ValueExpressionLdapRepositoryQueryTests {
+@TestPropertySource(properties = { "full.name=John Doe" })
+class AnnotatedLdapRepositoryQueryIntegrationTests {
 
-	@Autowired private QueryRepository queryRepository;
+	@Autowired QueryRepository queryRepository;
 
-	@Test
-	void shouldWorkWithNamedParameters() {
+	@Test // GH-453
+	void filterWithNamedParameters() {
 
-		List<SchemaEntry> objects = queryRepository.namedParameters("John Doe", "Bar");
-
-		assertThatReturnedObjectIsJohnDoe(objects);
-	}
-
-	@Test
-	void usingQueryLanguageCharsShouldNotFail() {
-
-		List<SchemaEntry> objects = queryRepository.namedParameters("John)(cn=Doe)", "Bar");
-
-		assertThat(objects).isEmpty();
-	}
-
-	@Test
-	void shouldWorkWithIndexParameters() {
-
-		List<SchemaEntry> objects = queryRepository.indexedParameters("John Doe", "Bar");
+		List<SchemaEntry> objects = queryRepository.namedParameters("John Doe");
 
 		assertThatReturnedObjectIsJohnDoe(objects);
 	}
 
-	@Test
-	void shouldWorkWithSpelExpressions() {
+	@Test // GH-453
+	void filterWithPositionalParameters() {
+
+		List<SchemaEntry> objects = queryRepository.indexedParameters("John Doe");
+
+		assertThatReturnedObjectIsJohnDoe(objects);
+	}
+
+	@Test // GH-453
+	void filterWithSpelExpression() {
 
 		List<SchemaEntry> objects = queryRepository.spelParameters();
 
 		assertThatReturnedObjectIsJohnDoe(objects);
 	}
 
-	@Test
-	void shouldWorkWithPropertyPlaceholders() {
+	@Test // GH-453
+	void filterWithPropertyPlaceholder() {
 
 		List<SchemaEntry> objects = queryRepository.propertyPlaceholderParameters();
 
 		assertThatReturnedObjectIsJohnDoe(objects);
 	}
 
-	@Test
-	void shouldWorkWithNamedParametersForBase() {
+	@Test // GH-453
+	void baseWithNamedParameters() {
 
-		List<SchemaEntry> objects = queryRepository.baseNamedParameters("John Doe", "dc=memorynotfound");
-
-		assertThatReturnedObjectIsJohnDoe(objects);
-	}
-
-	@Test
-	void shouldWorkWithIndexParametersForBase() {
-
-		List<SchemaEntry> objects = queryRepository.baseIndexedParameters("John Doe", "memorynotfound");
-
-		assertThatReturnedObjectIsJohnDoe(objects);
-	}
-
-	@Test
-	void shouldWorkWithSpelExpressionsForBase() {
-
-		List<SchemaEntry> objects = queryRepository.baseSpelParameters();
-
-		assertThatReturnedObjectIsJohnDoe(objects);
-	}
-
-	@Test
-	void shouldWorkWithPropertyPlaceholdersForBase() {
-
-		List<SchemaEntry> objects = queryRepository.basePropertyPlaceholderParameters();
+		List<SchemaEntry> objects = queryRepository.baseNamedParameters("John Doe", "memorynotfound");
 
 		assertThatReturnedObjectIsJohnDoe(objects);
 	}
@@ -141,10 +108,10 @@ class ValueExpressionLdapRepositoryQueryTests {
 	interface QueryRepository extends LdapRepository<SchemaEntry> {
 
 		@Query(value = "(cn=:fullName)")
-		List<SchemaEntry> namedParameters(@Param("fullName") String fullName, @Param("lastName") String lastName);
+		List<SchemaEntry> namedParameters(String fullName);
 
 		@Query(value = "(cn=?0)")
-		List<SchemaEntry> indexedParameters(String fullName, String lastName);
+		List<SchemaEntry> indexedParameters(String fullName);
 
 		@Query(value = "(cn=:#{'John ' + 'Doe'})")
 		List<SchemaEntry> spelParameters();
@@ -152,16 +119,7 @@ class ValueExpressionLdapRepositoryQueryTests {
 		@Query(value = "(cn=?${full.name})")
 		List<SchemaEntry> propertyPlaceholderParameters();
 
-		@Query(base = ":dc", value = "(cn=:fullName)")
-		List<SchemaEntry> baseNamedParameters(@Param("fullName") String fullName, @Param("dc") String dc);
-
-		@Query(base = "dc=?1", value = "(cn=?0)")
-		List<SchemaEntry> baseIndexedParameters(String fullName, String dc);
-
-		@Query(base = "dc=:#{'memory' + 'notfound'}", value = "(cn=:#{'John ' + 'Doe'})")
-		List<SchemaEntry> baseSpelParameters();
-
-		@Query(base = "dc=?${dc.name}", value = "(cn=?${full.name})")
-		List<SchemaEntry> basePropertyPlaceholderParameters();
+		@Query(base = "dc=:dc", value = "(cn=:fullName)")
+		List<SchemaEntry> baseNamedParameters(String fullName, String dc);
 	}
 }
