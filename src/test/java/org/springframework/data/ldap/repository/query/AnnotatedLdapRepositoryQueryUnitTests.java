@@ -15,14 +15,14 @@
  */
 package org.springframework.data.ldap.repository.query;
 
-import static org.assertj.core.api.Assertions.*;
-
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import org.springframework.data.ldap.core.mapping.LdapMappingContext;
+import org.springframework.data.ldap.repository.LdapEncoder;
+import org.springframework.data.ldap.repository.LdapEncode;
 import org.springframework.data.ldap.repository.LdapRepository;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.mapping.model.EntityInstantiators;
@@ -31,6 +31,8 @@ import org.springframework.data.repository.core.support.DefaultRepositoryMetadat
 import org.springframework.data.repository.query.ValueExpressionDelegate;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link AnnotatedLdapRepositoryQuery}
@@ -79,6 +81,18 @@ class AnnotatedLdapRepositoryQueryUnitTests {
 		assertThat(ldapQuery.base()).hasToString("cn=John\\29");
 	}
 
+	@Test
+	void shouldEncodeWithCustomEncoder() throws NoSuchMethodException {
+
+		LdapQueryMethod method = queryMethod("customEncoder", String.class);
+		AnnotatedLdapRepositoryQuery query = repositoryQuery(method);
+
+		LdapQuery ldapQuery = query.createQuery(
+				new LdapParametersParameterAccessor(method, new Object[] { "Doe" }));
+
+		assertThat(ldapQuery.filter().encode()).isEqualTo("(cn=Doebar)");
+	}
+
 	private LdapQueryMethod queryMethod(String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
 		return new LdapQueryMethod(QueryRepository.class.getMethod(methodName, parameterTypes),
 				new DefaultRepositoryMetadata(QueryRepository.class), new SpelAwareProxyProjectionFactory());
@@ -100,5 +114,16 @@ class AnnotatedLdapRepositoryQueryUnitTests {
 		@Query(base = ":dc", value = "(cn=:fullName)")
 		List<SchemaEntry> baseNamedParameters(String fullName, String dc);
 
+		@Query(value = "(cn=:fullName)")
+		List<SchemaEntry> customEncoder(@LdapEncode(MyEncoder.class) String fullName);
+
+	}
+
+	static class MyEncoder implements LdapEncoder {
+
+		@Override
+		public String filterEncode(String value) {
+			return value + "bar";
+		}
 	}
 }

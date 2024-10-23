@@ -15,8 +15,6 @@
  */
 package org.springframework.data.ldap.repository.query;
 
-import static org.springframework.data.ldap.repository.query.StringBasedQuery.BindingContext.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,8 +25,10 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.expression.ValueExpression;
 import org.springframework.data.expression.ValueExpressionParser;
+import org.springframework.data.ldap.repository.LdapEncode;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.Parameters;
@@ -39,6 +39,8 @@ import org.springframework.ldap.support.LdapEncoder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import static org.springframework.data.ldap.repository.query.StringBasedQuery.BindingContext.ParameterBinding;
+
 /**
  * String-based Query abstracting a query with parameter bindings.
  *
@@ -48,7 +50,7 @@ import org.springframework.util.StringUtils;
 class StringBasedQuery {
 
 	private final String query;
-	private final Parameters<?, ?> parameters;
+	private final LdapParameters parameters;
 	private final List<ParameterBinding> queryParameterBindings = new ArrayList<>();
 	private final ExpressionDependencies expressionDependencies;
 
@@ -59,7 +61,7 @@ class StringBasedQuery {
 	 * @param parameters must not be {@literal null}.
 	 * @param expressionParser must not be {@literal null}.
 	 */
-	public StringBasedQuery(String query, Parameters<?, ?> parameters, ValueExpressionDelegate expressionParser) {
+	public StringBasedQuery(String query, LdapParameters parameters, ValueExpressionDelegate expressionParser) {
 
 		this.query = ParameterBindingParser.parseAndCollectParameterBindingsFromQueryIntoBindings(query,
 				this.queryParameterBindings, expressionParser);
@@ -298,7 +300,7 @@ class StringBasedQuery {
 	 */
 	static class BindingContext {
 
-		private final Parameters<?, ?> parameters;
+		private final LdapParameters parameters;
 		private final ParameterAccessor parameterAccessor;
 		private final List<ParameterBinding> bindings;
 		private final Function<ValueExpression, Object> evaluator;
@@ -306,7 +308,7 @@ class StringBasedQuery {
 		/**
 		 * Create new {@link BindingContext}.
 		 */
-		BindingContext(Parameters<?, ?> parameters, ParameterAccessor parameterAccessor, List<ParameterBinding> bindings,
+		BindingContext(LdapParameters parameters, ParameterAccessor parameterAccessor, List<ParameterBinding> bindings,
 				Function<ValueExpression, Object> evaluator) {
 
 			this.parameters = parameters;
@@ -356,11 +358,15 @@ class StringBasedQuery {
 			if (binding.isExpression()) {
 				return evaluator.apply(binding.getRequiredExpression());
 			}
-
 			Object value = binding.isNamed()
 					? parameterAccessor.getBindableValue(getParameterIndex(parameters, binding.getRequiredParameterName()))
 					: parameterAccessor.getBindableValue(binding.getParameterIndex());
-			return value == null ? null : LdapEncoder.filterEncode(value.toString());
+
+			if (value == null) {
+				return null;
+			}
+
+			return binding.getEncodedValue(parameters, value);
 		}
 
 		private int getParameterIndex(Parameters<?, ?> parameters, String parameterName) {
@@ -405,6 +411,38 @@ class StringBasedQuery {
 
 			static ParameterBinding named(String name) {
 				return new ParameterBinding(-1, null, name);
+			}
+
+			Object getEncodedValue(LdapParameters ldapParameters, Object value) {
+				org.springframework.data.ldap.repository.LdapEncoder encoder = encoderForParameter(ldapParameters);
+				if (encoder == null) {
+					return LdapEncoder.filterEncode(value.toString());
+				}
+				return encoder.filterEncode(value.toString());
+			}
+
+
+			@Nullable
+			org.springframework.data.ldap.repository.LdapEncoder encoderForParameter(LdapParameters ldapParameters) {
+				for (LdapParameters.LdapParameter parameter : ldapParameters) {
+					if (isByName(parameter) || isByIndex(parameter)) {
+						LdapEncode ldapEncode = parameter.parameter.getParameterAnnotation(LdapEncode.class);
+						if (ldapEncode == null) {
+							return null;
+						}
+						Class<? extends org.springframework.data.ldap.repository.LdapEncoder> encoder = ldapEncode.value();
+						return BeanUtils.instantiateClass(encoder);
+					}
+				}
+				return null;
+			}
+
+			private boolean isByIndex(LdapParameters.LdapParameter parameter) {
+				return parameterIndex != -1 && parameter.getIndex() == parameterIndex;
+			}
+
+			private boolean isByName(LdapParameters.LdapParameter parameter) {
+				return parameterName != null && parameterName.equals(parameter.getName().orElse(null));
 			}
 
 			boolean isNamed() {
