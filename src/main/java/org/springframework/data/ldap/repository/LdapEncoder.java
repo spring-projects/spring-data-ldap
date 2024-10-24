@@ -16,17 +16,25 @@
 package org.springframework.data.ldap.repository;
 
 /**
- * Allows plugging in custom encoding for {@link LdapEncode}.
+ * Strategy interface to escape values for use in LDAP filters.
+ * <p>
+ * Accepts an LDAP filter value to be encoded (escaped) for String-based LDAP query usage as LDAP queries do not feature
+ * an out-of-band parameter binding mechanism.
+ * <p>
+ * Make sure that your implementation escapes special characters in the value adequately to prevent injection attacks.
  *
  * @author Marcin Grzejszczak
- * @since 3.5.0
+ * @author Mark Paluch
+ * @since 3.5
  */
 public interface LdapEncoder {
 
 	/**
-	 * Escape a value for use in a filter.
-	 * @param value the value to escape.
-	 * @return a properly escaped representation of the supplied value.
+	 * Encode a value for use in a filter.
+	 *
+	 * @param value the value to encode.
+	 * @return a properly encoded representation of the supplied value.
 	 */
-	String filterEncode(String value);
+	String encode(String value);
+
 }

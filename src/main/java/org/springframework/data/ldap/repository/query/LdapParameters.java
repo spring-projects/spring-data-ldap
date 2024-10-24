@@ -18,18 +18,22 @@ package org.springframework.data.ldap.repository.query;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.geo.Distance;
+import org.springframework.data.ldap.repository.LdapEncode;
+import org.springframework.data.ldap.repository.LdapEncoder;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersSource;
 import org.springframework.data.util.TypeInformation;
+import org.springframework.lang.Nullable;
 
 /**
  * Custom extension of {@link Parameters} discovering additional
  *
  * @author Marcin Grzejszczak
- * @since 3.5.0
+ * @since 3.5
  */
 public class LdapParameters extends Parameters<LdapParameters, LdapParameters.LdapParameter> {
 
@@ -65,9 +69,10 @@ public class LdapParameters extends Parameters<LdapParameters, LdapParameters.Ld
 	 *
 	 * @author Marcin Grzejszczak
 	 */
-	static class LdapParameter extends Parameter {
+	protected static class LdapParameter extends Parameter {
 
-		final MethodParameter parameter;
+		private final @Nullable LdapEncoder ldapEncoder;
+		private final MethodParameter parameter;
 
 		/**
 		 * Creates a new {@link LdapParameter}.
@@ -76,8 +81,29 @@ public class LdapParameters extends Parameters<LdapParameters, LdapParameters.Ld
 		 * @param domainType must not be {@literal null}.
 		 */
 		LdapParameter(MethodParameter parameter, TypeInformation<?> domainType) {
+
 			super(parameter, domainType);
 			this.parameter = parameter;
+
+			LdapEncode encode = parameter.getParameterAnnotation(LdapEncode.class);
+
+			if (encode != null) {
+				this.ldapEncoder = BeanUtils.instantiateClass(encode.value());
+			} else {
+				this.ldapEncoder = null;
+			}
+		}
+
+		public boolean hasLdapEncoder() {
+			return ldapEncoder != null;
+		}
+
+		public LdapEncoder getLdapEncoder() {
+
+			if (ldapEncoder == null) {
+				throw new IllegalStateException("No LdapEncoder found for parameter " + parameter);
+			}
+			return ldapEncoder;
 		}
 	}
 
