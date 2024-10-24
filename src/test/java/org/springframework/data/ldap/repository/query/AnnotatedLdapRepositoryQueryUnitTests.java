@@ -22,7 +22,7 @@ import org.mockito.Mockito;
 
 import org.springframework.data.ldap.core.mapping.LdapMappingContext;
 import org.springframework.data.ldap.repository.LdapEncoder;
-import org.springframework.data.ldap.repository.LdapParam;
+import org.springframework.data.ldap.repository.LdapEncode;
 import org.springframework.data.ldap.repository.LdapRepository;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.mapping.model.EntityInstantiators;
@@ -115,7 +115,7 @@ class AnnotatedLdapRepositoryQueryUnitTests {
 		List<SchemaEntry> baseNamedParameters(String fullName, String dc);
 
 		@Query(value = "(cn=:fullName)")
-		List<SchemaEntry> customEncoder(@LdapParam(value = "fullName", encoder = MyEncoder.class) String fullName);
+		List<SchemaEntry> customEncoder(@LdapEncode(MyEncoder.class) String fullName);
 
 	}
 

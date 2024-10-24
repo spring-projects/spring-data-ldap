@@ -16,7 +16,7 @@
 package org.springframework.data.ldap.repository;
 
 /**
- * Allows plugging in custom encoding for {@link LdapParam}.
+ * Allows plugging in custom encoding for {@link LdapEncode}.
  *
  * @author Marcin Grzejszczak
  * @since 3.5.0
@@ -29,17 +29,4 @@ public interface LdapEncoder {
 	 * @return a properly escaped representation of the supplied value.
 	 */
 	String filterEncode(String value);
-
-	/**
-	 * Default implementation of {@link LdapEncoder} that uses
-	 * {@link org.springframework.ldap.support.LdapEncoder}.
-	 */
-	class DefaultLdapEncoder implements LdapEncoder {
-
-		@Override
-		public String filterEncode(String value) {
-			return org.springframework.ldap.support.LdapEncoder.filterEncode(value);
-		}
-	}
-
 }

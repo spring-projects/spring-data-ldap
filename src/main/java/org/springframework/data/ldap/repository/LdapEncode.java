@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2024 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.data.repository.query.Param;
 
 /**
- * A {@link Param} alias that allows passing of custom {@link LdapEncoder}.
+ * Allows passing of custom {@link LdapEncoder}.
  *
  * @author Marcin Grzejszczak
  * @since 3.5.0
@@ -33,15 +32,22 @@ import org.springframework.data.repository.query.Param;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface LdapParam {
-
-	@AliasFor(annotation = Param.class)
-	String value();
+public @interface LdapEncode {
 
 	/**
 	 * {@link LdapEncoder} to instantiate to encode query parameters.
 	 *
 	 * @return {@link LdapEncoder} class
 	 */
-	Class<? extends LdapEncoder> encoder() default LdapEncoder.DefaultLdapEncoder.class;
+	@AliasFor("encoder")
+	Class<? extends LdapEncoder> value();
+
+	/**
+	 * {@link LdapEncoder} to instantiate to encode query parameters.
+	 *
+	 * @return {@link LdapEncoder} class
+	 */
+	@AliasFor("value")
+	Class<? extends LdapEncoder> encoder() default LdapEncoder.class;
+
 }
