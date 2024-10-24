@@ -17,11 +17,14 @@ package org.springframework.data.ldap.repository.query;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
+import org.springframework.data.expression.ValueEvaluationContext;
+import org.springframework.data.expression.ValueEvaluationContextProvider;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.EntityInstantiators;
+import org.springframework.data.repository.query.ValueExpressionDelegate;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.util.Assert;
@@ -31,10 +34,14 @@ import org.springframework.util.Assert;
  *
  * @author Mattias Hellborg Arthursson
  * @author Mark Paluch
+ * @author Marcin Grzejszczak
  */
 public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
 	private final Query queryAnnotation;
+	private final StringBasedQuery query;
+	private final StringBasedQuery base;
+	private final ValueEvaluationContextProvider valueContextProvider;
 
 	/**
 	 * Construct a new instance.
@@ -44,26 +51,62 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	 * @param ldapOperations the LdapOperations instance to use.
 	 * @param mappingContext must not be {@literal null}.
 	 * @param instantiators must not be {@literal null}.
+	 * @deprecated use the constructor with {@link ValueExpressionDelegate}
 	 */
+	@Deprecated(since = "3.4")
 	public AnnotatedLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations,
 			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
 			EntityInstantiators instantiators) {
+
+		this(queryMethod, entityType, ldapOperations, mappingContext, instantiators, ValueExpressionDelegate.create());
+	}
+
+	/**
+	 * Construct a new instance.
+	 *
+	 * @param queryMethod the QueryMethod.
+	 * @param entityType the managed class.
+	 * @param ldapOperations the LdapOperations instance to use.
+	 * @param mappingContext must not be {@literal null}.
+	 * @param instantiators must not be {@literal null}.
+	 * @param valueExpressionDelegate must not be {@literal null}
+	 * @since 3.4
+	 */
+	public AnnotatedLdapRepositoryQuery(LdapQueryMethod queryMethod, Class<?> entityType, LdapOperations ldapOperations,
+			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
+			EntityInstantiators instantiators, ValueExpressionDelegate valueExpressionDelegate) {
 
 		super(queryMethod, entityType, ldapOperations, mappingContext, instantiators);
 
 		Assert.notNull(queryMethod.getQueryAnnotation(), "Annotation must be present");
 		Assert.hasLength(queryMethod.getQueryAnnotation().value(), "Query filter must be specified");
 
-		queryAnnotation = queryMethod.getRequiredQueryAnnotation();
+		this.queryAnnotation = queryMethod.getRequiredQueryAnnotation();
+		this.query = new StringBasedQuery(queryAnnotation.value(), queryMethod.getParameters(), valueExpressionDelegate);
+		this.base = new StringBasedQuery(queryAnnotation.base(), queryMethod.getParameters(), valueExpressionDelegate);
+		this.valueContextProvider = valueExpressionDelegate.createValueContextProvider(getQueryMethod().getParameters());
 	}
 
 	@Override
 	protected LdapQuery createQuery(LdapParameterAccessor parameters) {
 
-		return query().base(queryAnnotation.base()) //
+		String query = bind(parameters, valueContextProvider, this.query);
+		String base = bind(parameters, valueContextProvider, this.base);
+
+		return query().base(base) //
 				.searchScope(queryAnnotation.searchScope()) //
 				.countLimit(queryAnnotation.countLimit()) //
 				.timeLimit(queryAnnotation.timeLimit()) //
-				.filter(queryAnnotation.value(), parameters.getBindableParameterValues());
+				.filter(query, parameters.getBindableParameterValues());
 	}
+
+	private String bind(LdapParameterAccessor parameters, ValueEvaluationContextProvider valueContextProvider, StringBasedQuery query) {
+
+		ValueEvaluationContext evaluationContext = valueContextProvider
+				.getEvaluationContext(parameters.getBindableParameterValues(), query.getExpressionDependencies());
+
+		return query.bindQuery(parameters,
+				expression -> expression.evaluate(evaluationContext));
+	}
+
 }

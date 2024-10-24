@@ -21,6 +21,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
+import org.springframework.data.repository.query.Parameters;
+import org.springframework.data.repository.query.ParametersSource;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.lang.Nullable;
 
@@ -85,4 +87,5 @@ public class LdapQueryMethod extends QueryMethod {
 
 		throw new IllegalStateException("Required @Query annotation is not present");
 	}
+
 }

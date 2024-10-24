@@ -76,3 +76,37 @@ The following table provides samples of the keywords that you can use with query
 | `(!(Firstname=name))`
 
 |===
+
+[[ldap.repositories.queries.value-expressions]]
+== Query Method Value Expressions
+
+Spring Data LDAP allows you to use `@Query` with docs.spring.io/spring-data/commons/reference/value-expressions.html[Value Expressions]. The supported options are:
+
+* Named parameters: e.g. `@Query(value = "(cn=:fullName)")`
+* Indexed parameters: e.g. `@Query(value = "(cn=?0)")`
+* SPEL parameters: e.g. `@Query(value = "(cn=:#{'John' + 'Doe'})")`
+* Property placeholder parameters: e.g. `@Query(value = "(cn=?${full.name})")`
+
+Value Expressions can be used in `value` and `base` annotation methods. Below you can find a usage example.
+
+.PersonRepository with query methods using https://docs.spring.io/spring-data/commons/reference/value-expressions.html[Value Expressions]
+[source,java]
+----
+interface PersonRepository extends LdapRepository<Person> {
+
+		@Query(value = "(cn=:fullName)")
+		List<Person> namedParameters(String fullName);
+
+		@Query(value = "(cn=?0)")
+		List<Person> indexedParameters(String fullName);
+
+		@Query(value = "(cn=:#{'John ' + 'Doe'})")
+		List<Person> spelParameters();
+
+		@Query(value = "(cn=?${full.name})")
+		List<Person> propertyPlaceholderParameters();
+
+		@Query(base = "dc=:dc", value = "(cn=:fullName)")
+		List<Person> baseNamedParameters(String fullName, String dc);
+	}
+----
