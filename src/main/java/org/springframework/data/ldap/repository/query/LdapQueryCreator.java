@@ -52,7 +52,7 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 	 * @param tree must not be {@literal null}.
 	 * @param entityType must not be {@literal null}.
 	 * @param mapper must not be {@literal null}.
-	 * @param values must not be {@literal null}.
+	 * @param parameterAccessor must not be {@literal null}.
 	 * @param inputProperties must not be {@literal null}.
 	 */
 	LdapQueryCreator(PartTree tree, Class<?> entityType, ObjectDirectoryMapper mapper,

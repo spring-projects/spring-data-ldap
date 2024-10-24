@@ -26,6 +26,10 @@ import org.springframework.ldap.query.SearchScope;
 /**
  * Annotation for use in {@link org.springframework.data.ldap.repository.LdapRepository} declarations to create
  * automatic query methods based on statically defined queries.
+ * <p>
+ * LDAP queries support parameter bindings (by-index using ?0, by-name using :someParam), SpEL expressions, and
+ * Configuration Properties to create dynamic queries. All non-String arguments are converted to their
+ * {@link Object#toString() toString} representation to render the query.
  *
  * @author Mattias Hellborg Arthursson
  */
@@ -36,7 +40,7 @@ public @interface Query {
 
 	/**
 	 * Search base, to be used as input to {@link org.springframework.ldap.query.LdapQueryBuilder#base(javax.naming.Name)}
-	 * .
+	 * . Supports parameter binding.
 	 *
 	 * @return the search base, default is {@link org.springframework.ldap.support.LdapUtils#emptyLdapName()}
 	 */
@@ -44,7 +48,7 @@ public @interface Query {
 
 	/**
 	 * The filter format string, to be used as input to
-	 * {@link org.springframework.ldap.query.LdapQueryBuilder#filter(String, Object...)}.
+	 * {@link org.springframework.ldap.query.LdapQueryBuilder#filter(String, Object...)}. Supports parameter binding.
 	 *
 	 * @return search filter, must be specified.
 	 */

@@ -15,18 +15,70 @@
  */
 package org.springframework.data.ldap.repository;
 
+import org.springframework.util.ObjectUtils;
+
 /**
- * Allows plugging in custom encoding for {@link LdapEncode}.
+ * Strategy interface to escape values for use in LDAP filters.
+ * <p>
+ * Accepts an LDAP filter value to be encoded (escaped) for String-based LDAP query usage as LDAP queries do not feature
+ * an out-of-band parameter binding mechanism.
+ * <p>
+ * Make sure that your implementation escapes special characters in the value adequately to prevent injection attacks.
  *
  * @author Marcin Grzejszczak
- * @since 3.5.0
+ * @author Mark Paluch
+ * @since 3.5
  */
 public interface LdapEncoder {
 
 	/**
-	 * Escape a value for use in a filter.
-	 * @param value the value to escape.
-	 * @return a properly escaped representation of the supplied value.
+	 * Encode a value for use in a filter.
+	 *
+	 * @param value the value to encode.
+	 * @return a properly encoded representation of the supplied value.
 	 */
-	String filterEncode(String value);
+	String encode(String value);
+
+	/**
+	 * {@link LdapEncoder} using {@link org.springframework.ldap.support.LdapEncoder#nameEncode(String)}. Encodes a value
+	 * for use with a DN. Escapes for LDAP, not JNDI!
+	 */
+	class NameEncoder implements LdapEncoder {
+
+		@Override
+		public String encode(String value) {
+			return org.springframework.ldap.support.LdapEncoder.nameEncode(value);
+		}
+	}
+
+	/**
+	 * Escape a value for use in a filter retaining asterisks ({@code *}) for like/contains searches.
+	 */
+	class LikeEncoder implements LdapEncoder {
+
+		@Override
+		public String encode(String value) {
+
+			if (ObjectUtils.isEmpty(value)) {
+				return value;
+			}
+
+			String[] substrings = value.split("\\*", -2);
+
+			if (substrings.length == 1) {
+				return org.springframework.ldap.support.LdapEncoder.filterEncode(substrings[0]);
+			}
+
+			StringBuilder buff = new StringBuilder();
+			for (int i = 0; i < substrings.length; i++) {
+				buff.append(org.springframework.ldap.support.LdapEncoder.filterEncode(substrings[i]));
+				if (i < substrings.length - 1) {
+					buff.append("*");
+				}
+			}
+
+			return buff.toString();
+		}
+	}
+
 }
