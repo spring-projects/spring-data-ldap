@@ -20,13 +20,10 @@ import java.util.List;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.data.geo.Distance;
-import org.springframework.data.ldap.repository.LdapEncoder;
-import org.springframework.data.ldap.repository.LdapParam;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersSource;
 import org.springframework.data.util.TypeInformation;
-import org.springframework.lang.Nullable;
 
 /**
  * Custom extension of {@link Parameters} discovering additional
@@ -62,33 +59,15 @@ public class LdapParameters extends Parameters<LdapParameters, LdapParameters.Ld
 		return new LdapParameters(parameters, this.domainType);
 	}
 
-	@Nullable
-	LdapEncoder encoderForParameterWithName(String parameterName) {
-		for (LdapParameter parameter : this) {
-			if (parameterName.equals(parameter.getName().orElse(null))) {
-				LdapParam ldapParam = parameter.parameter.getParameterAnnotation(LdapParam.class);
-				if (ldapParam == null) {
-					return null;
-				}
-				Class<? extends LdapEncoder> encoder = ldapParam.encoder();
-				try {
-					return encoder.getDeclaredConstructor().newInstance();
-				} catch (Exception e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * Custom {@link Parameter} implementation adding parameters of type {@link Distance} to the special ones.
 	 *
 	 * @author Marcin Grzejszczak
 	 */
-	protected static class LdapParameter extends Parameter {
+	static class LdapParameter extends Parameter {
 
-		private final MethodParameter parameter;
+		final MethodParameter parameter;
 
 		/**
 		 * Creates a new {@link LdapParameter}.

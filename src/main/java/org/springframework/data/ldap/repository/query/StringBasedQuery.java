@@ -25,8 +25,10 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.expression.ValueExpression;
 import org.springframework.data.expression.ValueExpressionParser;
+import org.springframework.data.ldap.repository.LdapEncode;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.Parameters;
@@ -364,12 +366,7 @@ class StringBasedQuery {
 				return null;
 			}
 
-			org.springframework.data.ldap.repository.LdapEncoder customLdapEncoder = parameters.encoderForParameterWithName(
-					binding.getRequiredParameterName());
-			if (customLdapEncoder != null) {
-				return customLdapEncoder.filterEncode(value.toString());
-			}
-			return LdapEncoder.filterEncode(value.toString());
+			return binding.getEncodedValue(parameters, value);
 		}
 
 		private int getParameterIndex(Parameters<?, ?> parameters, String parameterName) {
@@ -414,6 +411,38 @@ class StringBasedQuery {
 
 			static ParameterBinding named(String name) {
 				return new ParameterBinding(-1, null, name);
+			}
+
+			Object getEncodedValue(LdapParameters ldapParameters, Object value) {
+				org.springframework.data.ldap.repository.LdapEncoder encoder = encoderForParameter(ldapParameters);
+				if (encoder == null) {
+					return LdapEncoder.filterEncode(value.toString());
+				}
+				return encoder.filterEncode(value.toString());
+			}
+
+
+			@Nullable
+			org.springframework.data.ldap.repository.LdapEncoder encoderForParameter(LdapParameters ldapParameters) {
+				for (LdapParameters.LdapParameter parameter : ldapParameters) {
+					if (isByName(parameter) || isByIndex(parameter)) {
+						LdapEncode ldapEncode = parameter.parameter.getParameterAnnotation(LdapEncode.class);
+						if (ldapEncode == null) {
+							return null;
+						}
+						Class<? extends org.springframework.data.ldap.repository.LdapEncoder> encoder = ldapEncode.value();
+						return BeanUtils.instantiateClass(encoder);
+					}
+				}
+				return null;
+			}
+
+			private boolean isByIndex(LdapParameters.LdapParameter parameter) {
+				return parameterIndex != -1 && parameter.getIndex() == parameterIndex;
+			}
+
+			private boolean isByName(LdapParameters.LdapParameter parameter) {
+				return parameterName != null && parameterName.equals(parameter.getName().orElse(null));
 			}
 
 			boolean isNamed() {
