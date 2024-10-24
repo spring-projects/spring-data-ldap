@@ -24,18 +24,28 @@ import java.lang.annotation.Target;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * Allows passing of custom {@link LdapEncoder}.
+ * Annotation which indicates that a method parameter should be encoded using a specific {@link LdapEncoder} for a
+ * repository query method invocation.
+ * <p>
+ * If no {@link LdapEncoder} is configured, method parameters are encoded using
+ * {@link org.springframework.ldap.support.LdapEncoder#filterEncode(String)}. The default encoder considers chars such
+ * as {@code *} (asterisk) to be encoded which might interfere with the intent of running a Like query. Since Spring
+ * Data LDAP doesn't parse queries it is up to you to decide which encoder to use.
+ * <p>
+ * {@link LdapEncoder} implementations must declare a no-args constructor so they can be instantiated during repository
+ * initialization.
  *
  * @author Marcin Grzejszczak
- * @since 3.5.0
+ * @author Mark Paluch
+ * @since 3.5
  */
-@Target(ElementType.PARAMETER)
+@Target({ ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface LdapEncode {
 
 	/**
-	 * {@link LdapEncoder} to instantiate to encode query parameters.
+	 * {@link LdapEncoder} to encode query parameters.
 	 *
 	 * @return {@link LdapEncoder} class
 	 */
@@ -43,7 +53,7 @@ public @interface LdapEncode {
 	Class<? extends LdapEncoder> value();
 
 	/**
-	 * {@link LdapEncoder} to instantiate to encode query parameters.
+	 * {@link LdapEncoder} to encode query parameters.
 	 *
 	 * @return {@link LdapEncoder} class
 	 */

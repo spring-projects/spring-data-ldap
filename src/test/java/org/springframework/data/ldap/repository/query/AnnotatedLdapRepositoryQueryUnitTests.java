@@ -15,14 +15,16 @@
  */
 package org.springframework.data.ldap.repository.query;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import org.springframework.data.ldap.core.mapping.LdapMappingContext;
-import org.springframework.data.ldap.repository.LdapEncoder;
 import org.springframework.data.ldap.repository.LdapEncode;
+import org.springframework.data.ldap.repository.LdapEncoder;
 import org.springframework.data.ldap.repository.LdapRepository;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.mapping.model.EntityInstantiators;
@@ -31,8 +33,6 @@ import org.springframework.data.repository.core.support.DefaultRepositoryMetadat
 import org.springframework.data.repository.query.ValueExpressionDelegate;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQuery;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link AnnotatedLdapRepositoryQuery}
@@ -122,7 +122,7 @@ class AnnotatedLdapRepositoryQueryUnitTests {
 	static class MyEncoder implements LdapEncoder {
 
 		@Override
-		public String filterEncode(String value) {
+		public String encode(String value) {
 			return value + "bar";
 		}
 	}
