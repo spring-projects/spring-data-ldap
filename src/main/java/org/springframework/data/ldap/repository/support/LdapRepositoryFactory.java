@@ -40,10 +40,8 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
-import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.ValueExpressionDelegate;
-import org.springframework.lang.Nullable;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.util.Assert;
 
@@ -146,15 +144,15 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 					ldapOperations.getObjectDirectoryMapper(), information.getDomainType());
 		}
 
-		return getTargetRepositoryViaReflection(information, ldapOperations,
-				ldapOperations.getObjectDirectoryMapper(),
+		return getTargetRepositoryViaReflection(information, ldapOperations, ldapOperations.getObjectDirectoryMapper(),
 				information.getDomainType());
 	}
 
 	@Override
 	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(Key key,
 			ValueExpressionDelegate valueExpressionDelegate) {
-		return Optional.of(new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext, valueExpressionDelegate));
+		return Optional
+				.of(new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext, valueExpressionDelegate));
 	}
 
 	/**
@@ -183,8 +181,8 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 		return acceptsMappingContext;
 	}
 
-	private record LdapQueryLookupStrategy(LdapOperations ldapOperations,
-			EntityInstantiators instantiators, MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
+	private record LdapQueryLookupStrategy(LdapOperations ldapOperations, EntityInstantiators instantiators,
+			MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext,
 			ValueExpressionDelegate valueExpressionDelegate) implements QueryLookupStrategy {
 
 		@Override
@@ -195,7 +193,8 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 			Class<?> domainType = metadata.getDomainType();
 
 			if (queryMethod.hasQueryAnnotation()) {
-				return new AnnotatedLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators, valueExpressionDelegate);
+				return new AnnotatedLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators,
+						valueExpressionDelegate);
 			} else {
 				return new PartTreeLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators);
 			}

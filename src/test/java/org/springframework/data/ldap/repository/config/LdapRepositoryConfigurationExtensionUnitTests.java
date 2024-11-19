@@ -47,7 +47,7 @@ class LdapRepositoryConfigurationExtensionUnitTests {
 	private BeanDefinitionRegistry registry = new DefaultListableBeanFactory();
 
 	private RepositoryConfigurationSource configurationSource = new AnnotationRepositoryConfigurationSource(metadata,
-			EnableLdapRepositories.class, loader, environment, registry);
+			EnableLdapRepositories.class, loader, environment, registry, null);
 
 	@Test // DATALDAP-60
 	void isStrictMatchIfDomainTypeIsAnnotatedWithEntry() {
