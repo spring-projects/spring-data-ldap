@@ -15,6 +15,8 @@
  */
 package org.springframework.data.ldap.repository.query;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.convert.DtoInstantiatingConverter;
@@ -39,6 +41,7 @@ import org.springframework.util.ClassUtils;
 @FunctionalInterface
 interface LdapQueryExecution {
 
+	@Nullable
 	Object execute(LdapQuery query);
 
 	/**
@@ -57,13 +60,14 @@ interface LdapQueryExecution {
 		}
 
 		@Override
-		public Object execute(LdapQuery query) {
+		public @Nullable Object execute(LdapQuery query) {
 			try {
 				return operations.findOne(query, entityType);
 			} catch (EmptyResultDataAccessException e) {
 				return null;
 			}
 		}
+
 	}
 
 	/**
@@ -85,6 +89,7 @@ interface LdapQueryExecution {
 		public Object execute(LdapQuery query) {
 			return operations.find(query, entityType);
 		}
+
 	}
 
 	/**
@@ -108,6 +113,7 @@ interface LdapQueryExecution {
 		public Object execute(LdapQuery query) {
 			return operations.find(query, entityType).stream().map(resultProcessing::convert);
 		}
+
 	}
 
 	/**
@@ -124,9 +130,12 @@ interface LdapQueryExecution {
 		}
 
 		@Override
-		public Object execute(LdapQuery query) {
-			return converter.convert(delegate.execute(query));
+		public @Nullable Object execute(LdapQuery query) {
+
+			Object result = delegate.execute(query);
+			return result != null ? converter.convert(result) : null;
 		}
+
 	}
 
 	/**
@@ -149,7 +158,7 @@ interface LdapQueryExecution {
 		}
 
 		@Override
-		public Object convert(Object source) {
+		public @Nullable Object convert(@Nullable Object source) {
 
 			ReturnedType returnedType = processor.getReturnedType();
 
@@ -165,5 +174,7 @@ interface LdapQueryExecution {
 
 			return processor.processResult(source, converter);
 		}
+
 	}
+
 }

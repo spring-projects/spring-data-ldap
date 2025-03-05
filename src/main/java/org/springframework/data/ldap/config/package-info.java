@@ -1,7 +1,5 @@
 /**
  * XML configuration support for Spring Data LDAP repositories.
  */
-@NonNullApi
+@org.jspecify.annotations.NullMarked
 package org.springframework.data.ldap.config;
-
-import org.springframework.lang.NonNullApi;

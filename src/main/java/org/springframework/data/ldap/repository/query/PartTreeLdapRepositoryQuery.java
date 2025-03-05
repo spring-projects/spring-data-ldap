@@ -74,4 +74,5 @@ public class PartTreeLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 				getEntityClass(), objectDirectoryMapper, parameters, inputProperties);
 		return queryCreator.createQuery();
 	}
+
 }

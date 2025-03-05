@@ -1,7 +1,5 @@
 /**
  * Query derivation mechanism for LDAP specific repositories.
  */
-@NonNullApi
+@org.jspecify.annotations.NullMarked
 package org.springframework.data.ldap.repository.query;
-
-import org.springframework.lang.NonNullApi;

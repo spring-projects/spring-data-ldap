@@ -48,4 +48,5 @@ public interface LdapRepository<T> extends ListCrudRepository<T, Name> {
 	 * @return the entries matching the query.
 	 */
 	List<T> findAll(LdapQuery ldapQuery);
+
 }

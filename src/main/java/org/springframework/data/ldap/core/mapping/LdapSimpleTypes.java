@@ -44,4 +44,5 @@ public abstract class LdapSimpleTypes {
 	public static final SimpleTypeHolder HOLDER = new SimpleTypeHolder(VAULT_SIMPLE_TYPES, true);
 
 	private LdapSimpleTypes() {}
+
 }

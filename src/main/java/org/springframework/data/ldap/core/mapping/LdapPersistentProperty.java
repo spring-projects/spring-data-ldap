@@ -48,11 +48,12 @@ public class LdapPersistentProperty extends AnnotationBasedPersistentProperty<Ld
 
 	@Override
 	protected Association<LdapPersistentProperty> createAssociation() {
-		return null;
+		throw new UnsupportedOperationException("LDAP does not support associations");
 	}
 
 	@Override
 	public boolean isIdProperty() {
 		return isId.get();
 	}
+
 }

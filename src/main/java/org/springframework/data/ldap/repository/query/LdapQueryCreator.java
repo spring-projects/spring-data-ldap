@@ -15,10 +15,10 @@
  */
 package org.springframework.data.ldap.repository.query;
 
-import static org.springframework.ldap.query.LdapQueryBuilder.*;
-
 import java.util.Iterator;
 import java.util.List;
+
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.domain.Sort;
@@ -73,7 +73,7 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 
 		Entry entry = AnnotatedElementUtils.findMergedAnnotation(entityType, Entry.class);
 
-		LdapQueryBuilder query = query();
+		LdapQueryBuilder query = LdapQueryBuilder.query();
 
 		if (entry != null) {
 			query = query.base(entry.base());
@@ -148,7 +148,8 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 	}
 
 	@Override
-	protected LdapQuery complete(ContainerCriteria criteria, Sort sort) {
-		return criteria;
+	protected LdapQuery complete(@Nullable ContainerCriteria criteria, Sort sort) {
+		return criteria == null ? LdapQueryBuilder.query() : criteria;
 	}
+
 }

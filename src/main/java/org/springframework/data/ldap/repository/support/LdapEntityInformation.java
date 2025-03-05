@@ -18,8 +18,9 @@ package org.springframework.data.ldap.repository.support;
 
 import javax.naming.Name;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
-import org.springframework.lang.Nullable;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 
 /**
@@ -39,9 +40,8 @@ class LdapEntityInformation<T> extends AbstractEntityInformation<T, Name> {
 		this.odm = odm;
 	}
 
-	@Nullable
 	@Override
-	public Name getId(T entity) {
+	public @Nullable Name getId(T entity) {
 		return odm.getId(entity);
 	}
 
@@ -49,4 +49,5 @@ class LdapEntityInformation<T> extends AbstractEntityInformation<T, Name> {
 	public Class<Name> getIdType() {
 		return Name.class;
 	}
+
 }

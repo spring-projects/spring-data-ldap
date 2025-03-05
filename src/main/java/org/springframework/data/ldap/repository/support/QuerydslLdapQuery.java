@@ -133,4 +133,5 @@ public class QuerydslLdapQuery<K> implements FilteredClause<QuerydslLdapQuery<K>
 
 		return where != null ? builder.filter(filterGenerator.handle(where)) : builder.filter(new AbsoluteTrueFilter());
 	}
+
 }

@@ -22,6 +22,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.ldap.core.mapping.LdapMappingContext;
 import org.springframework.data.ldap.repository.query.AnnotatedLdapRepositoryQuery;
@@ -149,7 +151,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 	}
 
 	@Override
-	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(Key key,
+	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable Key key,
 			ValueExpressionDelegate valueExpressionDelegate) {
 		return Optional
 				.of(new LdapQueryLookupStrategy(ldapOperations, instantiators, mappingContext, valueExpressionDelegate));
@@ -199,5 +201,7 @@ public class LdapRepositoryFactory extends RepositoryFactorySupport {
 				return new PartTreeLdapRepositoryQuery(queryMethod, domainType, ldapOperations, mappingContext, instantiators);
 			}
 		}
+
 	}
+
 }

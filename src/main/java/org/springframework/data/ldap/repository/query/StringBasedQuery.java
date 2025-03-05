@@ -27,6 +27,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.data.expression.ValueExpression;
 import org.springframework.data.expression.ValueExpressionParser;
 import org.springframework.data.repository.query.Parameter;
@@ -34,7 +36,6 @@ import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ValueExpressionDelegate;
 import org.springframework.data.spel.ExpressionDependencies;
-import org.springframework.lang.Nullable;
 import org.springframework.ldap.support.LdapEncoder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -245,6 +246,7 @@ class StringBasedQuery {
 
 			return (matcherMap.isEmpty() ? null : matcherMap.values().iterator().next());
 		}
+
 	}
 
 	/**
@@ -288,6 +290,7 @@ class StringBasedQuery {
 
 			return result.append(input.subSequence(currentPosition, input.length())).toString();
 		}
+
 	}
 
 	/**
@@ -349,8 +352,7 @@ class StringBasedQuery {
 		 * @param binding must not be {@literal null}.
 		 * @return the value used for the given {@link ParameterBinding}.
 		 */
-		@Nullable
-		private Object getParameterValueForBinding(ParameterBinding binding) {
+		private @Nullable Object getParameterValueForBinding(ParameterBinding binding) {
 
 			if (binding.isExpression()) {
 				return evaluator.apply(binding.getRequiredExpression());
@@ -439,6 +441,9 @@ class StringBasedQuery {
 
 				return parameterName;
 			}
+
 		}
+
 	}
+
 }

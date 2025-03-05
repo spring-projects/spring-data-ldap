@@ -53,4 +53,5 @@ public class LdapAnnotationProcessor extends AbstractQuerydslProcessor {
 
 		return configuration;
 	}
+
 }

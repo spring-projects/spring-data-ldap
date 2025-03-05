@@ -70,4 +70,5 @@ public class LdapRepositoryBean<T> extends CdiRepositoryBean<T> {
 	public Class<? extends Annotation> getScope() {
 		return operations.getScope();
 	}
+
 }

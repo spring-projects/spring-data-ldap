@@ -31,4 +31,5 @@ public interface LdapParameterAccessor extends ParameterAccessor {
 	 * @return
 	 */
 	Object[] getBindableParameterValues();
+
 }
