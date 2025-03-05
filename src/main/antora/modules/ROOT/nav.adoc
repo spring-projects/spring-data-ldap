@@ -17,7 +17,6 @@
 ** xref:ldap/configuration.adoc[]
 ** xref:ldap/usage.adoc[]
 ** xref:ldap/query-methods.adoc[]
-** xref:ldap/querydsl.adoc[]
 ** xref:ldap/cdi-integration.adoc[]
 
 * xref:attachment$api/java/index.html[Javadoc,role=link-external,window=_blank]
