@@ -17,6 +17,8 @@ package org.springframework.data.ldap.repository.support;
 
 import javax.naming.Name;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.data.ldap.core.mapping.LdapMappingContext;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
@@ -24,7 +26,6 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
-import org.springframework.lang.Nullable;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.util.Assert;
 
@@ -87,4 +88,5 @@ public class LdapRepositoryFactoryBean<T extends Repository<S, Name>, S>
 			setMappingContext(new LdapMappingContext());
 		}
 	}
+
 }

@@ -17,6 +17,8 @@ package org.springframework.data.ldap.repository.query;
 
 import static org.springframework.data.ldap.repository.query.LdapQueryExecution.*;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.mapping.PersistentEntity;
@@ -71,7 +73,7 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 
 	@Override
 	@SuppressWarnings("ConstantConditions")
-	public final Object execute(Object[] parameters) {
+	public final @Nullable Object execute(Object[] parameters) {
 
 		LdapParametersParameterAccessor parameterAccessor = new LdapParametersParameterAccessor(queryMethod, parameters);
 		LdapQuery query = createQuery(parameterAccessor);
@@ -117,4 +119,5 @@ public abstract class AbstractLdapRepositoryQuery implements RepositoryQuery {
 	public final QueryMethod getQueryMethod() {
 		return queryMethod;
 	}
+
 }

@@ -49,6 +49,7 @@ public interface LdapEncoder {
 		public String encode(String value) {
 			return org.springframework.ldap.support.LdapEncoder.nameEncode(value);
 		}
+
 	}
 
 	/**
@@ -79,6 +80,7 @@ public interface LdapEncoder {
 
 			return buff.toString();
 		}
+
 	}
 
 }

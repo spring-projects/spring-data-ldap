@@ -35,4 +35,5 @@ public class BasicLdapPersistentEntity<T> extends BasicPersistentEntity<T, LdapP
 	public BasicLdapPersistentEntity(TypeInformation<T> information) {
 		super(information);
 	}
+
 }

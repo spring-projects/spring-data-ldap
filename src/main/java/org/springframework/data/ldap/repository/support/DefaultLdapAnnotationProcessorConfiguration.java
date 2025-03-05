@@ -22,7 +22,8 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.VariableElement;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.ldap.odm.annotations.Id;
 
 import com.querydsl.apt.DefaultConfiguration;
@@ -55,4 +56,5 @@ class DefaultLdapAnnotationProcessorConfiguration extends DefaultConfiguration {
 	public boolean isValidField(VariableElement field) {
 		return super.isValidField(field) && field.getAnnotation(Id.class) == null;
 	}
+
 }

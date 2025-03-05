@@ -112,4 +112,5 @@ public class LdapRepositoryConfigurationExtension extends RepositoryConfiguratio
 	protected boolean useRepositoryConfiguration(RepositoryMetadata metadata) {
 		return !metadata.isReactiveRepository();
 	}
+
 }
