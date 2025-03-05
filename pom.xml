@@ -75,7 +75,7 @@
 
 		<dependency>
 			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-mongodb</artifactId>
+			<artifactId>querydsl-core</artifactId>
 			<version>${querydsl}</version>
 			<optional>true</optional>
 		</dependency>
