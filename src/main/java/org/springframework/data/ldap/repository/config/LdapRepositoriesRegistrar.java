@@ -36,4 +36,5 @@ class LdapRepositoriesRegistrar extends RepositoryBeanDefinitionRegistrarSupport
 	protected RepositoryConfigurationExtension getExtension() {
 		return new LdapRepositoryConfigurationExtension();
 	}
+
 }

@@ -24,6 +24,8 @@ import java.util.stream.StreamSupport;
 
 import javax.naming.Name;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.ldap.repository.LdapRepository;
@@ -31,7 +33,6 @@ import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.util.Optionals;
-import org.springframework.lang.Nullable;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.support.CountNameClassPairCallbackHandler;
@@ -227,16 +228,8 @@ public class SimpleLdapRepository<T> implements LdapRepository<T> {
 		return ldapOperations.find(ldapQuery, entityType);
 	}
 
-
 	private <S extends T> boolean isNew(S entity, @Nullable Name id) {
-
-		if (entity instanceof Persistable) {
-			Persistable<?> persistable = (Persistable<?>) entity;
-			return persistable.isNew();
-		} else {
-			return id == null;
-		}
+		return entity instanceof Persistable<?> p ? p.isNew() : id == null;
 	}
-
 
 }

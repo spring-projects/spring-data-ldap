@@ -115,4 +115,5 @@ public class LdapRepositoryExtension extends CdiRepositoryExtensionSupport {
 		return new LdapRepositoryBean<>(LdapOperations, qualifiers, repositoryType, beanManager,
 				Optional.of(getCustomImplementationDetector()));
 	}
+
 }

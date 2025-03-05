@@ -45,4 +45,5 @@ public class LdapMappingContext extends AbstractMappingContext<BasicLdapPersiste
 			SimpleTypeHolder simpleTypeHolder) {
 		return new LdapPersistentProperty(property, owner, simpleTypeHolder);
 	}
+
 }

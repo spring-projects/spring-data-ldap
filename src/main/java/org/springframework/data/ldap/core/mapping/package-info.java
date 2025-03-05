@@ -1,6 +1,5 @@
 /**
  * Infrastructure for the LDAP object mapping subsystem.
  */
-@org.springframework.lang.NonNullApi
-@org.springframework.lang.NonNullFields
+@org.jspecify.annotations.NullMarked
 package org.springframework.data.ldap.core.mapping;

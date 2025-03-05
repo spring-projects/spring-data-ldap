@@ -75,4 +75,5 @@ public @interface Query {
 	 * @return the count limit.
 	 */
 	int countLimit() default 0;
+
 }

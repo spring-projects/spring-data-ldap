@@ -26,6 +26,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.convert.DtoInstantiatingConverter;
 import org.springframework.data.domain.Example;
@@ -43,7 +45,6 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.lang.Nullable;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.util.Assert;
@@ -247,9 +248,8 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 			return new FluentQuerydsl<>(predicate, sort, resultType, new ArrayList<>(properties));
 		}
 
-		@Nullable
 		@Override
-		public R oneValue() {
+		public @Nullable R oneValue() {
 
 			List<T> results = findTop(2);
 
@@ -265,9 +265,8 @@ public class QuerydslLdapPredicateExecutor<T> implements ListQuerydslPredicateEx
 			return getConversionFunction().apply(one);
 		}
 
-		@Nullable
 		@Override
-		public R firstValue() {
+		public @Nullable R firstValue() {
 
 			List<T> results = findTop(2);
 

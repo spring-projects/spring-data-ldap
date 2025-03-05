@@ -17,12 +17,13 @@ package org.springframework.data.ldap.repository.query;
 
 import java.lang.reflect.Method;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryMethod;
-import org.springframework.lang.Nullable;
 
 /**
  * QueryMethod for Ldap Queries.

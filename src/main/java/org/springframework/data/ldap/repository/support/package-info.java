@@ -1,7 +1,5 @@
 /**
  * Support infrastructure for query derivation of LDAP specific repositories.
  */
-@NonNullApi
+@org.jspecify.annotations.NullMarked
 package org.springframework.data.ldap.repository.support;
-
-import org.springframework.lang.NonNullApi;
