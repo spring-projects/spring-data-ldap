@@ -21,7 +21,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.ldap.repository.Query;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
-import org.springframework.data.repository.query.ParametersSource;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.lang.Nullable;
 
@@ -44,14 +43,8 @@ public class LdapQueryMethod extends QueryMethod {
 	 */
 	public LdapQueryMethod(Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
 
-		super(method, metadata, factory);
-
+		super(method, metadata, factory, LdapParameters::new);
 		this.method = method;
-	}
-
-	@Override
-	protected LdapParameters createParameters(ParametersSource parametersSource) {
-		return new LdapParameters(parametersSource);
 	}
 
 	@Override
