@@ -5,7 +5,7 @@
 
 	<groupId>org.springframework.data</groupId>
 	<artifactId>spring-data-ldap</artifactId>
-	<version>3.6.0-SNAPSHOT</version>
+	<version>4.0.0-SNAPSHOT</version>
 
 	<name>Spring Data LDAP</name>
 	<description>Spring Data integration for LDAP</description>
@@ -14,12 +14,12 @@
 	<parent>
 		<groupId>org.springframework.data.build</groupId>
 		<artifactId>spring-data-parent</artifactId>
-		<version>3.5.0</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<spring-ldap>3.3.0</spring-ldap>
-		<springdata.commons>3.5.0</springdata.commons>
+		<springdata.commons>4.0.0-SNAPSHOT</springdata.commons>
 		<java-module-name>spring.data.ldap</java-module-name>
 		<unboundid-ldapsdk>7.0.1</unboundid-ldapsdk>
 	</properties>
@@ -168,8 +168,20 @@
 	</profiles>
 
 	<repositories>
-		
-		
+		<repository>
+			<id>spring-snapshot</id>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>spring-milestone</id>
+			<url>https://repo.spring.io/milestone</url>
+		</repository>
 	</repositories>
 
 </project>
