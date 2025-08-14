@@ -7,7 +7,7 @@ antora:
       root_component_name: 'data-ldap'
 site:
   title: Spring Data LDAP
-  url: https://docs.spring.io/spring-data-ldap/reference/
+  url: https://docs.spring.io/spring-data-ldap/reference
 content:
   sources:
     - url: ./../../..
