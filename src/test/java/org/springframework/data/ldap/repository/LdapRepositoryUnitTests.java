@@ -41,6 +41,7 @@ import org.springframework.ldap.query.LdapQuery;
  * Unit tests for {@link LdapRepository}.
  *
  * @author Mark Paluch
+ * @author Xiangcheng Kuo
  */
 @MockitoSettings
 class LdapRepositoryUnitTests {
@@ -63,7 +64,7 @@ class LdapRepositoryUnitTests {
 		repository = new LdapRepositoryFactory(ldapOperations).getRepository(PersonRepository.class);
 	}
 
-	@Test
+	@Test // GH-573
 	void shouldReturnInterfaceProjection() {
 
 		when(ldapOperations.findOne(any(LdapQuery.class), eq(UnitTestPerson.class))).thenReturn(walter);
@@ -81,7 +82,7 @@ class LdapRepositoryUnitTests {
 		assertThat(query.attributes()).containsOnly("sn");
 	}
 
-	@Test
+	@Test // GH-573
 	void shouldReturnDynamicDtoProjection() {
 
 		when(ldapOperations.findOne(any(LdapQuery.class), eq(UnitTestPerson.class))).thenReturn(walter);
@@ -99,7 +100,7 @@ class LdapRepositoryUnitTests {
 		assertThat(query.attributes()).contains("sn");
 	}
 
-	@Test
+	@Test // GH-573
 	void shouldReturnInterfaceProjectionAsStream() {
 
 		when(ldapOperations.find(any(LdapQuery.class), eq(UnitTestPerson.class)))
