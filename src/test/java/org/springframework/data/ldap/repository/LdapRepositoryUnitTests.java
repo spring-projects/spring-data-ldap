@@ -78,7 +78,7 @@ class LdapRepositoryUnitTests {
 		verify(ldapOperations).findOne(captor.capture(), any());
 
 		LdapQuery query = captor.getValue();
-		assertThat(query.attributes()).containsOnly("lastName");
+		assertThat(query.attributes()).containsOnly("sn");
 	}
 
 	@Test
@@ -96,7 +96,7 @@ class LdapRepositoryUnitTests {
 		verify(ldapOperations).findOne(captor.capture(), any());
 
 		LdapQuery query = captor.getValue();
-		assertThat(query.attributes()).contains("lastName");
+		assertThat(query.attributes()).contains("sn");
 	}
 
 	@Test
@@ -115,7 +115,7 @@ class LdapRepositoryUnitTests {
 		verify(ldapOperations).find(captor.capture(), any());
 
 		LdapQuery query = captor.getValue();
-		assertThat(query.attributes()).containsOnly("lastName");
+		assertThat(query.attributes()).containsOnly("sn");
 	}
 
 	interface PersonRepository extends LdapRepository<UnitTestPerson> {
