@@ -53,7 +53,7 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 	 * @param tree must not be {@literal null}.
 	 * @param entityType must not be {@literal null}.
 	 * @param mapper must not be {@literal null}.
-	 * @param values must not be {@literal null}.
+	 * @param parameterAccessor must not be {@literal null}.
 	 * @param inputProperties must not be {@literal null}.
 	 */
 	LdapQueryCreator(PartTree tree, Class<?> entityType, ObjectDirectoryMapper mapper,
@@ -81,7 +81,8 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 		}
 
 		if (!inputProperties.isEmpty()) {
-			query.attributes(inputProperties.stream().map(prop -> mapper.attributeFor(entityType, prop)).toList().toArray(new String[0]));
+			query.attributes(
+					inputProperties.stream().map(prop -> mapper.attributeFor(entityType, prop)).toArray(String[]::new));
 		}
 
 		ConditionCriteria criteria = query.where(getAttribute(part));
