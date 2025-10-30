@@ -15,10 +15,10 @@
  */
 package org.springframework.data.ldap.core.mapping;
 
+import org.springframework.data.core.TypeInformation;
 import org.springframework.data.mapping.context.AbstractMappingContext;
 import org.springframework.data.mapping.model.Property;
 import org.springframework.data.mapping.model.SimpleTypeHolder;
-import org.springframework.data.util.TypeInformation;
 
 /**
  * Mapping context for {@link LdapPersistentEntity LDAP-specific entities}.

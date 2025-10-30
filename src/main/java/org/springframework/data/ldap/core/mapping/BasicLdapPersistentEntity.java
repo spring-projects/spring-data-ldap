@@ -15,8 +15,8 @@
  */
 package org.springframework.data.ldap.core.mapping;
 
+import org.springframework.data.core.TypeInformation;
 import org.springframework.data.mapping.model.BasicPersistentEntity;
-import org.springframework.data.util.TypeInformation;
 
 /**
  * {@link LdapPersistentEntity} implementation.
