@@ -22,6 +22,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import org.springframework.data.domain.Limit;
 import org.springframework.data.ldap.core.mapping.LdapMappingContext;
 import org.springframework.data.ldap.repository.LdapEncode;
 import org.springframework.data.ldap.repository.LdapEncoder;
@@ -93,6 +94,34 @@ class AnnotatedLdapRepositoryQueryUnitTests {
 		assertThat(ldapQuery.filter().encode()).isEqualTo("(cn=Doebar)");
 	}
 
+	@Test // GH-586
+	void shouldConsiderLimit() throws NoSuchMethodException {
+
+		LdapQueryMethod method = queryMethod("limited", String.class);
+		AnnotatedLdapRepositoryQuery query = repositoryQuery(method);
+
+		LdapQuery ldapQuery = query.createQuery(new LdapParametersParameterAccessor(method, new Object[] { "John Doe" }));
+
+		assertThat(ldapQuery.countLimit()).isEqualTo(123);
+	}
+
+	@Test // GH-586
+	void shouldConsiderLimitParameter() throws NoSuchMethodException {
+
+		LdapQueryMethod method = queryMethod("limited", String.class, Limit.class);
+		AnnotatedLdapRepositoryQuery query = repositoryQuery(method);
+
+		LdapQuery ldapQuery = query
+				.createQuery(new LdapParametersParameterAccessor(method, new Object[] { "John Doe", Limit.unlimited() }));
+
+		assertThat(ldapQuery.countLimit()).isEqualTo(0);
+
+		ldapQuery = query
+				.createQuery(new LdapParametersParameterAccessor(method, new Object[] { "John Doe", Limit.of(10) }));
+
+		assertThat(ldapQuery.countLimit()).isEqualTo(10);
+	}
+
 	private LdapQueryMethod queryMethod(String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
 		return new LdapQueryMethod(QueryRepository.class.getMethod(methodName, parameterTypes),
 				new DefaultRepositoryMetadata(QueryRepository.class), new SpelAwareProxyProjectionFactory());
@@ -107,6 +136,12 @@ class AnnotatedLdapRepositoryQueryUnitTests {
 
 		@Query(value = "(cn=:fullName)")
 		List<SchemaEntry> namedParameters(String fullName);
+
+		@Query(value = "(cn=:fullName)", countLimit = 123)
+		List<SchemaEntry> limited(String fullName);
+
+		@Query(value = "(cn=:fullName)", countLimit = 123)
+		List<SchemaEntry> limited(String fullName, Limit limit);
 
 		@Query(value = "(cn={0})")
 		List<SchemaEntry> messageFormatParameters(String fullName);

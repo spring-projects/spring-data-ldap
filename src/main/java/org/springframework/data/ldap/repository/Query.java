@@ -71,6 +71,9 @@ public @interface Query {
 
 	/**
 	 * Count limit, to be used as input to {@link org.springframework.ldap.query.LdapQueryBuilder#countLimit(int)}.
+	 * <p>
+	 * This attribute will be ignored when a query method accepts a {@link org.springframework.data.domain.Limit}
+	 * parameter
 	 *
 	 * @return the count limit.
 	 */

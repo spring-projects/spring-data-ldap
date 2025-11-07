@@ -31,4 +31,13 @@ public interface LdapParameterAccessor extends ParameterAccessor {
 	 * @return
 	 */
 	Object[] getBindableParameterValues();
+
+	/**
+	 * Returns all parameter values of the underlying query method.
+	 *
+	 * @return
+	 * @since 3.5.6
+	 */
+	Object[] getValues();
+
 }
