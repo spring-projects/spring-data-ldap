@@ -99,6 +99,7 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 			Object next = iterator.next();
 			value = next != null ? next.toString() : null;
 		}
+
 		switch (type) {
 			case NEGATING_SIMPLE_PROPERTY:
 				return criteria.not().is(value);
@@ -125,10 +126,10 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 			default:
 				throw new IllegalArgumentException(String.format("%s queries are not supported for LDAP repositories", type));
 		}
-
 	}
 
 	private String getAttribute(Part part) {
+
 		PropertyPath path = part.getProperty();
 		if (path.hasNext()) {
 			throw new IllegalArgumentException("Nested properties are not supported");
@@ -139,8 +140,8 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 
 	@Override
 	protected ContainerCriteria and(Part part, ContainerCriteria base, Iterator<Object> iterator) {
-		ConditionCriteria criteria = base.and(getAttribute(part));
 
+		ConditionCriteria criteria = base.and(getAttribute(part));
 		return appendCondition(part, iterator, criteria);
 	}
 

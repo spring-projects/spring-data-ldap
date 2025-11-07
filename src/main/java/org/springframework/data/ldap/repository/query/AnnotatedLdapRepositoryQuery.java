@@ -17,6 +17,7 @@ package org.springframework.data.ldap.repository.query;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.*;
 
+import org.springframework.data.domain.Limit;
 import org.springframework.data.expression.ValueEvaluationContext;
 import org.springframework.data.expression.ValueEvaluationContextProvider;
 import org.springframework.data.ldap.repository.Query;
@@ -93,9 +94,16 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 		String query = bind(parameters, valueContextProvider, this.query);
 		String base = bind(parameters, valueContextProvider, this.base);
 
+		int countLimit = queryAnnotation.countLimit();
+
+		if (getQueryMethod().getParameters().hasLimitParameter()) {
+			Limit limit = parameters.getLimit();
+			countLimit = limit.isLimited() ? limit.max() : 0;
+		}
+
 		return query().base(base) //
 				.searchScope(queryAnnotation.searchScope()) //
-				.countLimit(queryAnnotation.countLimit()) //
+				.countLimit(countLimit) //
 				.timeLimit(queryAnnotation.timeLimit()) //
 				.filter(query, parameters.getBindableParameterValues());
 	}
@@ -103,7 +111,7 @@ public class AnnotatedLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 	private String bind(LdapParameterAccessor parameters, ValueEvaluationContextProvider valueContextProvider, StringBasedQuery query) {
 
 		ValueEvaluationContext evaluationContext = valueContextProvider
-				.getEvaluationContext(parameters.getBindableParameterValues(), query.getExpressionDependencies());
+				.getEvaluationContext(parameters.getValues(), query.getExpressionDependencies());
 
 		return query.bindQuery(parameters,
 				expression -> expression.evaluate(evaluationContext));

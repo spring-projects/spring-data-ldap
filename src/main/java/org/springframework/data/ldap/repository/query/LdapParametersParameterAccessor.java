@@ -56,4 +56,9 @@ class LdapParametersParameterAccessor extends ParametersParameterAccessor implem
 		return values;
 	}
 
+	@Override
+	public Object[] getValues() {
+		return super.getValues();
+	}
+
 }

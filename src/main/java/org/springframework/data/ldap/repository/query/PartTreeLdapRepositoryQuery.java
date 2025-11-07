@@ -18,6 +18,7 @@ package org.springframework.data.ldap.repository.query;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.data.domain.Limit;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.context.MappingContext;
@@ -28,6 +29,7 @@ import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
 import org.springframework.ldap.query.LdapQuery;
+import org.springframework.ldap.query.LdapQueryBuilder;
 
 /**
  * {@link RepositoryQuery} implementation for LDAP.
@@ -72,7 +74,27 @@ public class PartTreeLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
 		org.springframework.data.ldap.repository.query.LdapQueryCreator queryCreator = new LdapQueryCreator(partTree,
 				getEntityClass(), objectDirectoryMapper, parameters, inputProperties);
-		return queryCreator.createQuery();
+
+		LdapQuery query = queryCreator.createQuery();
+
+		if (getQueryMethod().getParameters().hasLimitParameter() || partTree.isLimiting()) {
+
+			LdapQueryBuilder builder = LdapQueryBuilder.fromQuery(query);
+
+			Limit limit = parameters.getLimit();
+
+			if (partTree.isLimiting()) {
+				builder.countLimit(partTree.getResultLimit().max());
+			}
+
+			if (getQueryMethod().getParameters().hasLimitParameter()) {
+				builder.countLimit(limit.isLimited() ? limit.max() : 0);
+			}
+
+			return builder;
+		}
+
+		return query;
 	}
 
 }
