@@ -5,7 +5,7 @@
 
 	<groupId>org.springframework.data</groupId>
 	<artifactId>spring-data-ldap</artifactId>
-	<version>3.5.6</version>
+	<version>3.5.7-SNAPSHOT</version>
 
 	<name>Spring Data LDAP</name>
 	<description>Spring Data integration for LDAP</description>
