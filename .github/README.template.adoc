@@ -1,0 +1,63 @@
+= Spring Data LDAP image:https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A["Revved up by Develocity", link="https://ge.spring.io/scans?search.rootProjectNames=Spring Data LDAP"]
+
+The primary goal of the https://projects.spring.io/spring-data[Spring Data] project is to make it easier to build Spring-powered applications that use new data access technologies such as non-relational databases, map-reduce frameworks, and cloud based data services.
+
+The Spring Data LDAP project aims to provide familiar and consistent repository abstractions for https://github.com/spring-projects/spring-ldap[Spring LDAP].
+
+== Features
+
+* Spring configuration support using Java-based `@Configuration` classes or an XML namespace.
+* Annotation based mapping metadata.
+* Automatic implementation of Repository interfaces including support for custom query methods.
+* QueryDSL integration to support type-safe queries.
+
+include::https://raw.githubusercontent.com/spring-projects/spring-data-build/refs/heads/main/etc/readme/code-of-conduct.adoc[]
+
+== Getting Started
+
+Here is a quick teaser of an application using Spring Data Repositories in Java:
+
+[source,java]
+----
+public interface PersonRepository extends CrudRepository<Person, Long> {
+
+  List<Person> findByLastname(String lastname);
+
+  List<Person> findByFirstnameLike(String firstname);
+}
+
+@Service
+public class MyService {
+
+  private final PersonRepository repository;
+
+  public MyService(PersonRepository repository) {
+    this.repository = repository;
+  }
+
+  public void doWork() {
+
+    repository.deleteAll();
+
+    Person person = new Person();
+    person.setFirstname("Rob");
+    person.setLastname("Winch");
+    repository.save(person);
+
+    List<Person> lastNameResults = repository.findByLastname("Winch");
+    List<Person> firstNameResults = repository.findByFirstnameLike("R*");
+ }
+}
+
+@Configuration
+@EnableLdapRepositories
+class ApplicationConfig {
+
+}
+----
+
+include::https://raw.githubusercontent.com/spring-projects/spring-data-build/refs/heads/main/etc/readme/dependencies.adoc[]
+
+include::https://raw.githubusercontent.com/spring-projects/spring-data-build/refs/heads/main/etc/readme/getting-help.adoc[]
+
+include::https://raw.githubusercontent.com/spring-projects/spring-data-build/refs/heads/main/etc/readme/license.adoc[]
