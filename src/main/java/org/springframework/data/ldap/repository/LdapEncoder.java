@@ -15,6 +15,7 @@
  */
 package org.springframework.data.ldap.repository;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -37,7 +38,7 @@ public interface LdapEncoder {
 	 * @param value the value to encode.
 	 * @return a properly encoded representation of the supplied value.
 	 */
-	String encode(String value);
+	@Nullable String encode(String value);
 
 	/**
 	 * {@link LdapEncoder} using {@link org.springframework.ldap.support.LdapEncoder#nameEncode(String)}. Encodes a value
@@ -46,7 +47,7 @@ public interface LdapEncoder {
 	class NameEncoder implements LdapEncoder {
 
 		@Override
-		public String encode(String value) {
+		public @Nullable String encode(String value) {
 			return org.springframework.ldap.support.LdapEncoder.nameEncode(value);
 		}
 

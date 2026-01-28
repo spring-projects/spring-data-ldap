@@ -18,7 +18,7 @@
 	</parent>
 
 	<properties>
-		<spring-ldap>4.0.1</spring-ldap>
+		<spring-ldap>4.1.0-M1</spring-ldap>
 		<springdata.commons>4.1.0-SNAPSHOT</springdata.commons>
 		<java-module-name>spring.data.ldap</java-module-name>
 		<unboundid-ldapsdk>7.0.3</unboundid-ldapsdk>

@@ -33,6 +33,7 @@ import org.springframework.ldap.query.ContainerCriteria;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Creator of dynamic queries based on method names.
@@ -94,17 +95,16 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 
 		Part.Type type = part.getType();
 
-		String value = null;
+		Object value = null;
 		if (iterator.hasNext()) {
-			Object next = iterator.next();
-			value = next != null ? next.toString() : null;
+			value = iterator.next();
 		}
 
 		switch (type) {
 			case NEGATING_SIMPLE_PROPERTY:
-				return criteria.not().is(value);
+				return value != null ? criteria.not().is(value.toString()) : criteria.isPresent();
 			case SIMPLE_PROPERTY:
-				return criteria.is(value);
+				return value != null ? criteria.is(value.toString()) : criteria.not().isPresent();
 			case STARTING_WITH:
 				return criteria.like(value + "*");
 			case ENDING_WITH:
@@ -112,13 +112,13 @@ class LdapQueryCreator extends AbstractQueryCreator<LdapQuery, ContainerCriteria
 			case CONTAINING:
 				return criteria.like("*" + value + "*");
 			case LIKE:
-				return criteria.like(value);
+				return criteria.like(ObjectUtils.nullSafeToString(value));
 			case NOT_LIKE:
-				return criteria.not().like(value);
+				return criteria.not().like(ObjectUtils.nullSafeToString(value));
 			case GREATER_THAN_EQUAL:
-				return criteria.gte(value);
+				return criteria.gte(ObjectUtils.nullSafeToString(value));
 			case LESS_THAN_EQUAL:
-				return criteria.lte(value);
+				return criteria.lte(ObjectUtils.nullSafeToString(value));
 			case IS_NOT_NULL:
 				return criteria.isPresent();
 			case IS_NULL:

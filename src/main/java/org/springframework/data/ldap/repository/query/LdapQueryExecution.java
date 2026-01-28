@@ -143,7 +143,7 @@ interface LdapQueryExecution {
 	 *
 	 * @author Mark Paluch
 	 */
-	final class ResultProcessingConverter implements Converter<Object, Object> {
+	final class ResultProcessingConverter implements Converter<Object, @Nullable Object> {
 
 		private final ResultProcessor processor;
 		private final MappingContext<? extends PersistentEntity<?, ?>, ? extends PersistentProperty<?>> mappingContext;
@@ -158,6 +158,7 @@ interface LdapQueryExecution {
 		}
 
 		@Override
+		@SuppressWarnings("NullAway")
 		public @Nullable Object convert(@Nullable Object source) {
 
 			ReturnedType returnedType = processor.getReturnedType();
