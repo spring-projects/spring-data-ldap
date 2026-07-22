@@ -15,6 +15,8 @@
  */
 package org.springframework.data.ldap.repository.support;
 
+import java.util.Collection;
+
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
@@ -33,6 +35,7 @@ import com.querydsl.core.types.*;
  *
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
+ * @author Ashish Vaghela
  */
 class LdapSerializer implements Visitor<Object, Void> {
 
@@ -94,9 +97,33 @@ class LdapSerializer implements Visitor<Object, Void> {
 			return new GreaterThanOrEqualsFilter(attribute(expr), value(expr));
 		} else if (operator == Ops.LOE) {
 			return new LessThanOrEqualsFilter(attribute(expr), value(expr));
+		} else if (operator == Ops.IN) {
+			return inFilter(expr);
 		}
 
 		throw new UnsupportedOperationException("Unsupported operator " + operator.toString());
+	}
+
+	private Filter inFilter(Operation<?> expr) {
+
+		if (expr.getArg(1) instanceof Path) {
+			String attribute = odm.attributeFor(entityType, (String) expr.getArg(1).accept(this, null));
+			return new EqualsFilter(attribute, (String) expr.getArg(0).accept(this, null));
+		}
+
+		if (expr.getArg(1) instanceof Constant<?> constant && constant.getConstant() instanceof Collection<?> values) {
+
+			String attribute = attribute(expr);
+			OrFilter filter = new OrFilter();
+
+			for (Object value : values) {
+				filter.or(new EqualsFilter(attribute, value.toString()));
+			}
+
+			return filter;
+		}
+
+		throw new UnsupportedOperationException("Unsupported operand for IN operator: " + expr.getArg(1));
 	}
 
 	private String value(Operation<?> expr) {
