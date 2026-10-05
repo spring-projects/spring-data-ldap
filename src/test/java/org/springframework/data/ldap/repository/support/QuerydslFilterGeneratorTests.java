@@ -27,6 +27,7 @@ import com.querydsl.core.types.Expression;
 /**
  * @author Mattias Hellborg Arthursson
  * @author Eddu Melendez
+ * @author Ashish Vaghela
  */
 class QuerydslFilterGeneratorTests {
 
@@ -133,5 +134,32 @@ class QuerydslFilterGeneratorTests {
 		Filter result = tested.handle(expression);
 
 		assertThat(result).hasToString("(!(cn=*))");
+	}
+
+	@Test // GH-82
+	void testCollectionContains() {
+
+		Expression<?> expression = person.description.contains("test");
+		Filter result = tested.handle(expression);
+
+		assertThat(result).hasToString("(description=test)");
+	}
+
+	@Test // GH-82
+	void testIn() {
+
+		Expression<?> expression = person.fullName.in("John Doe", "Jane Doe");
+		Filter result = tested.handle(expression);
+
+		assertThat(result).hasToString("(|(cn=John Doe)(cn=Jane Doe))");
+	}
+
+	@Test // GH-82
+	void testInWithSingleValue() {
+
+		Expression<?> expression = person.fullName.in("John Doe");
+		Filter result = tested.handle(expression);
+
+		assertThat(result).hasToString("(cn=John Doe)");
 	}
 }
