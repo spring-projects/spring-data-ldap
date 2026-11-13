@@ -79,7 +79,7 @@ public class PartTreeLdapRepositoryQuery extends AbstractLdapRepositoryQuery {
 
 		if (getQueryMethod().getParameters().hasLimitParameter() || partTree.isLimiting()) {
 
-			LdapQueryBuilder builder = LdapQueryBuilder.fromQuery(query);
+			LdapQueryBuilder builder = LdapQueryBuilder.withQuery(query);
 
 			Limit limit = parameters.getLimit();
 
